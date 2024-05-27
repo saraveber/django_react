@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
             serializer.save(author=self.request.user)
         else:
             print(serializer.errors)
-    
+ 
 class NoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Note

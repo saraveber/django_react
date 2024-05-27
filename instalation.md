@@ -1,4 +1,4 @@
-# Installation
+# Installation Backend
 
 To get started, follow these steps to set up your Django and React project:
 
@@ -26,7 +26,7 @@ To get started, follow these steps to set up your Django and React project:
     pip install -r requirements.txt
     ```
 
-# Project Setup
+## Project Setup 
 
 Now that your environment is set up, you can start your Django project:
 
@@ -42,13 +42,21 @@ Now that your environment is set up, you can start your Django project:
     python manage.py startapp api
     ```
 
+3. Watch [this YouTube video](https://www.youtube.com/watch?v=c-QsfbznSXI&t=505s) for additional guidance.
 
-4. Watch https://www.youtube.com/watch?v=c-QsfbznSXI&t=505s
-
-3. Run the following commands to complete the project setup:
+4. Run the following commands to complete the project setup:
 
     ```bash
     python manage.py makemigrations
     python manage.py migrate
     python manage.py runserver
     ```
+
+# Frontend
+
+To install the frontend dependencies, run the following command:
+
+
+npm create vite@latest frontend -- --template react
+
+npm install axios react-router-dom jwt-decode
