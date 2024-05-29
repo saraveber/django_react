@@ -64,3 +64,6 @@ npm install axios react-router-dom jwt-decode
 
 
 check out this link https://react.dev/learn/react-developer-tools
+
+
+using prettier
