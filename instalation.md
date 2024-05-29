@@ -60,3 +60,7 @@ To install the frontend dependencies, run the following command:
 npm create vite@latest frontend -- --template react
 
 npm install axios react-router-dom jwt-decode
+
+
+
+check out this link https://react.dev/learn/react-developer-tools
