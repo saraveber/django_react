@@ -59,11 +59,16 @@ Now that your environment is set up, you can start your Django project:
 
 3. Watch [this YouTube video](https://www.youtube.com/watch?v=c-QsfbznSXI&t=505s) for additional guidance.
 
-4. Run the following commands to complete the project setup:
+4. Run the following commands when database changes:
 
     ```bash
     python manage.py makemigrations
     python manage.py migrate
+    ```
+
+5. Run backend
+
+    ```bash
     python manage.py runserver
     ```
 
@@ -71,11 +76,23 @@ Now that your environment is set up, you can start your Django project:
 
 To install the frontend dependencies, run the following command:
 
+1. Make frontend template
 
-npm create vite@latest frontend -- --template react
+    ```bash
+    npm create vite@latest frontend -- --template react
+    ```
 
-npm install axios react-router-dom jwt-decode
+2. Install packages
 
+    ```bash
+    npm install axios react-router-dom jwt-decode
+    ```
+
+3. Run frontend
+
+    ```bash
+    npm run dev
+    ```
 
 
 check out this link https://react.dev/learn/react-developer-tools
