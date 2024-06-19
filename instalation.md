@@ -10,15 +10,30 @@ To get started, follow these steps to set up your Django and React project:
 
 2. Create a virtual environment for your project:
 
+    Linux:
     ```bash
     python3 -m venv env
     ```
 
+    Windows:
+    ```bash
+    python -m venv env
+    ```
+
 3. Activate the virtual environment:
 
+    Linux:
     ```bash
     source env/bin/activate
     ```
+
+    Windows:
+    ```bash
+    cd env/Scripts/
+    .\activate
+    ```
+
+
 
 4. Install the project dependencies from the `requirements.txt` file:
 
@@ -64,6 +79,6 @@ npm install axios react-router-dom jwt-decode
 
 
 check out this link https://react.dev/learn/react-developer-tools
-check out locafy
+
 
 using prettier
