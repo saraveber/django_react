@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../api";
 import "../styles/Home.css";
 import Note from "../components/Note";
+import Calendar from '../components/Calendar';
 
 function Home() {
     const [notes, setNotes] = useState([]);
@@ -47,7 +48,11 @@ function Home() {
     };
 
     return (
+        
         <div>
+            
+            <Calendar />
+
             <div>
                 <h2>Notes</h2>
                 {notes.map((note) => <Note note={note} onDelete={deleteNote} key={note.id} />)}

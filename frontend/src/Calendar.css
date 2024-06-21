@@ -1,0 +1,46 @@
+.calendar {
+    width: 80%;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+  }
+  
+  .calendar table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensures all columns have the same width */
+  }
+  
+  .hour-header, .day-header, .hour, .cell {
+    border: 1px solid #ccc;
+    text-align: center;
+    padding: 10px;
+    user-select: none; /* Prevent text selection on day headers */
+  }
+  
+  .day-header {
+    background-color: #f0f0f0;
+    user-select: none; /* Prevent text selection on day headers */
+  }
+  
+  .hour {
+    background-color: #f0f0f0;
+  }
+  
+  .cell {
+    height: 25px; /* Adjust as needed */
+    cursor: pointer;
+  }
+  
+  .cell.colored {
+    background-color: lightblue;
+  }
+  
+  .cell.dragged {
+    background-color: lightgray;
+  }
+  
+  .cell:hover {
+    background-color: #e0e0e0;
+  }
+  
