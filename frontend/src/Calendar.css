@@ -1,46 +1,92 @@
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Adjust height as needed */
+}
+
 .calendar {
-    width: 80%;
-    margin: 0 auto;
-    border: 1px solid #ccc;
-    border-collapse: collapse;
-  }
-  
-  .calendar table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed; /* Ensures all columns have the same width */
-  }
-  
-  .hour-header, .day-header, .hour, .cell {
-    border: 1px solid #ccc;
-    text-align: center;
-    padding: 10px;
-    user-select: none; /* Prevent text selection on day headers */
-  }
-  
-  .day-header {
-    background-color: #f0f0f0;
-    user-select: none; /* Prevent text selection on day headers */
-  }
-  
-  .hour {
-    background-color: #f0f0f0;
-  }
-  
-  .cell {
-    height: 25px; /* Adjust as needed */
-    cursor: pointer;
-  }
-  
-  .cell.colored {
-    background-color: lightblue;
-  }
-  
-  .cell.dragged {
-    background-color: lightgray;
-  }
-  
-  .cell:hover {
-    background-color: #e0e0e0;
-  }
-  
+  margin-bottom: 20px; /* Spacing between calendar and button */
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  width: 80%;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures all columns have the same width */
+}
+
+.hour-header, .day-header, .hour, .cell {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 10px;
+  width: 14.2857%; /* This ensures all columns (7 days) + 1 (hour column) are equally distributed */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  background-color: #f0f0f0;
+  user-select: none;
+}
+
+.hour {
+  background-color: #f0f0f0;
+}
+
+.cell {
+  height: 40px; /* Adjust as needed */
+  cursor: pointer;
+}
+
+.cell.colored {
+  background-color: lightblue;
+}
+
+.cell.dragged {
+  background-color: lightgray;
+}
+
+.cell:hover {
+  background-color: #e0e0e0;
+}
+
+.submit-container {
+  text-align: center;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #3e84ec;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #206bdd;
+}
+
+.arrow-button {
+  background-color: #3e84ec;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 10px;
+  transition: background-color 0.3s ease;
+}
+
+.arrow-button:hover {
+  background-color: #206bdd;
+}
