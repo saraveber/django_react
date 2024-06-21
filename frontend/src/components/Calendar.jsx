@@ -8,9 +8,9 @@ const Calendar = () => {
   const [dragEnd, setDragEnd] = useState(null); // State for drag end
 
   // Function to handle cell click
-  const handleCellClick = (day, hour) => {
+  const handleCellClick = (date, month, year, hour) => {
     if (!isDragging) {
-      const cellKey = `${day}-${hour}`;
+      const cellKey = `${date}-${month}-${year}-${hour}`;
       setColoredCells((prevState) => ({
         ...prevState,
         [cellKey]: !prevState[cellKey], // Toggle color
@@ -19,16 +19,16 @@ const Calendar = () => {
   };
 
   // Function to handle mouse down on cell
-  const handleMouseDown = (day, hour) => {
+  const handleMouseDown = (date, month, year, hour) => {
     setIsDragging(true);
-    setDragStart({ day, hour });
+    setDragStart({ date, month, year, hour });
     setDragEnd(null);
   };
 
   // Function to handle mouse enter on cell (during dragging)
-  const handleMouseEnter = (day, hour) => {
+  const handleMouseEnter = (date, month, year, hour) => {
     if (isDragging) {
-      setDragEnd({ day, hour });
+      setDragEnd({ date, month, year, hour });
     }
   };
 
@@ -36,15 +36,14 @@ const Calendar = () => {
   const handleMouseUp = () => {
     if (dragStart && dragEnd) {
       const updatedCells = { ...coloredCells };
-      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-      const startDayIndex = days.indexOf(dragStart.day);
-      const endDayIndex = days.indexOf(dragEnd.day);
+      const startDate = dragStart.date;
+      const endDate = dragEnd.date;
       const startHour = parseInt(dragStart.hour.split(':')[0], 10);
       const endHour = parseInt(dragEnd.hour.split(':')[0], 10);
 
-      for (let dayIndex = Math.min(startDayIndex, endDayIndex); dayIndex <= Math.max(startDayIndex, endDayIndex); dayIndex++) {
+      for (let date = Math.min(startDate, endDate); date <= Math.max(startDate, endDate); date++) {
         for (let hour = Math.min(startHour, endHour); hour <= Math.max(startHour, endHour); hour++) {
-          const cellKey = `${days[dayIndex]}-${hour.toString().padStart(2, '0')}:00`;
+          const cellKey = `${date}-${dragStart.month}-${dragStart.year}-${hour.toString().padStart(2, '0')}:00`;
           updatedCells[cellKey] = !updatedCells[cellKey]; // Toggle color
         }
       }
@@ -56,18 +55,17 @@ const Calendar = () => {
   };
 
   // Function to determine if a cell is within the drag area
-  const isWithinDragArea = (day, hour) => {
+  const isWithinDragArea = (date, month, year, hour) => {
     if (!dragStart || !dragEnd) return false;
 
-    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const startDayIndex = days.indexOf(dragStart.day);
-    const endDayIndex = days.indexOf(dragEnd.day);
-    const currentDayIndex = days.indexOf(day);
+    const startDate = dragStart.date;
+    const endDate = dragEnd.date;
+    const currentDate = date;
     const startHour = parseInt(dragStart.hour.split(':')[0], 10);
     const endHour = parseInt(dragEnd.hour.split(':')[0], 10);
     const currentHour = parseInt(hour.split(':')[0], 10);
 
-    const withinDays = currentDayIndex >= Math.min(startDayIndex, endDayIndex) && currentDayIndex <= Math.max(startDayIndex, endDayIndex);
+    const withinDays = currentDate >= Math.min(startDate, endDate) && currentDate <= Math.max(startDate, endDate);
     const withinHours = currentHour >= Math.min(startHour, endHour) && currentHour <= Math.max(startHour, endHour);
 
     return withinDays && withinHours;
@@ -78,11 +76,10 @@ const Calendar = () => {
     const selectedTimestamps = Object.keys(coloredCells)
       .filter((key) => coloredCells[key]) // Filter only colored cells
       .map((cellKey) => {
-        // Extract day and hour from cellKey
-
-        const [day, hour] = cellKey.split('-');
+        // Extract date, month, year, and hour from cellKey
+        const [date, month, year, hour] = cellKey.split('-');
         // Return timestamp format 'DD.MM.YYYY HH:00'
-        return `${day}.${new Date().toLocaleString('default', { month: 'numeric' }).padStart(2, '0')}.${new Date().getFullYear()} ${hour}:00`;
+        return `${date}.${month}.${year} ${hour}`;
       });
 
     console.log('Selected Timestamps:', selectedTimestamps);
@@ -108,6 +105,7 @@ const Calendar = () => {
       name: date.toLocaleString('en-US', { weekday: 'long' }),
       date: date.getDate(),
       month: date.toLocaleString('en-US', { month: 'long' }),
+      year: date.getFullYear(), // Get the year
     };
   });
 
@@ -135,11 +133,11 @@ const Calendar = () => {
                 <td className="hour">{hour}</td>
                 {days.map((day) => (
                   <td
-                    key={`${day.name}-${hour}`}
-                    className={`cell ${coloredCells[`${day.name}-${hour}`] ? 'colored' : ''} ${isDragging && isWithinDragArea(day.name, hour) ? 'dragged' : ''}`}
-                    onMouseDown={() => handleMouseDown(day.name, hour)}
-                    onMouseEnter={() => handleMouseEnter(day.name, hour)}
-                    onClick={() => handleCellClick(day.name, hour)}
+                    key={`${day.date}-${day.month}-${day.year}-${hour}`}
+                    className={`cell ${coloredCells[`${day.date}-${day.month}-${day.year}-${hour}`] ? 'colored' : ''} ${isDragging && isWithinDragArea(day.date, day.month, day.year, hour) ? 'dragged' : ''}`}
+                    onMouseDown={() => handleMouseDown(day.date, day.month, day.year, hour)}
+                    onMouseEnter={() => handleMouseEnter(day.date, day.month, day.year, hour)}
+                    onClick={() => handleCellClick(day.date, day.month, day.year, hour)}
                   >
                   </td>
                 ))}
