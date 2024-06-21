@@ -6,6 +6,7 @@ const Calendar = () => {
   const [isDragging, setIsDragging] = useState(false); // State to track dragging
   const [dragStart, setDragStart] = useState(null); // State for drag start
   const [dragEnd, setDragEnd] = useState(null); // State for drag end
+  const [currentWeek, setCurrentWeek] = useState(new Date()); // State for current week
 
   // Function to handle cell click
   const handleCellClick = (date, month, year, hour) => {
@@ -78,13 +79,12 @@ const Calendar = () => {
       .map((cellKey) => {
         // Extract date, month, year, and hour from cellKey
         const [date, month, year, hour] = cellKey.split('-');
-        
+
         const monthNames = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
           ];
         
-        console.log(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
         return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
       });
 
@@ -94,6 +94,20 @@ const Calendar = () => {
     // You can add further logic here to send `coloredCells` data to your backend or perform other actions
   };
 
+  // Function to navigate to the previous week
+  const handlePreviousWeek = () => {
+    const newDate = new Date(currentWeek);
+    newDate.setDate(currentWeek.getDate() - 7);
+    setCurrentWeek(newDate);
+  };
+
+  // Function to navigate to the next week
+  const handleNextWeek = () => {
+    const newDate = new Date(currentWeek);
+    newDate.setDate(currentWeek.getDate() + 7);
+    setCurrentWeek(newDate);
+  };
+
   // Generate hours from 07:00 to 22:00 (7 AM to 10 PM)
   const hours = Array.from({ length: 16 }, (_, i) => {
     const hour = i + 7;
@@ -101,7 +115,7 @@ const Calendar = () => {
   });
 
   // Dates for each day of the week starting from Monday
-  const startDate = new Date();
+  const startDate = new Date(currentWeek);
   startDate.setDate(startDate.getDate() - startDate.getDay() + (startDate.getDay() === 0 ? -6 : 1)); // Set to Monday of the current week
 
   const days = Array.from({ length: 7 }, (_, i) => {
@@ -117,6 +131,10 @@ const Calendar = () => {
 
   return (
     <div className="calendar-container">
+      <div className="navigation-buttons">
+      <button onClick={handlePreviousWeek}>&lt;</button>
+      <button onClick={handleNextWeek}>&gt;</button>
+      </div>
       <div className="calendar">
         <table
           onMouseUp={handleMouseUp}

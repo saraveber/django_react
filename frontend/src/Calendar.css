@@ -76,17 +76,37 @@
   background-color: #206bdd;
 }
 
-.arrow-button {
-  background-color: #3e84ec;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  padding: 5px 10px;
-  transition: background-color 0.3s ease;
+.navigation-buttons {
+  display: flex;
 }
 
-.arrow-button:hover {
-  background-color: #206bdd;
+.navigation-buttons button {
+  background-color: #3e84ec; /* Green background */
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove underline */
+  display: inline-block; /* Get the element to respect width and height */
+  font-size: 16px; /* Increase font size */
+  margin: 4px 20px; /* Some margin */
+  cursor: pointer; /* Pointer/hand icon */
+  border-radius: 50%; /* Rounded corners */
+  width: 40px; /* Width */
+  height: 40px; /* Height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition-duration: 0.4s; /* 0.4 seconds transition effect to hover state */
 }
+
+.navigation-buttons button:hover {
+  background-color: white; /* White background */
+  color: black; /* Black text */
+  border: 1px solid #206bdd; /* Green border */
+}
+
+.calendar {
+  margin-top: 50px; /* Adjust margin to make space for navigation buttons */
+}
+
+
