@@ -78,8 +78,14 @@ const Calendar = () => {
       .map((cellKey) => {
         // Extract date, month, year, and hour from cellKey
         const [date, month, year, hour] = cellKey.split('-');
-        // Return timestamp format 'DD.MM.YYYY HH:00'
-        return `${date}.${month}.${year} ${hour}`;
+        
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ];
+        
+        console.log(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
+        return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
       });
 
     console.log('Selected Timestamps:', selectedTimestamps);
