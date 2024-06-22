@@ -103,3 +103,11 @@ check out this link https://react.dev/learn/react-developer-tools
 ```bash
     python manage.py createsuperuser
 ```
+
+1. Sara 
+Username: sara
+Password: Ananas 3510
+
+2. Tina
+Username:
+Password: 
