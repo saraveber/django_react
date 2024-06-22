@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../Calendar.css';
+import '../styles/Calendar.css';
 
 const Calendar = () => {
   const [coloredCells, setColoredCells] = useState({}); // State for colored cells
