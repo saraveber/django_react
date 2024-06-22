@@ -98,4 +98,8 @@ To install the frontend dependencies, run the following command:
 check out this link https://react.dev/learn/react-developer-tools
 
 
-using prettier
+# Superuser 
+
+```bash
+    python manage.py createsuperuser
+```
