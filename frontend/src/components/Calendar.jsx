@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/Calendar.css';
+import api from "../api";
 
 const Calendar = () => {
   const [coloredCells, setColoredCells] = useState({}); // State for colored cells
@@ -7,7 +8,37 @@ const Calendar = () => {
   const [dragStart, setDragStart] = useState(null); // State for drag start
   const [dragEnd, setDragEnd] = useState(null); // State for drag end
   const [currentWeek, setCurrentWeek] = useState(new Date()); // State for current week
+  const [savedTerms, setSavedTerms] = useState([]); // State for saved timestamps
 
+
+  // Example logic to set colored cells based on saved timestamps
+  useEffect(() => {   
+    getTerms();
+  }, []);
+
+
+  // Function to read which cells are saved in db
+  const getTerms = () => { 
+    // Example API call
+    api
+      .get("/api/terms/")
+      .then((res) => res.data)
+      .then((data) => {
+        const updatedCells = { ...coloredCells };
+        data.forEach((term) => {
+          const date = new Date(term.start_date);
+          const cellKey = `${date.getDate()}-${date.toLocaleString('en-US', { month: 'long' })}-${date.getFullYear()}-${date.getHours().toString().padStart(2, '0')}:00`;
+          updatedCells[cellKey] = true;
+        });
+        setSavedTerms(updatedCells); // Update with 'data' instead of 'updatedCells'
+        setColoredCells(updatedCells);
+      })
+      .catch((err) => alert(err));
+  };
+
+
+
+  
   // Function to handle cell click
   const handleCellClick = (date, month, year, hour) => {
     if (!isDragging) {
