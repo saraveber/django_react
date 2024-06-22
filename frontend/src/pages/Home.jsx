@@ -50,9 +50,6 @@ function Home() {
     return (
         
         <div>
-            
-            <Calendar />
-
             <div>
                 <h2>Notes</h2>
                 {notes.map((note) => <Note note={note} onDelete={deleteNote} key={note.id} />)}
