@@ -103,8 +103,75 @@ const Calendar = () => {
     return withinDays && withinHours;
   };
 
+  // Function to create a term
+  const createTerm = (start_date, end_date) => {
+    api
+      .post("api/terms/", { start_date, end_date })
+      .then((res) => {
+        if (res.status === 201) alert("Term saved!");
+        else alert("Failed to make term.");
+      }
+      )
+      .catch((err) => alert(err));
+  };
+
+  // Function to delete a term
+  const deleteTerm = (start_date) => {
+    api
+      .delete(`/api/terms/${startDate}/`)
+      .then((res) => {
+        if (res.status === 204) alert("Term deleted!");
+        else alert("Failed to delete term.");
+
+      })
+      .catch((error) => alert(error));
+  };
+
+
+
+
+
   // Function to handle form submission
   const handleSubmit = () => {
+      // All selected that are not saved allready
+      Object.keys(coloredCells)
+        .filter((key) => coloredCells[key] && !savedTerms[key]) // Filter only colored cells
+        .map((cellKey) => {
+          // Extract date, month, year, and hour from cellKey
+          const [date, month, year, hour] = cellKey.split('-');
+  
+          const monthNames = [
+              "January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"
+            ];
+          
+            const startDate = new Date(year, monthNames.indexOf(month), date, hour.split(":")[0], 0);
+            const endDate = new Date(startDate);
+            endDate.setHours(endDate.getHours() + 1);
+            console.log(startDate, endDate);
+            createTerm(startDate, endDate);
+        });
+      // All selected that are not saved that are no longer selected
+      Object.keys(savedTerms)
+        .filter((key) => savedTerms[key] && !coloredCells[key]) // Filter only colored cells
+        .map((cellKey) => {
+          // Extract date, month, year, and hour from cellKey
+          const [date, month, year, hour] = cellKey.split('-');
+  
+          const monthNames = [
+              "January", "February", "March", "April", "May", "June",
+              "July", "August", "September", "October", "November", "December"
+            ];
+          
+          const startDate = new Date(year, monthNames.indexOf(month), date, hour.split(":")[0], 0);
+          const endDate = new Date(startDate);
+          endDate.setHours(endDate.getHours() + 1);
+          console.log(startDate, endDate);
+          deleteTerm(startDate);
+        });
+      
+
+    /*
     const selectedTimestamps = Object.keys(coloredCells)
       .filter((key) => coloredCells[key]) // Filter only colored cells
       .map((cellKey) => {
@@ -118,11 +185,11 @@ const Calendar = () => {
         
         return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
       });
-
+          
     console.log('Selected Timestamps:', selectedTimestamps);
     // Example submission logic
     alert('Submitted!');
-    // You can add further logic here to send `coloredCells` data to your backend or perform other actions
+    // You can add further logic here to send `coloredCells` data to your backend or perform other actions*/
   };
 
   // Function to navigate to the previous week

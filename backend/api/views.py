@@ -21,12 +21,12 @@ class AvailableTermListCreate(generics.ListCreateAPIView):
         start_date = serializer.validated_data.get('start_date')
 
         if AvailableTerm.objects.filter(user=user, start_date=start_date, end_date=end_date).exists():
-            raise ValidationError('This term already exists.')
-
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
+            print('This term already exists.')
         else:
-            print(serializer.errors)
+            if serializer.is_valid():
+                serializer.save(user=self.request.user)
+            else:
+                print(serializer.errors)
 
 class AvailableTermDelete(generics.DestroyAPIView):
     serializer_class = AvailableTermSerializer
