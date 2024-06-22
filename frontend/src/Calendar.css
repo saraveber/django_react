@@ -1,0 +1,111 @@
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Adjust height as needed */
+}
+
+.calendar {
+  margin-bottom: 20px; /* Spacing between calendar and button */
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  width: 80%;
+}
+
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+.calendar table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures all columns have the same width */
+}
+
+.hour-header, .day-header, .hour, .cell {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 10px;
+  width: 14.2857%; /* This ensures all columns (7 days) + 1 (hour column) are equally distributed */
+  box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  user-select: none;
+}
+
+.hour, .day-header, .hour-header {
+  background-color: #f0f0f0;
+}
+
+.cell {
+  height: 40px; /* Adjust as needed */
+  cursor: pointer;
+}
+
+.cell.colored {
+  background-color: lightblue;
+}
+
+.cell.dragged {
+  background-color: lightgray;
+}
+
+.cell:hover {
+  background-color: #e0e0e0;
+}
+
+.submit-container {
+  text-align: center;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #3e84ec;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: #206bdd;
+}
+
+.navigation-buttons {
+  display: flex;
+}
+
+.navigation-buttons button {
+  background-color: #3e84ec; /* Green background */
+  border: none; /* Remove borders */
+  color: white; /* White text */
+  text-align: center; /* Center the text */
+  text-decoration: none; /* Remove underline */
+  display: inline-block; /* Get the element to respect width and height */
+  font-size: 16px; /* Increase font size */
+  margin: 4px 20px; /* Some margin */
+  cursor: pointer; /* Pointer/hand icon */
+  border-radius: 50%; /* Rounded corners */
+  width: 40px; /* Width */
+  height: 40px; /* Height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition-duration: 0.4s; /* 0.4 seconds transition effect to hover state */
+}
+
+.navigation-buttons button:hover {
+  background-color: white; /* White background */
+  color: black; /* Black text */
+  border: 1px solid #206bdd; /* Green border */
+}
+
+.calendar {
+  margin-top: 50px; /* Adjust margin to make space for navigation buttons */
+}
+
+
