@@ -105,8 +105,8 @@ check out this link https://react.dev/learn/react-developer-tools
 ```
 
 1. Sara 
-Username: sara
-Password: Ananas 3510
+Username: saraveber
+Password: Ananas3510
 
 2. Tina
 Username:
