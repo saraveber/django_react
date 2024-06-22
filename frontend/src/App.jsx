@@ -1,5 +1,6 @@
 import react from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import Navigation from './pages/Navigation';
 import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Home from "./pages/Home"
@@ -19,9 +20,18 @@ function RegisterAndLogout(){
 function App() {
   return (
     <BrowserRouter>
+      <Navigation /> 
       <Routes>
+        
         <Route 
           path="/" 
+          element={
+            <ProtectedRoute>
+              <Home/>
+            </ProtectedRoute>}
+        />
+        <Route 
+          path="/my-terms" 
           element={
             <ProtectedRoute>
               <Home/>
