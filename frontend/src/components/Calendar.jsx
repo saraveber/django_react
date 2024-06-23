@@ -24,10 +24,11 @@ const Calendar = () => {
       .get("/api/terms/")
       .then((res) => res.data)
       .then((data) => {
+        console.log("Data: ", data);
+        console.log("I AM IN GETTERMS")
         setSavedTermsRaw(data);
         const updatedCells = { ...coloredCells };
         data.forEach((term) => {
-          console.log(term);
           const date = new Date(term.start_date);
           const cellKey = `${date.getDate()}-${date.toLocaleString('en-US', { month: 'long' })}-${date.getFullYear()}-${date.getHours().toString().padStart(2, '0')}:00`;
           updatedCells[cellKey] = true;
@@ -110,7 +111,7 @@ const Calendar = () => {
     api
       .post("api/terms/", { start_date, end_date })
       .then((res) => {
-        if (res.status === 201) alert("Term saved!");
+        if (res.status === 201) console.log("Term saved!");
         else alert("Failed to make term.");
       }
       )
@@ -119,13 +120,11 @@ const Calendar = () => {
 
   // Function to delete a term
   const deleteTerm = (index) => {
-    console.log("Deleting term with index: ");
-    console.log(index);
     api
       .delete(`api/terms/delete/${index}/`)
       .then((res) => {
-        if (res.status === 204) alert("Term deleted!");
-        else alert("Failed to delete term.");
+        if (res.status === 204) console.log("Term deleted!");
+        else successfulyDeleted = false;
 
       })
       .catch((error) => alert(error));
@@ -138,15 +137,11 @@ const Calendar = () => {
 
   // Function that finds id of term in savedTermsRaw
   const findTermIndex = (date) => {
-    console.log(savedTermsRaw)
-    console.log(date)
     const index = savedTermsRaw.findIndex((term) => {
       const termDate = new Date(term.start_date);
       return termDate.getTime() === date.getTime();
     });
-    console.log(index);
     return savedTermsRaw[index].id;
-    
   };
 
 
@@ -168,27 +163,18 @@ const Calendar = () => {
           const index = findTermIndex(new Date(cellKey));
           deleteTerm(index);
         });
+      console.log("before")
+      console.log("Saved terms: ", savedTerms);
+      console.log("Colored cells: ", coloredCells);
+      console.log("savedTermsRaw: ", savedTermsRaw);
+      //getTerms();
+      console.log("after")
+      console.log("Saved terms: ", savedTerms);
+      console.log("Colored cells: ", coloredCells);
+      console.log("savedTermsRaw: ", savedTermsRaw);
+
   
 
-    /*
-    const selectedTimestamps = Object.keys(coloredCells)
-      .filter((key) => coloredCells[key]) // Filter only colored cells
-      .map((cellKey) => {
-        // Extract date, month, year, and hour from cellKey
-        const [date, month, year, hour] = cellKey.split('-');
-
-        const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-          ];
-        
-        return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
-      });
-          
-    console.log('Selected Timestamps:', selectedTimestamps);
-    // Example submission logic
-    alert('Submitted!');
-    // You can add further logic here to send `coloredCells` data to your backend or perform other actions*/
   };
 
   // Function to navigate to the previous week
