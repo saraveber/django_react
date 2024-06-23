@@ -24,15 +24,10 @@ const Calendar = () => {
       .get("/api/terms/")
       .then((res) => res.data)
       .then((data) => {
-        setSavedTermsRaw(data);
-        const updatedCells = { ...coloredCells };
         data.forEach((term) => {
           const date = new Date(term.start_date);
-          const cellKey = `${date.getDate()}-${date.toLocaleString('en-US', { month: 'long' })}-${date.getFullYear()}-${date.getHours().toString().padStart(2, '0')}:00`;
-          updatedCells[cellKey] = true;
+          handleCellClick(date.getDate(), date.toLocaleString('en-US', { month: 'long' }), date.getFullYear(), date.getHours() + ":00");
         });
-        setSavedTerms(updatedCells); // Update with 'data' instead of 'updatedCells'
-        setColoredCells(updatedCells);
       })
       .catch((err) => alert(err));
   };
@@ -135,32 +130,57 @@ const Calendar = () => {
     return savedTermsRaw[index].id;
   };
 
-  // Function to format date to match the format in the db
-  const formatDate = (date) => {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}Z`;
-  };
+  /*
+  const handleSubmit = () => {
+    const selectedTimestamps = Object.keys(coloredCells)
+      .filter((key) => coloredCells[key]) // Filter only colored cells
+      .map((cellKey) => {
+        // Extract date, month, year, and hour from cellKey
+        const [date, month, year, hour] = cellKey.split('-');
+
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ];
+        
+        return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
+      });
+    console.log(selectedTimestamps);
+    
+  */
 
   // Function to handle form submission
   const handleSubmit = () => {
+    console.log("Submitting form...");
     // Empty database for user
     deleteAllTerms();
     // Save all collored cells
     
-    console.log(coloredCells);
     
     // Create terms in correct format
-    Object.keys(coloredCells)
+    const selectedTimestamps = Object.keys(coloredCells)
       .filter((key) => coloredCells[key]) // Filter only colored cells
       .map((cellKey) => {
-        const dateStart  = new Date(cellKey);
-        const dateEnd = new Date(cellKey);
-        dateEnd.setHours(dateEnd.getHours() + 1);
-        const formattedDateStart = formatDate(dateStart);
-        const formattedDateEnd = formatDate(dateEnd);
-        createTerm(formattedDateStart, formattedDateEnd);
-      });
+        // Extract date, month, year, and hour from cellKey
+        const [date, month, year, hour] = cellKey.split('-');
 
-    //window.location.reload();
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ];
+        
+        return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
+        /*console.log(cellKey);
+        const dateStart  = new Date(cellKey);
+        return dateStart;*/
+    });
+
+    selectedTimestamps.map((date) => {
+      createTerm(date, date);
+    });
+    
+
+
 
 
 
