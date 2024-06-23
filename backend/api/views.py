@@ -33,7 +33,7 @@ class AvailableTermDelete(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     def get_queryset(self):
         user = self.request.user
-        return AvailableTerm.objects.filter(author=user)
+        return AvailableTerm.objects.filter(user=user)
 
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer

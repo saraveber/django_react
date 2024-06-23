@@ -9,7 +9,7 @@ const Calendar = () => {
   const [dragEnd, setDragEnd] = useState(null); // State for drag end
   const [currentWeek, setCurrentWeek] = useState(new Date()); // State for current week
   const [savedTerms, setSavedTerms] = useState([]); // State for saved timestamps
-
+  const [savedTermsRaw, setSavedTermsRaw] = useState([]); // State for saved timestamps
 
   // Example logic to set colored cells based on saved timestamps
   useEffect(() => {   
@@ -24,8 +24,10 @@ const Calendar = () => {
       .get("/api/terms/")
       .then((res) => res.data)
       .then((data) => {
+        setSavedTermsRaw(data);
         const updatedCells = { ...coloredCells };
         data.forEach((term) => {
+          console.log(term);
           const date = new Date(term.start_date);
           const cellKey = `${date.getDate()}-${date.toLocaleString('en-US', { month: 'long' })}-${date.getFullYear()}-${date.getHours().toString().padStart(2, '0')}:00`;
           updatedCells[cellKey] = true;
@@ -116,9 +118,9 @@ const Calendar = () => {
   };
 
   // Function to delete a term
-  const deleteTerm = (start_date) => {
+  const deleteTerm = (index) => {
     api
-      .delete(`/api/terms/${startDate}/`)
+      .delete(`api/terms/delete/${index}/`)
       .then((res) => {
         if (res.status === 204) alert("Term deleted!");
         else alert("Failed to delete term.");
@@ -127,8 +129,18 @@ const Calendar = () => {
       .catch((error) => alert(error));
   };
 
+  // Function to format date to match the format in the db
+  const formatDate = (date) => {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}Z`;
+  };
 
-
+  // Function that finds index of term in savedTermsRaw
+  const findTermIndex = (date) => {
+    return savedTermsRaw.findIndex((term) => {
+      const termDate = new Date(term.start_date);
+      return termDate.getDate() === date.getDate() && termDate.getMonth() === date.getMonth() && termDate.getFullYear() === date.getFullYear();
+    });
+  };
 
 
   // Function to handle form submission
@@ -137,39 +149,19 @@ const Calendar = () => {
       Object.keys(coloredCells)
         .filter((key) => coloredCells[key] && !savedTerms[key]) // Filter only colored cells
         .map((cellKey) => {
-          // Extract date, month, year, and hour from cellKey
-          const [date, month, year, hour] = cellKey.split('-');
-  
-          const monthNames = [
-              "January", "February", "March", "April", "May", "June",
-              "July", "August", "September", "October", "November", "December"
-            ];
-          
-            const startDate = new Date(year, monthNames.indexOf(month), date, hour.split(":")[0], 0);
-            const endDate = new Date(startDate);
-            endDate.setHours(endDate.getHours() + 1);
-            console.log(startDate, endDate);
-            createTerm(startDate, endDate);
+          const formattedDate = formatDate(new Date(cellKey));
+          //TODO: Add +1 hour to end_date
+          createTerm(formattedDate, formattedDate);
+
         });
       // All selected that are not saved that are no longer selected
       Object.keys(savedTerms)
         .filter((key) => savedTerms[key] && !coloredCells[key]) // Filter only colored cells
         .map((cellKey) => {
-          // Extract date, month, year, and hour from cellKey
-          const [date, month, year, hour] = cellKey.split('-');
-  
-          const monthNames = [
-              "January", "February", "March", "April", "May", "June",
-              "July", "August", "September", "October", "November", "December"
-            ];
-          
-          const startDate = new Date(year, monthNames.indexOf(month), date, hour.split(":")[0], 0);
-          const endDate = new Date(startDate);
-          endDate.setHours(endDate.getHours() + 1);
-          console.log(startDate, endDate);
-          deleteTerm(startDate);
+          const index = findTermIndex(new Date(cellKey));
+          deleteTerm(index);
         });
-      
+  
 
     /*
     const selectedTimestamps = Object.keys(coloredCells)
