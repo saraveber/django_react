@@ -30,6 +30,7 @@ const Calendar = () => {
         });
       })
       .catch((err) => alert(err));
+    console.log(coloredCells);
   };
 
   // Function to handle cell click
@@ -110,50 +111,29 @@ const Calendar = () => {
   };
 
   // Function to delete all terms for user
-  const deleteAllTerms = () => {
-    api
-      .delete("api/terms/delete-all/")
+  const deleteAllTermsThenCreate = (selectedTimestamps) => {
+    api.delete("api/terms/delete-all/")
       .then((res) => {
-        if (res.status === 204) console.log("All terms deleted!");
-        else alert("Failed to delete terms.");
+        if (res.status === 204) {
+          console.log("All terms deleted!");
+
+          // After successful deletion, create the new term
+          selectedTimestamps.map((date) => {
+            console.log(date);
+            createTerm(date, date);
+          });
+
+        } else {
+          alert("Failed to delete terms.");
+        }
       })
       .catch((error) => alert(error));
   };
 
 
-  // Function that finds id of term in savedTermsRaw
-  const findTermIndex = (date) => {
-    const index = savedTermsRaw.findIndex((term) => {
-      const termDate = new Date(term.start_date);
-      return termDate.getTime() === date.getTime();
-    });
-    return savedTermsRaw[index].id;
-  };
-
-  /*
-  const handleSubmit = () => {
-    const selectedTimestamps = Object.keys(coloredCells)
-      .filter((key) => coloredCells[key]) // Filter only colored cells
-      .map((cellKey) => {
-        // Extract date, month, year, and hour from cellKey
-        const [date, month, year, hour] = cellKey.split('-');
-
-        const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-          ];
-        
-        return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
-      });
-    console.log(selectedTimestamps);
-    
-  */
-
   // Function to handle form submission
   const handleSubmit = () => {
     console.log("Submitting form...");
-    // Empty database for user
-    deleteAllTerms();
     // Save all collored cells
     
     
@@ -170,54 +150,10 @@ const Calendar = () => {
           ];
         
         return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
-        /*console.log(cellKey);
-        const dateStart  = new Date(cellKey);
-        return dateStart;*/
     });
-
-    selectedTimestamps.map((date) => {
-      createTerm(date, date);
-    });
-    
-
-
-
-
-
-
-
-    // Reload page
-    //Fix this nicely
-    //window.location.reload();
-
-    /*
-      //
-      // All selected that are not saved allready
-      Object.keys(coloredCells)
-        .filter((key) => coloredCells[key] && !savedTerms[key]) // Filter only colored cells
-        .map((cellKey) => {
-          const dateStart  = new Date(cellKey);
-          const dateEnd = new Date(cellKey);
-          console.log(dateStart);
-          dateEnd.setHours(dateEnd.getHours() + 1);
-          console.log(formatDate(dateStart));
-          const formattedDateStart = formatDate(dateStart);
-          const formattedDateEnd = formatDate(dateEnd);
-          createTerm(formattedDateStart, formattedDateEnd);
-
-        });
-      // All selected that are not saved that are no longer selected
-      Object.keys(savedTerms)
-        .filter((key) => savedTerms[key] && !coloredCells[key]) // Filter only colored cells
-        .map((cellKey) => {
-          const index = findTermIndex(new Date(cellKey));
-          deleteTerm(index);
-        });
-        
-    */
-  
-
-  };
+    // Empty database and add new terms
+    deleteAllTermsThenCreate(selectedTimestamps);
+   };
 
   // Function to navigate to the previous week
   const handlePreviousWeek = () => {
