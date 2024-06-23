@@ -20,4 +20,4 @@ class AvailableTerm(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)    
 
     def __str__(self):
-        return f"{self.start_date} - {self.end_date}"
+        return f"{self.user} - {self.start_date} - {self.end_date}"

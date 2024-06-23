@@ -24,8 +24,6 @@ const Calendar = () => {
       .get("/api/terms/")
       .then((res) => res.data)
       .then((data) => {
-        console.log("Data: ", data);
-        console.log("I AM IN GETTERMS")
         setSavedTermsRaw(data);
         const updatedCells = { ...coloredCells };
         data.forEach((term) => {
@@ -39,9 +37,6 @@ const Calendar = () => {
       .catch((err) => alert(err));
   };
 
-
-
-  
   // Function to handle cell click
   const handleCellClick = (date, month, year, hour) => {
     if (!isDragging) {
@@ -106,6 +101,7 @@ const Calendar = () => {
     return withinDays && withinHours;
   };
 
+
   // Function to create a term
   const createTerm = (start_date, end_date) => {
     api
@@ -118,22 +114,17 @@ const Calendar = () => {
       .catch((err) => alert(err));
   };
 
-  // Function to delete a term
-  const deleteTerm = (index) => {
+  // Function to delete all terms for user
+  const deleteAllTerms = () => {
     api
-      .delete(`api/terms/delete/${index}/`)
+      .delete("api/terms/delete-all/")
       .then((res) => {
-        if (res.status === 204) console.log("Term deleted!");
-        else successfulyDeleted = false;
-
+        if (res.status === 204) console.log("All terms deleted!");
+        else alert("Failed to delete terms.");
       })
       .catch((error) => alert(error));
   };
 
-  // Function to format date to match the format in the db
-  const formatDate = (date) => {
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}Z`;
-  };
 
   // Function that finds id of term in savedTermsRaw
   const findTermIndex = (date) => {
@@ -144,16 +135,55 @@ const Calendar = () => {
     return savedTermsRaw[index].id;
   };
 
+  // Function to format date to match the format in the db
+  const formatDate = (date) => {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}Z`;
+  };
 
   // Function to handle form submission
   const handleSubmit = () => {
+    // Empty database for user
+    deleteAllTerms();
+    // Save all collored cells
+    
+    console.log(coloredCells);
+    
+    // Create terms in correct format
+    Object.keys(coloredCells)
+      .filter((key) => coloredCells[key]) // Filter only colored cells
+      .map((cellKey) => {
+        const dateStart  = new Date(cellKey);
+        const dateEnd = new Date(cellKey);
+        dateEnd.setHours(dateEnd.getHours() + 1);
+        const formattedDateStart = formatDate(dateStart);
+        const formattedDateEnd = formatDate(dateEnd);
+        createTerm(formattedDateStart, formattedDateEnd);
+      });
+
+    //window.location.reload();
+
+
+
+
+
+    // Reload page
+    //Fix this nicely
+    //window.location.reload();
+
+    /*
+      //
       // All selected that are not saved allready
       Object.keys(coloredCells)
         .filter((key) => coloredCells[key] && !savedTerms[key]) // Filter only colored cells
         .map((cellKey) => {
-          const formattedDate = formatDate(new Date(cellKey));
-          //TODO: Add +1 hour to end_date
-          createTerm(formattedDate, formattedDate);
+          const dateStart  = new Date(cellKey);
+          const dateEnd = new Date(cellKey);
+          console.log(dateStart);
+          dateEnd.setHours(dateEnd.getHours() + 1);
+          console.log(formatDate(dateStart));
+          const formattedDateStart = formatDate(dateStart);
+          const formattedDateEnd = formatDate(dateEnd);
+          createTerm(formattedDateStart, formattedDateEnd);
 
         });
       // All selected that are not saved that are no longer selected
@@ -163,16 +193,8 @@ const Calendar = () => {
           const index = findTermIndex(new Date(cellKey));
           deleteTerm(index);
         });
-      console.log("before")
-      console.log("Saved terms: ", savedTerms);
-      console.log("Colored cells: ", coloredCells);
-      console.log("savedTermsRaw: ", savedTermsRaw);
-      //getTerms();
-      console.log("after")
-      console.log("Saved terms: ", savedTerms);
-      console.log("Colored cells: ", coloredCells);
-      console.log("savedTermsRaw: ", savedTermsRaw);
-
+        
+    */
   
 
   };

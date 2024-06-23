@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
 from .serializers import UserSerializer, NoteSerializer, AvailableTermSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Note, AvailableTerm
@@ -27,6 +28,15 @@ class AvailableTermListCreate(generics.ListCreateAPIView):
                 serializer.save(user=self.request.user)
             else:
                 print(serializer.errors)
+
+class AvailableTermDelleteAll(generics.GenericAPIView):
+    serializer_class = AvailableTermSerializer
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        AvailableTerm.objects.filter(user=request.user).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class AvailableTermDelete(generics.DestroyAPIView):
     serializer_class = AvailableTermSerializer
