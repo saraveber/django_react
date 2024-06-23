@@ -119,6 +119,8 @@ const Calendar = () => {
 
   // Function to delete a term
   const deleteTerm = (index) => {
+    console.log("Deleting term with index: ");
+    console.log(index);
     api
       .delete(`api/terms/delete/${index}/`)
       .then((res) => {
@@ -134,12 +136,17 @@ const Calendar = () => {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}Z`;
   };
 
-  // Function that finds index of term in savedTermsRaw
+  // Function that finds id of term in savedTermsRaw
   const findTermIndex = (date) => {
-    return savedTermsRaw.findIndex((term) => {
+    console.log(savedTermsRaw)
+    console.log(date)
+    const index = savedTermsRaw.findIndex((term) => {
       const termDate = new Date(term.start_date);
-      return termDate.getDate() === date.getDate() && termDate.getMonth() === date.getMonth() && termDate.getFullYear() === date.getFullYear();
+      return termDate.getTime() === date.getTime();
     });
+    console.log(index);
+    return savedTermsRaw[index].id;
+    
   };
 
 
