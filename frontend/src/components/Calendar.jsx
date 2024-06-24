@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../styles/Calendar.css';
+import api from "../api";
 
 const Calendar = () => {
   const [coloredCells, setColoredCells] = useState({}); // State for colored cells
@@ -7,6 +8,47 @@ const Calendar = () => {
   const [dragStart, setDragStart] = useState(null); // State for drag start
   const [dragEnd, setDragEnd] = useState(null); // State for drag end
   const [currentWeek, setCurrentWeek] = useState(new Date()); // State for current week
+  const [savedTerms, setSavedTerms] = useState([]); // State for saved timestamps
+  const [savedTermsRaw, setSavedTermsRaw] = useState([]); // State for saved timestamps
+
+  // Example logic to set colored cells based on saved timestamps
+  useEffect(() => {   
+    getTerms();
+  }, []);
+
+
+  // Function to read which cells are saved in db
+  const getTerms = () => { 
+    // Example API call
+    console.log("Getting terms...");
+    api
+      .get("/api/terms/")
+      .then((res) => res.data)
+      .then((data) => {
+        data.forEach((term) => {
+          const date = new Date(term.start_date);
+          const formated_hour = date.getHours().toString().padStart(2, '0') + ":00";
+          initialColoredCells(date.getDate(), date.toLocaleString('en-US', { month: 'long' }), date.getFullYear(), formated_hour);
+        });
+      })
+      .catch((err) => alert(err));
+    console.log(coloredCells);
+  };
+
+  const initialColoredCells = (date, month, year, hour) => {
+
+    console.log("Setting initial colored cells...");
+    const cellKey = `${date}-${month}-${year}-${hour}`;
+    console.log(cellKey);
+
+    setColoredCells((prevState) => ({
+      ...prevState,
+      [cellKey]: true, // Toggle color
+    }));
+  };
+  
+
+
 
   // Helper function to filter out past cells
   const filterPastCells = (cells) => {
@@ -27,8 +69,11 @@ const Calendar = () => {
 
   // Function to handle cell click
   const handleCellClick = (date, month, year, hour) => {
+    console.log("Clicking cell...")
     if (!isDragging) {
       const cellKey = `${date}-${month}-${year}-${hour}`;
+      console.log("date:", cellKey);
+
       setColoredCells((prevState) => {
         const newState = { ...prevState, [cellKey]: !prevState[cellKey] }; // Toggle color
         return filterPastCells(newState); // Filter out past cells
@@ -89,8 +134,47 @@ const Calendar = () => {
     return withinDays && withinHours;
   };
 
+
+  // Function to create a term
+  const createTerm = (start_date, end_date) => {
+    api
+      .post("api/terms/", { start_date, end_date })
+      .then((res) => {
+        if (res.status === 201) console.log("Term saved!");
+        else alert("Failed to make term.");
+      }
+      )
+      .catch((err) => alert(err));
+  };
+
+  // Function to delete all terms for user
+  const deleteAllTermsThenCreate = (selectedTimestamps) => {
+    api.delete("api/terms/delete-all/")
+      .then((res) => {
+        if (res.status === 204) {
+          console.log("All terms deleted!");
+
+          // After successful deletion, create the new term
+          selectedTimestamps.map((date) => {
+            console.log(date);
+            createTerm(date, date);
+          });
+
+        } else {
+          alert("Failed to delete terms.");
+        }
+      })
+      .catch((error) => alert(error));
+  };
+
+
   // Function to handle form submission
   const handleSubmit = () => {
+    console.log("Submitting form...");
+    // Save all collored cells
+    
+    
+    // Create terms in correct format
     const selectedTimestamps = Object.keys(coloredCells)
       .filter((key) => coloredCells[key]) // Filter only colored cells
       .map((cellKey) => {
@@ -98,18 +182,15 @@ const Calendar = () => {
         const [date, month, year, hour] = cellKey.split('-');
 
         const monthNames = [
-          "January", "February", "March", "April", "May", "June",
-          "July", "August", "September", "October", "November", "December"
-        ];
-
-        return new Date(year, monthNames.indexOf(month), date, hour.split(":")[0], 0);
-      });
-
-    console.log('Selected Timestamps:', selectedTimestamps);
-    // Example submission logic
-    alert('Submitted!');
-    // You can add further logic here to send `coloredCells` data to your backend or perform other actions
-  };
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ];
+        
+        return new Date(year,monthNames.indexOf(month),date,hour.split(":")[0],0)
+    });
+    // Empty database and add new terms
+    deleteAllTermsThenCreate(selectedTimestamps);
+   };
 
   // Function to navigate to the previous week
   const handlePreviousWeek = () => {

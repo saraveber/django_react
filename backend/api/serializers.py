@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Note
+from .models import AvailableTerm
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,3 +21,9 @@ class NoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ["id", "title", "content", "created_at", "author"]
         extra_kwargs = {"author": {"read_only": True}}
+
+class AvailableTermSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailableTerm
+        fields = ["id", "user", "start_date", "end_date", "created_at"]
+        extra_kwargs = {"user": {"read_only": True}}
