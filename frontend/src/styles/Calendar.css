@@ -80,16 +80,9 @@
 }
 
 .navigation-buttons button {
-  background-color: #3e84ec; /* Green background */
-  border: none; /* Remove borders */
-  color: white; /* White text */
-  text-align: center; /* Center the text */
   text-decoration: none; /* Remove underline */
   display: inline-block; /* Get the element to respect width and height */
-  font-size: 16px; /* Increase font size */
   margin: 4px 20px; /* Some margin */
-  cursor: pointer; /* Pointer/hand icon */
-  border-radius: 50%; /* Rounded corners */
   width: 40px; /* Width */
   height: 40px; /* Height */
   display: flex;
@@ -98,10 +91,40 @@
   transition-duration: 0.4s; /* 0.4 seconds transition effect to hover state */
 }
 
-.navigation-buttons button:hover {
+.change-week {
+  border: none;
+  background-color: #3e84ec; /* Green background */
+  color: white; /* White text */
+  border-radius: 50%; /* Rounded corners */
+  cursor: pointer;
+}
+
+.change-week:hover {
   background-color: white; /* White background */
   color: black; /* Black text */
   border: 1px solid #206bdd; /* Green border */
+}
+
+.today-button {
+  color: black;
+  padding: 23px 40px; /* Make the button wider */
+  font-size: 20px; /* Increase font size */
+  border: 1px solid #3e84ec;
+  border-radius: 10%; /* Rounded corners */
+  cursor: pointer;
+}
+
+.hidden {
+  cursor: not-allowed;
+  background-color: rgb(218, 218, 218);
+  color: white;
+  border: none;
+}
+
+.hidden:hover {
+  background-color: rgb(218, 218, 218); /* Maintain the same background color */
+  color: white; /* Maintain the same text color */
+  border: none; /* Maintain the same border */
 }
 
 .calendar {

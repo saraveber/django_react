@@ -50,6 +50,23 @@ const Calendar = () => {
 
 
 
+  // Helper function to filter out past cells
+  const filterPastCells = (cells) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0); // Set to start of today for comparison
+
+    return Object.keys(cells).reduce((result, key) => {
+      const [date, month, year, hour] = key.split('-');
+      const cellDate = new Date(year, new Date(`${month} 1, ${year}`).getMonth(), date, hour.split(':')[0], 0);
+
+      if (cellDate >= now) {
+        result[key] = cells[key];
+      }
+
+      return result;
+    }, {});
+  };
+
   // Function to handle cell click
   const handleCellClick = (date, month, year, hour) => {
     console.log("Clicking cell...")
@@ -57,10 +74,10 @@ const Calendar = () => {
       const cellKey = `${date}-${month}-${year}-${hour}`;
       console.log("date:", cellKey);
 
-      setColoredCells((prevState) => ({
-        ...prevState,
-        [cellKey]: !prevState[cellKey], // Toggle color
-      }));
+      setColoredCells((prevState) => {
+        const newState = { ...prevState, [cellKey]: !prevState[cellKey] }; // Toggle color
+        return filterPastCells(newState); // Filter out past cells
+      });
     }
   };
 
@@ -93,7 +110,7 @@ const Calendar = () => {
           updatedCells[cellKey] = !updatedCells[cellKey]; // Toggle color
         }
       }
-      setColoredCells(updatedCells); // Update state with new colored cells
+      setColoredCells(filterPastCells(updatedCells)); // Update state with new colored cells and filter past cells
     }
     setIsDragging(false);
     setDragStart(null);
@@ -179,7 +196,13 @@ const Calendar = () => {
   const handlePreviousWeek = () => {
     const newDate = new Date(currentWeek);
     newDate.setDate(currentWeek.getDate() - 7);
-    setCurrentWeek(newDate);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Set time to start of day for comparison
+
+    if (newDate >= today) {
+      setCurrentWeek(newDate);
+    }
   };
 
   // Function to navigate to the next week
@@ -187,6 +210,11 @@ const Calendar = () => {
     const newDate = new Date(currentWeek);
     newDate.setDate(currentWeek.getDate() + 7);
     setCurrentWeek(newDate);
+  };
+
+  // Function to navigate to the current week
+  const handleToday = () => {
+    setCurrentWeek(new Date());
   };
 
   // Generate hours from 07:00 to 22:00 (7 AM to 10 PM)
@@ -210,11 +238,15 @@ const Calendar = () => {
     };
   });
 
-  return (
+  // Determine if the current week is the same as this week
+  const isCurrentWeek = new Date().toDateString() === currentWeek.toDateString();
+
+  return  (
     <div className="calendar-container">
       <div className="navigation-buttons">
-      <button onClick={handlePreviousWeek}>&lt;</button>
-      <button onClick={handleNextWeek}>&gt;</button>
+        <button className={`change-week ${isCurrentWeek ? 'hidden' : ''}`} onClick={handlePreviousWeek}>&lt;</button>
+        <button className={`today-button ${isCurrentWeek ? 'hidden' : ''}`} onClick={handleToday}>Danes</button>
+        <button className="change-week" onClick={handleNextWeek}>&gt;</button>
       </div>
       <div className="calendar">
         <table
