@@ -20,23 +20,43 @@ const Calendar = () => {
   // Function to read which cells are saved in db
   const getTerms = () => { 
     // Example API call
+    console.log("Getting terms...");
     api
       .get("/api/terms/")
       .then((res) => res.data)
       .then((data) => {
         data.forEach((term) => {
           const date = new Date(term.start_date);
-          handleCellClick(date.getDate(), date.toLocaleString('en-US', { month: 'long' }), date.getFullYear(), date.getHours() + ":00");
+          const formated_hour = date.getHours().toString().padStart(2, '0') + ":00";
+          initialColoredCells(date.getDate(), date.toLocaleString('en-US', { month: 'long' }), date.getFullYear(), formated_hour);
         });
       })
       .catch((err) => alert(err));
     console.log(coloredCells);
   };
 
+  const initialColoredCells = (date, month, year, hour) => {
+
+    console.log("Setting initial colored cells...");
+    const cellKey = `${date}-${month}-${year}-${hour}`;
+    console.log(cellKey);
+
+    setColoredCells((prevState) => ({
+      ...prevState,
+      [cellKey]: true, // Toggle color
+    }));
+  };
+  
+
+
+
   // Function to handle cell click
   const handleCellClick = (date, month, year, hour) => {
+    console.log("Clicking cell...")
     if (!isDragging) {
       const cellKey = `${date}-${month}-${year}-${hour}`;
+      console.log("date:", cellKey);
+
       setColoredCells((prevState) => ({
         ...prevState,
         [cellKey]: !prevState[cellKey], // Toggle color
@@ -149,7 +169,7 @@ const Calendar = () => {
             "July", "August", "September", "October", "November", "December"
           ];
         
-        return new Date(year,monthNames.indexOf(month)+1,date,hour.split(":")[0],0)
+        return new Date(year,monthNames.indexOf(month),date,hour.split(":")[0],0)
     });
     // Empty database and add new terms
     deleteAllTermsThenCreate(selectedTimestamps);
