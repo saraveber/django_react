@@ -7,6 +7,7 @@ function Navigation() {
       <ul>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/my-terms">MyTerms</Link></li>
+        <li><Link to="/players">Add player</Link></li>
         <li><Link to="/login">Login</Link></li>
         <li><Link to="/logout">Logout</Link></li>
         <li><Link to="/register">Register</Link></li>

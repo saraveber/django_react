@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Note
 from .models import AvailableTerm
+from .models import Player
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -27,3 +28,8 @@ class AvailableTermSerializer(serializers.ModelSerializer):
         model = AvailableTerm
         fields = ["id", "user", "start_date", "end_date", "created_at"]
         extra_kwargs = {"user": {"read_only": True}}
+
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = ["name", "surname", "email", "phone_number", "gender", "birthdate", "leagues"]

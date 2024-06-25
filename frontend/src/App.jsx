@@ -7,6 +7,7 @@ import Register from "./pages/Register"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
+import PlayerForm from "./components/PlayerForm";
 
 function Logout(){
   localStorage.clear()
@@ -36,6 +37,13 @@ function App() {
           element={
             <ProtectedRoute>
               <MyTerms/>
+            </ProtectedRoute>}
+        />
+        <Route 
+          path="/players" 
+          element={
+            <ProtectedRoute>
+              <PlayerForm/>
             </ProtectedRoute>}
         />
         <Route path="/login" element={<Login/>}/>
