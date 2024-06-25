@@ -1,5 +1,7 @@
-import react from "react"
+import React from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { AuthProvider } from './contexts/AuthContext'
+
 import Navigation from './components/Navigation';
 import Login from "./pages/Login"
 import MyTerms from "./pages/MyTerms"
@@ -21,7 +23,9 @@ function RegisterAndLogout(){
 function App() {
   return (
     <BrowserRouter>
-      <Navigation /> 
+      <AuthProvider>
+        <Navigation /> 
+      </AuthProvider>
       <Routes>
         
         <Route 

@@ -48,7 +48,6 @@ function Home() {
     };
 
     return (
-        
         <div>
             <div>
                 <h2>Notes</h2>
