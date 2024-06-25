@@ -29,15 +29,14 @@ class Player(models.Model):
         ('O', 'Other'),
     ]
 
-    name = models.CharField(max_length=100)
-    surname = models.CharField(max_length=100)
-    #email = models.CharField(max_length=255)
-    email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15, unique=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    #birthdate = models.DateField() 
-    birthdate = models.CharField(max_length=255)
-    leagues = models.CharField(max_length=255)
+    name = models.CharField(max_length=100,null=True)
+    surname = models.CharField(max_length=100,null=True)
+    email = models.EmailField(null=True)
+    phone_number = models.CharField(max_length=15,null=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES,null=True)
+    birthdate = models.DateField(null=True) 
+    #birthdate = models.CharField(max_length=255)
+    leagues = models.CharField(max_length=255,null=True)
 
     def __str__(self):
         return f"{self.name} {self.surname}"

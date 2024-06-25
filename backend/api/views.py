@@ -57,11 +57,12 @@ class PlayerListCreate(generics.ListCreateAPIView):
         surname = serializer.validated_data.get('surname')
         
         if Player.objects.filter(name=name, surname=surname).exists():
-            raise ValidationError('This player already exists.')
-        if serializer.is_valid():
-            serializer.save()
+            print('This player already exists.')
         else:
-            print(serializer.errors)
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
 
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
