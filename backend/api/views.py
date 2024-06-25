@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, NoteSerializer, AvailableTermSerializer
+from .serializers import UserSerializer, AvailableTermSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note, AvailableTerm
+from .models import AvailableTerm
 from rest_framework.exceptions import ValidationError
 
 
@@ -45,32 +45,6 @@ class AvailableTermDelete(generics.DestroyAPIView):
         user = self.request.user
         return AvailableTerm.objects.filter(user=user)
 
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
-
-    def perform_create(self, serializer):
-        user = self.request.user
-        title =serializer.validated_data.get('title')
-        
-        if Note.objects.filter(author=user, title=title).exists():
-            raise ValidationError('This term already exists.')
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
-
-
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
 
 
 class CreateUserView(generics.CreateAPIView):
