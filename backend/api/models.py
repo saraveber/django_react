@@ -35,7 +35,6 @@ class Player(models.Model):
     phone_number = models.CharField(max_length=15,null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,null=True)
     birthdate = models.DateField(null=True) 
-    #birthdate = models.CharField(max_length=255)
     leagues = models.CharField(max_length=255,null=True)
 
     def __str__(self):
