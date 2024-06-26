@@ -1,86 +1,49 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { getProfile } from '../api';
 import api from "../api";
 import "../styles/Home.css";
-import Note from "../components/Note";
-import Calendar from '../components/Calendar';
+
 
 function Home() {
-    const [notes, setNotes] = useState([]);
-    const [content, setContent] = useState("");
-    const [title, setTitle] = useState("");
-
+    const [profile, setProfile] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
     useEffect(() => {
-        getNotes();
-    }, []);
+        const fetchProfile = async () => {
+            try {
+                const profileData = await getProfile();
+                console.log('profileData:', profileData);
+                setProfile(profileData);
+                setLoading(false);
+            } catch (error) {
+                console.error('Failed to fetch profile:', error);
+                setError('Failed to load profile.');
+                setLoading(false);
+            }
+        };
+        try{
+        fetchProfile();
+        } catch (err){
+            setError(err.maessage);
+        }
+    }, []); // Empty dependency array means this effect runs once on mount
 
-    const getNotes = () => {
-        api
-            .get("/api/notes/")
-            .then((res) => res.data)
-            .then((data) => {
-                setNotes(data);
-                console.log(data);
-            })
-            .catch((err) => alert(err));
-    };
 
-    const deleteNote = (id) => {
-        api
-            .delete(`/api/notes/delete/${id}/`)
-            .then((res) => {
-                if (res.status === 204) alert("Note deleted!");
-                else alert("Failed to delete note.");
-                getNotes();
-            })
-            .catch((error) => alert(error));
-    };
-
-    const createNote = (e) => {
-        e.preventDefault();
-        api
-            .post("/api/notes/", { content, title })
-            .then((res) => {
-                if (res.status === 201) alert("Note created!");
-                else alert("Failed to make note.");
-                getNotes();
-            })
-            .catch((err) => alert(err));
-    };
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
-        
         <div>
-            <div>
-                <h2>Notes</h2>
-                {notes.map((note) => <Note note={note} onDelete={deleteNote} key={note.id} />)}
-            </div>
-
-            <h2>Create a Note</h2>
-            <form onSubmit={createNote}>
-                <label htmlFor="title">Title:</label>
-                <br />
-                <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    required
-                    onChange={(e) => setTitle(e.target.value)}
-                    value={title}
-                />
-                <label htmlFor="content">Content:</label>
-                <br />
-                <textarea
-                    id="content"
-                    name="content"
-                    required
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                ></textarea>
-                <br />
-                <input type="submit" value="Submit"></input>
-            </form>
+            {profile && (
+                <div>
+                    <h2>Welcome {profile.user.username}</h2>
+                    <p>Your acces is:  {profile.user_type}</p>
+                    
+                </div>
+            )}
         </div>
     );
-}
+};
 
 export default Home;

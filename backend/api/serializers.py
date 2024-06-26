@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note, AvailableTerm, Player, League
+from .models import Note, AvailableTerm, Player, League, UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,13 +13,14 @@ class UserSerializer(serializers.ModelSerializer):
         print(validated_data)
         user = User.objects.create_user(**validated_data)
         return user
+    
 
-
-class NoteSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
     class Meta:
-        model = Note
-        fields = ["id", "title", "content", "created_at", "author"]
-        extra_kwargs = {"author": {"read_only": True}}
+        model = UserProfile
+        fields = ['user', 'user_type']
+
 
 class AvailableTermSerializer(serializers.ModelSerializer):
     class Meta:

@@ -9,6 +9,7 @@ class ApiConfig(AppConfig):
     name = 'api'
 
     def ready(self):
+        import api.signals
         post_migrate.connect(load_initial_league_data, sender=self)
 
 def load_initial_league_data(sender, **kwargs):
