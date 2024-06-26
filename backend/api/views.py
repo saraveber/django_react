@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, NoteSerializer, AvailableTermSerializer, PlayerSerializer, LeagueSerializer, UserProfileSerializer
+from .serializers import UserSerializer, AvailableTermSerializer, PlayerSerializer, LeagueSerializer, UserProfileSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note, AvailableTerm, Player, League, UserProfile
+from .models import AvailableTerm, Player, League, UserProfile
 from rest_framework.exceptions import ValidationError
 
 

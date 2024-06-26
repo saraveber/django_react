@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note, AvailableTerm, Player, League, UserProfile
+from .models import AvailableTerm, Player, League, UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
