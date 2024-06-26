@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import AvailableTerm
+from .models import UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,6 +14,13 @@ class UserSerializer(serializers.ModelSerializer):
         print(validated_data)
         user = User.objects.create_user(**validated_data)
         return user
+    
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    class Meta:
+        model = UserProfile
+        fields = ['user', 'user_type']
 
 
 class AvailableTermSerializer(serializers.ModelSerializer):

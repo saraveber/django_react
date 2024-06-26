@@ -1,6 +1,5 @@
 import React from "react"
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { AuthProvider } from './contexts/AuthContext'
 
 import Navigation from './components/Navigation';
 import Login from "./pages/Login"
@@ -23,9 +22,7 @@ function RegisterAndLogout(){
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
         <Navigation /> 
-      </AuthProvider>
       <Routes>
         
         <Route 

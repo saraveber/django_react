@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, AvailableTermSerializer
+from .serializers import UserSerializer, AvailableTermSerializer, UserProfileSerializer 
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import AvailableTerm
+from .models import AvailableTerm, UserProfile
 from rest_framework.exceptions import ValidationError
 
 
@@ -51,3 +51,16 @@ class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
+
+
+class UserProfileDetail(generics.RetrieveAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+
+        #TODO: check documentation for get_or_create method; is there a better way to do this?
+        
+        user_profile, created = UserProfile.objects.get_or_create(user=self.request.user)
+        return user_profile
