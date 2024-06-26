@@ -1,0 +1,105 @@
+.PlayerTeamForm {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2; /* Light gray background */
+}
+
+/* Columns layout */
+.columns {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Column specific styles */
+.column {
+  width: 45%;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Category headings */
+h3 {
+  margin-top: 0;
+  font-size: 1.5em;
+  color: #004d99; /* Dark blue heading color */
+  border-bottom: 2px solid #004d99;
+  padding-bottom: 8px;
+}
+
+/* League list styles */
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+/* League item styles */
+li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+/* Checkbox styles */
+input[type="checkbox"] {
+  margin-right: 10px;
+  transform: scale(1.5); /* Increase checkbox size */
+}
+
+/* Label styles */
+label {
+  cursor: pointer;
+  font-size: 1.1em;
+  color: #333333; /* Dark gray label text color */
+}
+
+/* Search container styles */
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-container input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  font-size: 1em;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  outline: none; /* Remove outline on focus */
+}
+
+.search-container ul {
+  margin-top: 5px;
+  padding: 0;
+  list-style-type: none;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 200px; /* Limit height and enable scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
+
+.search-container ul li {
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-container ul li:hover {
+  background-color: #f2f2f2; /* Light gray background on hover */
+}
+
+/* Media query for responsiveness */
+@media (max-width: 768px) {
+  .columns {
+    flex-direction: column;
+  }
+  .column {
+    width: 100%;
+  }
+}

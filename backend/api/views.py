@@ -50,7 +50,13 @@ class PlayerListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Player.objects.all()
+        queryset = Player.objects.all()
+        name = self.request.query_params.get('name', None)
+        
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        
+        return queryset
 
     def perform_create(self, serializer):
         name = serializer.validated_data.get('name')
@@ -64,20 +70,19 @@ class PlayerListCreate(generics.ListCreateAPIView):
             else:
                 print(serializer.errors)
 
-class LeagueListCreate(generics.ListCreateAPIView):
-    queryset = League.objects.all()
+class LeagueList(generics.ListCreateAPIView):
     serializer_class = LeagueSerializer
+    permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        name = serializer.validated_data.get('name')
-        
-        if League.objects.filter(name=name).exists():
-            print('This league already exists.')
-        else:
-            if serializer.is_valid():
-                serializer.save()
-            else:
-                print(serializer.errors)
+    def get_queryset(self):
+        queryset = League.objects.all()
+        gender = self.request.query_params.get('gender', None)
+        league_type = self.request.query_params.get('type', None)
+        if gender:
+            queryset = queryset.filter(gender=gender)
+        if league_type:
+            queryset = queryset.filter(type=league_type)
+        return queryset
 
 class NoteListCreate(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
