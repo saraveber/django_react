@@ -171,3 +171,10 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+backend/api/migrations/0001_initial.py
+backend/api/migrations/0002_availableterm.py
+backend/api/migrations/0002_rename_userprofile_userprofile_user_type_and_more.py
+backend/api/migrations/0003_alter_availableterm_end_date_and_more.py
+backend/api/migrations/__pycache__/__init__.cpython-310.pyc
+backend/api/migrations/__pycache__/0001_initial.cpython-310.pyc
+backend/backend/__pycache__/urls.cpython-310.pyc

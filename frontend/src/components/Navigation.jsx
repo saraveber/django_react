@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import "../styles/Navigation.css";
 
 function Navigation() {
     // TODO: Rewiew of isAuthorized is needed 
     // When the user is logged in, the isAuthorized function returns true
     // In this code I have to refresh the page to see the changes
-    const { isAuthorized } = useAuth();
+
+
+    //const { isAuthorized } = useAuth();
 
     
     const location = useLocation();
@@ -20,7 +21,7 @@ function Navigation() {
 
     //console.log('Route changed to: ', location.pathname);
     //console.log('isAuthorized: ', isAuthorized);
-    console.log('loggedIn: ', loggedIn);
+    //console.log('loggedIn: ', loggedIn);
 
     return (
         <nav className="nav-bar">
