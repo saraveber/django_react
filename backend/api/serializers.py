@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
-from .models import AvailableTerm
-from .models import Player
+from .models import Note, AvailableTerm, Player, League
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -32,4 +30,9 @@ class AvailableTermSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ["name", "surname", "email", "phone_number", "gender", "birthdate", "leagues"]
+        fields = ["name", "surname", "email", "phone_number", "gender", "birthdate"]
+
+class LeagueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = League
+        fields = ["name", "gender", "type"]

@@ -9,8 +9,7 @@ const PlayerForm = () => {
     email: '',
     phone_number: '',
     gender: '',
-    birthdate: '',
-    leagues: ''
+    birthdate: ''
   });
 
   const handleChange = (e) => {
@@ -21,14 +20,13 @@ const PlayerForm = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
     console.log("Submitting form...");
-    createPlayer(player.name, player.surname, player.email, player.phone_number, player.gender, player.birthdate, player.leagues);
+    createPlayer(player.name, player.surname, player.email, player.phone_number, player.gender, player.birthdate);
   };
 
-  const createPlayer = (name, surname, email, phone_number, gender, birthdate, leagues) => {
+  const createPlayer = (name, surname, email, phone_number, gender, birthdate) => {
 
-    api.post("api/players/", { name, surname, email, phone_number, gender, birthdate, leagues })
+    api.post("api/players/", { name, surname, email, phone_number, gender, birthdate})
       .then((res) => {
         if (res.status === 201) console.log("Player saved!");
         else alert("Failed to make player.");
@@ -68,10 +66,6 @@ const PlayerForm = () => {
       <div className="form-group">
         <label>Rojstni datum</label>
         <input type="date" name="birthdate" value={player.birthdate} onChange={handleChange} required />
-      </div>
-      <div className="form-group">
-        <label>Lige</label>
-        <input type="text" name="leagues" value={player.leagues} onChange={handleChange} required />
       </div>
       <button type="submit" className="submit-button">Add Player</button>
     </form>

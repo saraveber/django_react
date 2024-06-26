@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, NoteSerializer, AvailableTermSerializer, PlayerSerializer
+from .serializers import UserSerializer, NoteSerializer, AvailableTermSerializer, PlayerSerializer, LeagueSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Note, AvailableTerm, Player
+from .models import Note, AvailableTerm, Player, League
 from rest_framework.exceptions import ValidationError
 
 
@@ -58,6 +58,21 @@ class PlayerListCreate(generics.ListCreateAPIView):
         
         if Player.objects.filter(name=name, surname=surname).exists():
             print('This player already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
+
+class LeagueListCreate(generics.ListCreateAPIView):
+    queryset = League.objects.all()
+    serializer_class = LeagueSerializer
+
+    def perform_create(self, serializer):
+        name = serializer.validated_data.get('name')
+        
+        if League.objects.filter(name=name).exists():
+            print('This league already exists.')
         else:
             if serializer.is_valid():
                 serializer.save()

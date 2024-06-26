@@ -35,7 +35,25 @@ class Player(models.Model):
     phone_number = models.CharField(max_length=15,null=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES,null=True)
     birthdate = models.DateField(null=True) 
-    leagues = models.CharField(max_length=255,null=True)
 
     def __str__(self):
         return f"{self.name} {self.surname}"
+
+class League(models.Model):
+    GENDER_CHOICES = [
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('X', 'Mixed'),
+    ]
+
+    TYPE_CHOICES = [
+        ('S', 'Single'),
+        ('D', 'Double'),
+    ]
+
+    name = models.CharField(max_length=100)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES)
+
+    def __str__(self):
+        return self.name
