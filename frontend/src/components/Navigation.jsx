@@ -15,7 +15,7 @@ function Navigation() {
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
-      const shouldBeLoggedIn = location.pathname === '/' || location.pathname === '/my-terms';
+      const shouldBeLoggedIn = location.pathname === '/' || location.pathname === '/my-terms' || location.pathname === '/players' || location.pathname === '/player-team';
       setLoggedIn(shouldBeLoggedIn);
     }, [location.pathname]);
 
