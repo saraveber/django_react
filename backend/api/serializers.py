@@ -31,7 +31,7 @@ class AvailableTermSerializer(serializers.ModelSerializer):
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
-        fields = ["name", "surname", "email", "phone_number", "gender", "birthdate"]
+        fields = ["id","name", "surname", "email", "phone_number", "gender", "birthdate"]
 
 class LeagueSerializer(serializers.ModelSerializer):
     class Meta:

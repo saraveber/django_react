@@ -75,9 +75,9 @@ class Team(models.Model):
     losses = models.IntegerField(default=0)
     points = models.IntegerField(default=0)
     is_in_playoff = models.BooleanField(default=False)
-    playoff_place = models.IntegerField(null=True, blank=True)
+    playoff_place = models.IntegerField(null=True, blank=True, default=0)
     playoff_wins = models.IntegerField(default=0)
-    type = models.CharField(max_length=1, choices=TYPE_CHOICES)
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES, null=True)
 
     def __str__(self):
         return f"Team {self.id} - {self.league.name} - {self.player1} and {self.player2}"

@@ -4,7 +4,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .serializers import UserSerializer, AvailableTermSerializer, PlayerSerializer, LeagueSerializer, UserProfileSerializer, TeamSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import AvailableTerm, Player, League, UserProfile
+from .models import AvailableTerm, Player, League, UserProfile, Team
 from rest_framework.exceptions import ValidationError
 
 
@@ -113,7 +113,7 @@ class TeamListCreate(generics.ListCreateAPIView):
         p1 = serializer.validated_data.get('player1')
         p2 = serializer.validated_data.get('player2')
         
-        if Team.objects.filter(player1=p1, player2=p2).exists():
+        if Team.objects.filter(player1=p1, player2=p2).exists() or Team.objects.filter(player1=p2, player2=p1).exists():
             print('This team already exists.')
         else:
             if serializer.is_valid():
