@@ -1,0 +1,21 @@
+/* UserSelectionDropDown.module.css */
+.dropdownContainer {
+    display: flex;
+    justify-content: center; /* Centers children horizontally in the container */
+    align-items: center; /* Centers children vertically, if needed */
+    margin: 20px 0;
+  }
+  
+  .dropdownLabel {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .selectDropdown {
+    padding: 10px 10px; /* Adjust padding to make the dropdown wider */
+    font-size: 20px; /* Increase font size for better readability */
+    border: 1px solid #3e84ec; /* Match border color to the button */
+    width: auto; /* Adjust width as needed or keep it responsive */
+    margin: 0 auto; /* Center the dropdown horizontally */
+    cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+  }

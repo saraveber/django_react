@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import Calendar from '../components/Calendar';
+import UserSelectionDropDown from '../components/UserSelectionDropDown';
 //import { useProfile } from "../contexts/ProfileContext";
 
 function MyTerms() {
     const [users, setUsers] = useState([]); 
     const [CurrUserId, setCurrUserId] = useState(null);
+    const [selectedUserId, setSelectedUserId] = useState(null); 
     const [CurrUser,setCurrUser] = useState(null);
     const [role,setRole] = useState(null);
     const [loading,setLoading] = useState(true);
+    
 
     useEffect(() => {
         getProfile();
@@ -60,7 +63,7 @@ function MyTerms() {
     };
 
     const handleUserChange = (event) => {
-        setCurrUserId(event.target.value);
+        setSelectedUserId(event.target.value);
       };
     // if role = null we return loading
     // if role = player than we return the calander with the user
@@ -82,26 +85,24 @@ function MyTerms() {
             </div>
         );
     }
-
+        
 
     if (role === "admin" || role === "staff") {
         return (
             <div>
-                <div>
-                    <p>Selected a user:</p>
-                    <p>{CurrUserId}</p>
-                    <select onChange={handleUserChange} value={CurrUserId}>
-                        {users.map((user) => (
-                            <option key={user.id} value={user.id}>
-                                {user.username} {user.id}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div>
-                    <Calendar CurrUserId={CurrUserId} role={role} />
-                </div>
+                <UserSelectionDropDown
+                    CurrUserId={selectedUserId} 
+                    users={users} 
+                    handleUserChange={handleUserChange} 
+                />
+                {selectedUserId && ( 
+                <Calendar 
+                    CurrUserId={selectedUserId} 
+                    role={role} 
+                />
+                )}
             </div>
+        
         );
     }
     if (role === "user") {
