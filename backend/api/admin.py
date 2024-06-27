@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from .models import AvailableTerm, Player, League, UserProfile
+from .models import AvailableTerm, Player, League, UserProfile, Team
 
 # Define an inline admin descriptor for UserProfile model
 # which acts a bit like a singleton
@@ -24,3 +24,4 @@ admin.site.register(User, UserAdmin)
 admin.site.register(AvailableTerm)
 admin.site.register(Player)
 admin.site.register(League) 
+admin.site.register(Team)

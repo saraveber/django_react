@@ -30,7 +30,6 @@ class Player(models.Model):
     GENDER_CHOICES = [
         ('M', 'Male'),
         ('F', 'Female'),
-        ('O', 'Other'),
     ]
 
     name = models.CharField(max_length=100,null=True)
@@ -61,3 +60,24 @@ class League(models.Model):
 
     def __str__(self):
         return self.name
+
+class Team(models.Model):
+    TYPE_CHOICES = [
+        ('S', 'Single'),
+        ('D', 'Double'),
+    ]
+
+    league = models.ForeignKey(League, on_delete=models.CASCADE,null=True)
+    player1 = models.ForeignKey(Player, related_name='team_player1', on_delete=models.CASCADE)
+    player2 = models.ForeignKey(Player, related_name='team_player2', on_delete=models.SET_NULL, null=True, blank=True)
+    number_of_played_matches = models.IntegerField(default=0)
+    wins = models.IntegerField(default=0)
+    losses = models.IntegerField(default=0)
+    points = models.IntegerField(default=0)
+    is_in_playoff = models.BooleanField(default=False)
+    playoff_place = models.IntegerField(null=True, blank=True, default=0)
+    playoff_wins = models.IntegerField(default=0)
+    type = models.CharField(max_length=1, choices=TYPE_CHOICES, null=True)
+
+    def __str__(self):
+        return f"Team {self.id} - {self.league.name} - {self.player1} and {self.player2}"

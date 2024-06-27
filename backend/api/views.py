@@ -2,9 +2,9 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, AvailableTermSerializer, PlayerSerializer, LeagueSerializer, UserProfileSerializer
+from .serializers import UserSerializer, AvailableTermSerializer, PlayerSerializer, LeagueSerializer, UserProfileSerializer, TeamSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import AvailableTerm, Player, League, UserProfile
+from .models import AvailableTerm, Player, League, UserProfile, Team
 from rest_framework.exceptions import ValidationError
 
 
@@ -101,3 +101,22 @@ class UserProfileDetail(generics.RetrieveAPIView):
         
         user_profile, created = UserProfile.objects.get_or_create(user=self.request.user)
         return user_profile
+
+class TeamListCreate(generics.ListCreateAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Team.objects.all()
+
+    def perform_create(self, serializer):
+        p1 = serializer.validated_data.get('player1')
+        p2 = serializer.validated_data.get('player2')
+        
+        if Team.objects.filter(player1=p1, player2=p2).exists() or Team.objects.filter(player1=p2, player2=p1).exists():
+            print('This team already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
