@@ -10,6 +10,15 @@ function Navigation() {
 
     //const { isAuthorized } = useAuth();
 
+
+    try {
+      const { profile, loading, error } = useProfile();
+      //TODO:  some problems with this
+      //doesn't work like I want
+    }
+    catch{
+      console.log("You are not logged in")
+    }
     
     const location = useLocation();
     const [loggedIn, setLoggedIn] = useState(false);
@@ -28,24 +37,24 @@ function Navigation() {
             <ul className="nav-list">
                 {loggedIn ? (
                     <>
-                      <li className="nav-item">
-                          <Link to="/" className="nav-link">Home</Link>
-                      </li>
-                      <li className="nav-item">
-                          <Link to="/my-terms" className="nav-link">MyTerms</Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/logout" className="nav-link">Logout</Link>
-                      </li>
+                        <li className="nav-item">
+                            <Link to="/" className="nav-link">Home</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to="/my-terms" className="nav-link">MyTerms</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to="/logout" className="nav-link">Logout</Link>
+                        </li>
                     </>
                 ) : (
                     <>
-                      <li className="nav-item">
-                        <Link to="/login" className="nav-link">Login</Link>
-                      </li>
-                      <li className="nav-item">
-                        <Link to="/register" className="nav-link">Register</Link>
-                      </li>
+                        <li className="nav-item">
+                            <Link to="/login" className="nav-link">Login</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to="/register" className="nav-link">Register</Link>
+                        </li>
                     </>
                 )}
             </ul>

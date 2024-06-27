@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/Calendar.css';
 import api from "../api";
 
-const Calendar = () => {
+const Calendar = ({ CurrUserId }) => {
   const [coloredCells, setColoredCells] = useState({}); // State for colored cells
   const [isDragging, setIsDragging] = useState(false); // State to track dragging
   const [dragStart, setDragStart] = useState(null); // State for drag start
@@ -14,20 +14,26 @@ const Calendar = () => {
   // Example logic to set colored cells based on saved timestamps
   useEffect(() => {   
     getTerms();
-  }, []);
+    console.log("I AM IN CALANDER")
+    console.log("Current User:", CurrUserId);
+  }, [CurrUserId]);
 
 
   // Function to read which cells are saved in db
   const getTerms = () => { 
     // Example API call
+    setColoredCells({});
     console.log("Getting terms...");
     api
-      .get("/api/terms/")
+      .get("api/terms/user/" + CurrUserId + "/")
       .then((res) => res.data)
       .then((data) => {
         data.forEach((term) => {
           const date = new Date(term.start_date);
           const formated_hour = date.getHours().toString().padStart(2, '0') + ":00";
+          // Empty colored cells
+          
+
           initialColoredCells(date.getDate(), date.toLocaleString('en-US', { month: 'long' }), date.getFullYear(), formated_hour);
         });
       })

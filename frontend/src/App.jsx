@@ -8,7 +8,6 @@ import Register from "./pages/Register"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import ProtectedRoute from "./components/ProtectedRoute"
-import { ProfileProvider } from "./contexts/ProfileContext"
 
 function Logout(){
   localStorage.clear()
@@ -23,27 +22,21 @@ function RegisterAndLogout(){
 function App() {
   return (
     <BrowserRouter>
-      <ProfileProvider>
         <Navigation /> 
-      </ProfileProvider>
       <Routes>
         
         <Route 
           path="/" 
           element={
             <ProtectedRoute>
-              <ProfileProvider>
                 <Home/>
-              </ProfileProvider>             
             </ProtectedRoute>}
         />
         <Route 
           path="/my-terms" 
           element={
             <ProtectedRoute>
-              <ProfileProvider>
                 <MyTerms/>
-                </ProfileProvider>
             </ProtectedRoute>}
         />
         <Route path="/login" element={<Login/>}/>
