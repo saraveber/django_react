@@ -8,6 +8,8 @@ urlpatterns = [
     path('terms/delete-all/user/<int:userId>/', views.AvailableTermDeleteAllForUser.as_view(), name='delete-all-terms-for-user'),
     path('terms/user/<int:userId>/', views.AvailableTermsByUser.as_view(), name='terms-by-user'),
     path('users/get-all-players/', views.PlayerListView.as_view(), name='player-list'),
+    path('players/', views.PlayerListCreate.as_view(), name='player-list-create'),
+    path('leagues/',views.LeagueList.as_view(), name='league-list'),
 
 ]
 
