@@ -2,9 +2,6 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
-
-
-
 # Define the AvailableTerm model
 class AvailableTerm(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='available_terms')
@@ -21,7 +18,7 @@ class Player(models.Model):
         ('F', 'Female'),
         ('O', 'Other'),
     ]
-
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True) 
     name = models.CharField(max_length=100,null=True)
     surname = models.CharField(max_length=100,null=True)
     email = models.EmailField(null=True)
