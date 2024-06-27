@@ -1,26 +1,25 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import AvailableTerm
-from .models import UserProfile
 
 
 class UserSerializer(serializers.ModelSerializer):
+    group_names = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ["id", "username", "password"]
+        fields = ["id", "username", "password", "group_names"]
         extra_kwargs = {"password": {"write_only": True}}
 
+
+    def get_group_names(self, user):
+        return [group.name for group in user.groups.all()]
+
     def create(self, validated_data):
-        print(validated_data)
         user = User.objects.create_user(**validated_data)
         return user
     
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    class Meta:
-        model = UserProfile
-        fields = ['user', 'user_type']
 
 
 class AvailableTermSerializer(serializers.ModelSerializer):

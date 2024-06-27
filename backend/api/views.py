@@ -2,15 +2,30 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, AvailableTermSerializer, UserProfileSerializer 
+from .serializers import UserSerializer, AvailableTermSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import AvailableTerm, UserProfile
+from .models import AvailableTerm
 from rest_framework.exceptions import ValidationError
+
+from .permissions import IsAdminUser, IsPlayerUser, IsStaffUser, IsOnlyUser ,IsAdminOrStaffUser
+
+#Terms
+class TermsByUser(generics.ListAPIView):
+    serializer_class = AvailableTermSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        """
+        This view should return a list of all the terms
+        for the user as determined by the userId captured from the URL.
+        """
+        userId = self.kwargs['userId']
+        return AvailableTerm.objects.filter(user__id=userId)
 
 
 class AvailableTermListCreate(generics.ListCreateAPIView):
     serializer_class = AvailableTermSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     
     def get_queryset(self):
         user = self.request.user
@@ -29,7 +44,7 @@ class AvailableTermListCreate(generics.ListCreateAPIView):
             else:
                 print(serializer.errors)
 
-class AvailableTermDelleteAll(generics.GenericAPIView):
+class AvailableTermDeleteAll(generics.GenericAPIView):
     serializer_class = AvailableTermSerializer
     permission_classes = [IsAuthenticated]
 
@@ -41,11 +56,10 @@ class AvailableTermDelleteAll(generics.GenericAPIView):
 class AvailableTermDelete(generics.DestroyAPIView):
     serializer_class = AvailableTermSerializer
     permission_classes = [IsAuthenticated]
+
     def get_queryset(self):
         user = self.request.user
         return AvailableTerm.objects.filter(user=user)
-
-
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -53,14 +67,18 @@ class CreateUserView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 
-class UserProfileDetail(generics.RetrieveAPIView):
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
+# Class that returns user 
+class UserView(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
+        return self.request.user
+    
+# Class that returns all users that have group "player"
 
-        #TODO: check documentation for get_or_create method; is there a better way to do this?
-        
-        user_profile, created = UserProfile.objects.get_or_create(user=self.request.user)
-        return user_profile
+class PlayerListView(generics.ListAPIView):
+    queryset = User.objects.filter(groups__name='player')
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]

@@ -1,15 +1,12 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from django.contrib.auth.models import User
-from .models import UserProfile
+from django.contrib.auth.models import User, Group 
 
 
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def assign_default_group(sender, instance, created, **kwargs):
     if created:
-        UserProfile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
-
+        default_group_name = 'player'  # Specify your default group name here
+        default_group, _ = Group.objects.get_or_create(name=default_group_name)
+        instance.groups.add(default_group)
+        instance.save()
