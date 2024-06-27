@@ -24,7 +24,7 @@ function Navigation() {
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
-      const shouldBeLoggedIn = location.pathname === '/' || location.pathname === '/my-terms';
+      const shouldBeLoggedIn = location.pathname === '/' || location.pathname === '/my-terms' || location.pathname === '/players' || location.pathname === '/player-team';
       setLoggedIn(shouldBeLoggedIn);
     }, [location.pathname]);
 
@@ -37,15 +37,21 @@ function Navigation() {
             <ul className="nav-list">
                 {loggedIn ? (
                     <>
-                        <li className="nav-item">
-                            <Link to="/" className="nav-link">Home</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/my-terms" className="nav-link">MyTerms</Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/logout" className="nav-link">Logout</Link>
-                        </li>
+                      <li className="nav-item">
+                          <Link to="/" className="nav-link">Home</Link>
+                      </li>
+                      <li className="nav-item">
+                          <Link to="/my-terms" className="nav-link">MyTerms</Link>
+                      </li>
+                      <li className="nav-item">
+                          <Link to="/players" className="nav-link">Add player</Link>
+                      </li>
+                      <li className="nav-item">
+                          <Link to="/player-team" className="nav-link">Add player team</Link>
+                      </li>
+                      <li className="nav-item">
+                        <Link to="/logout" className="nav-link">Logout</Link>
+                      </li>
                     </>
                 ) : (
                     <>

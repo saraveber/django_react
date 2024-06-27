@@ -1,10 +1,10 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from django.contrib.auth.models import User
-from .models import AvailableTerm
+from .models import AvailableTerm, Player, League
 
 
 
 
 # Register your models here.
 admin.site.register(AvailableTerm)
+admin.site.register(Player)
+admin.site.register(League) 

@@ -10,3 +10,4 @@ urlpatterns = [
     path('users/get-all-players/', views.PlayerListView.as_view(), name='player-list'),
 
 ]
+
