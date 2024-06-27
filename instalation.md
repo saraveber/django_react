@@ -112,5 +112,5 @@ Username: saraveber
 Password: Ananas3510
 
 2. Tina
-Username:
-Password: 
+Username: tinapostuvan
+Password: Kiwi2002
