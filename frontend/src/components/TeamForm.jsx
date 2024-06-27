@@ -1,6 +1,7 @@
+// React Component
 import React, { useState, useEffect } from 'react';
 import api from '../api'; // Assuming you have an api module for making HTTP requests
-import '../styles/PlayerTeamForm.css'; // Import the CSS file for styling
+import '../styles/TeamForm.css'; // Import the CSS file for styling
 
 const PlayerTeamForm = () => {
   const [maleSingles, setMaleSingles] = useState([]);
@@ -13,6 +14,15 @@ const PlayerTeamForm = () => {
   const [players, setPlayers] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [showSearchResults, setShowSearchResults] = useState(false); // State to control visibility of search results
+
+  // State to track the selected checkboxes
+  const [selectedCheckboxes, setSelectedCheckboxes] = useState({
+    maleSingle: null,
+    femaleSingle: null,
+    maleDouble: null,
+    femaleDouble: null,
+    mixedDouble: null,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,6 +68,15 @@ const PlayerTeamForm = () => {
     setShowSearchResults(false); // Hide search results when a player is clicked
   };
 
+  const handleCheckboxChange = (category, id) => {
+    if (selectedPlayer) {
+      setSelectedCheckboxes((prevSelected) => ({
+        ...prevSelected,
+        [category]: id === prevSelected[category] ? null : id,
+      }));
+    }
+  };
+
   return (
     <div className="PlayerTeamForm">
       <div className="search-container">
@@ -81,34 +100,38 @@ const PlayerTeamForm = () => {
         {/* Singles Column */}
         <div className="column">
           <h3>Singles</h3>
-          <div>
+          <div className="checkbox-container">
             <h4>Male Singles</h4>
             <ul>
               {maleSingles.map((league) => (
                 <li key={league.id}>
                   <input
                     type="checkbox"
-                    id={`league_${league.id}`}
-                    onChange={() => {}}
+                    id={`maleSingle_${league.id}`}
+                    checked={selectedCheckboxes.maleSingle === league.id}
+                    onChange={() => handleCheckboxChange('maleSingle', league.id)}
+                    disabled={!selectedPlayer} // Disable checkbox if no player selected
                   />
-                  <label htmlFor={`league_${league.id}`}>
+                  <label htmlFor={`maleSingle_${league.id}`}>
                     {league.name}
                   </label>
                 </li>
               ))}
             </ul>
           </div>
-          <div>
+          <div className="checkbox-container">
             <h4>Female Singles</h4>
             <ul>
               {femaleSingles.map((league) => (
                 <li key={league.id}>
                   <input
                     type="checkbox"
-                    id={`league_${league.id}`}
-                    onChange={() => {}}
+                    id={`femaleSingle_${league.id}`}
+                    checked={selectedCheckboxes.femaleSingle === league.id}
+                    onChange={() => handleCheckboxChange('femaleSingle', league.id)}
+                    disabled={!selectedPlayer} // Disable checkbox if no player selected
                   />
-                  <label htmlFor={`league_${league.id}`}>
+                  <label htmlFor={`femaleSingle_${league.id}`}>
                     {league.name}
                   </label>
                 </li>
@@ -120,51 +143,57 @@ const PlayerTeamForm = () => {
         {/* Doubles Column */}
         <div className="column">
           <h3>Doubles</h3>
-          <div>
+          <div className="checkbox-container">
             <h4>Male Doubles</h4>
             <ul>
               {maleDoubles.map((league) => (
                 <li key={league.id}>
                   <input
                     type="checkbox"
-                    id={`league_${league.id}`}
-                    onChange={() => {}}
+                    id={`maleDouble_${league.id}`}
+                    checked={selectedCheckboxes.maleDouble === league.id}
+                    onChange={() => handleCheckboxChange('maleDouble', league.id)}
+                    disabled={!selectedPlayer} // Disable checkbox if no player selected
                   />
-                  <label htmlFor={`league_${league.id}`}>
+                  <label htmlFor={`maleDouble_${league.id}`}>
                     {league.name}
                   </label>
                 </li>
               ))}
             </ul>
           </div>
-          <div>
+          <div className="checkbox-container">
             <h4>Female Doubles</h4>
             <ul>
               {femaleDoubles.map((league) => (
                 <li key={league.id}>
                   <input
                     type="checkbox"
-                    id={`league_${league.id}`}
-                    onChange={() => {}}
+                    id={`femaleDouble_${league.id}`}
+                    checked={selectedCheckboxes.femaleDouble === league.id}
+                    onChange={() => handleCheckboxChange('femaleDouble', league.id)}
+                    disabled={!selectedPlayer} // Disable checkbox if no player selected
                   />
-                  <label htmlFor={`league_${league.id}`}>
+                  <label htmlFor={`femaleDouble_${league.id}`}>
                     {league.name}
                   </label>
                 </li>
               ))}
             </ul>
           </div>
-          <div>
+          <div className="checkbox-container">
             <h4>Mixed Doubles</h4>
             <ul>
               {mixedDoubles.map((league) => (
                 <li key={league.id}>
                   <input
                     type="checkbox"
-                    id={`league_${league.id}`}
-                    onChange={() => {}}
+                    id={`mixedDouble_${league.id}`}
+                    checked={selectedCheckboxes.mixedDouble === league.id}
+                    onChange={() => handleCheckboxChange('mixedDouble', league.id)}
+                    disabled={!selectedPlayer} // Disable checkbox if no player selected
                   />
-                  <label htmlFor={`league_${league.id}`}>
+                  <label htmlFor={`mixedDouble_${league.id}`}>
                     {league.name}
                   </label>
                 </li>

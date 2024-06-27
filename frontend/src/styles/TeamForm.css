@@ -94,6 +94,11 @@ label {
   background-color: #f2f2f2; /* Light gray background on hover */
 }
 
+.checkbox-container input[type="checkbox"]:hover {
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+
 /* Media query for responsiveness */
 @media (max-width: 768px) {
   .columns {
