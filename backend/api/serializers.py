@@ -27,3 +27,11 @@ class AvailableTermSerializer(serializers.ModelSerializer):
         model = AvailableTerm
         fields = ["id", "user", "start_date", "end_date", "created_at"]
         extra_kwargs = {"user": {"read_only": True}}
+
+
+
+#this serilizer is used for admin/staff to add term for specific user
+class AvailableTermForUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailableTerm
+        fields = ["id", "user", "start_date", "end_date", "created_at"]

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import '../styles/Calendar.css';
 import api from "../api";
 
-const Calendar = ({ CurrUserId }) => {
+const Calendar = ({ CurrUserId ,role}) => {
   const [coloredCells, setColoredCells] = useState({}); // State for colored cells
   const [isDragging, setIsDragging] = useState(false); // State to track dragging
   const [dragStart, setDragStart] = useState(null); // State for drag start
@@ -14,8 +14,6 @@ const Calendar = ({ CurrUserId }) => {
   // Example logic to set colored cells based on saved timestamps
   useEffect(() => {   
     getTerms();
-    console.log("I AM IN CALANDER")
-    console.log("Current User:", CurrUserId);
   }, [CurrUserId]);
 
 
@@ -38,14 +36,12 @@ const Calendar = ({ CurrUserId }) => {
         });
       })
       .catch((err) => alert(err));
-    console.log(coloredCells);
   };
 
   const initialColoredCells = (date, month, year, hour) => {
 
     console.log("Setting initial colored cells...");
     const cellKey = `${date}-${month}-${year}-${hour}`;
-    console.log(cellKey);
 
     setColoredCells((prevState) => ({
       ...prevState,
@@ -78,7 +74,6 @@ const Calendar = ({ CurrUserId }) => {
     console.log("Clicking cell...")
     if (!isDragging) {
       const cellKey = `${date}-${month}-${year}-${hour}`;
-      console.log("date:", cellKey);
 
       setColoredCells((prevState) => {
         const newState = { ...prevState, [cellKey]: !prevState[cellKey] }; // Toggle color
@@ -143,34 +138,70 @@ const Calendar = ({ CurrUserId }) => {
 
   // Function to create a term
   const createTerm = (start_date, end_date) => {
-    api
-      .post("api/terms/", { start_date, end_date })
-      .then((res) => {
-        if (res.status === 201) console.log("Term saved!");
-        else alert("Failed to make term.");
-      }
-      )
-      .catch((err) => alert(err));
+    console.log("Role in createTerm:", role);
+    console.log(role === "admin" || role === "staff")
+    if (role === "admin" || role === "staff") {
+      api
+        .post("api/terms/by-user/", { user: CurrUserId, start_date, end_date })
+        .then((res) => {
+          if (res.status === 201) console.log("Term saved!");
+          else alert("Failed to make term.");
+        }
+        )
+        .catch((err) => alert(err));
+    }else{
+      console.log("Role is not admin or staff");
+      api
+        .post("api/terms/", {start_date, end_date })
+        .then((res) => {
+          if (res.status === 201) console.log("Term saved!");
+          else alert("Failed to make term.");
+        }
+        )
+        .catch((err) => alert(err));
+    }
+
   };
 
   // Function to delete all terms for user
   const deleteAllTermsThenCreate = (selectedTimestamps) => {
-    api.delete("api/terms/delete-all/")
-      .then((res) => {
-        if (res.status === 204) {
-          console.log("All terms deleted!");
+    console.log("Role in createTerm:", role);
+    console.log(role === "admin" || role === "staff")
+    if (role === "admin" || role === "staff") {
+      api.delete(`api/terms/delete-all/user/${CurrUserId}/`)
+        .then((res) => {
+          if (res.status === 204) {
+            console.log("All terms deleted!");
 
-          // After successful deletion, create the new term
-          selectedTimestamps.map((date) => {
-            console.log(date);
-            createTerm(date, date);
-          });
+            // After successful deletion, create the new term
+            selectedTimestamps.map((date) => {
+              console.log(date);
+              createTerm(date, date);
+            });
 
-        } else {
-          alert("Failed to delete terms.");
-        }
-      })
-      .catch((error) => alert(error));
+          } else {
+            alert("Failed to delete terms.");
+          }
+        })
+        .catch((error) => alert(error));
+    }else{
+      api.delete(`api/terms/delete-all/`)
+        .then((res) => {
+          if (res.status === 204) {
+            console.log("All terms deleted!");
+
+            // After successful deletion, create the new term
+            selectedTimestamps.map((date) => {
+              console.log(date);
+              createTerm(date, date);
+            });
+
+          } else {
+            alert("Failed to delete terms.");
+          }
+        })
+        .catch((error) => alert(error));
+    }
   };
 
 

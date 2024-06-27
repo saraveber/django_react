@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, AvailableTermSerializer
+from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import AvailableTerm
 from rest_framework.exceptions import ValidationError
@@ -10,7 +10,7 @@ from rest_framework.exceptions import ValidationError
 from .permissions import IsAdminUser, IsPlayerUser, IsStaffUser, IsOnlyUser ,IsAdminOrStaffUser
 
 #Terms
-class TermsByUser(generics.ListAPIView):
+class AvailableTermsByUser(generics.ListAPIView):
     serializer_class = AvailableTermSerializer
     permission_classes = [AllowAny]
 
@@ -23,9 +23,29 @@ class TermsByUser(generics.ListAPIView):
         return AvailableTerm.objects.filter(user__id=userId)
 
 
+#This view is used by admin/staff to add term for specific user
+class AvailableTermListCreateForUser(generics.ListCreateAPIView):
+    serializer_class = AvailableTermForUserSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+    def perform_create(self, serializer):
+        user = serializer.validated_data.get('user')
+        end_date = serializer.validated_data.get('end_date')
+        start_date = serializer.validated_data.get('start_date')
+
+        if AvailableTerm.objects.filter(user=user, start_date=start_date, end_date=end_date).exists():
+            print('This term already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
+
+
+# Class that returns all available terms for the current user
 class AvailableTermListCreate(generics.ListCreateAPIView):
     serializer_class = AvailableTermSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         user = self.request.user
@@ -44,6 +64,17 @@ class AvailableTermListCreate(generics.ListCreateAPIView):
             else:
                 print(serializer.errors)
 
+# Class that deletes all available terms for a specific user
+class AvailableTermDeleteAllForUser(generics.GenericAPIView):
+    serializer_class = AvailableTermSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+    def delete(self, request, *args, **kwargs):
+        userId = self.kwargs['userId']
+        AvailableTerm.objects.filter(user__id=userId).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# Class that deletes all available terms for the current user
 class AvailableTermDeleteAll(generics.GenericAPIView):
     serializer_class = AvailableTermSerializer
     permission_classes = [IsAuthenticated]
@@ -53,21 +84,14 @@ class AvailableTermDeleteAll(generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AvailableTermDelete(generics.DestroyAPIView):
-    serializer_class = AvailableTermSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return AvailableTerm.objects.filter(user=user)
-
+# Class that creates a new user
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
 
-# Class that returns user 
+# Class that returns Current user 
 class UserView(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -76,8 +100,7 @@ class UserView(generics.RetrieveAPIView):
     def get_object(self):
         return self.request.user
     
-# Class that returns all users that have group "player"
-
+#Class that returns all users that are players
 class PlayerListView(generics.ListAPIView):
     queryset = User.objects.filter(groups__name='player')
     serializer_class = UserSerializer

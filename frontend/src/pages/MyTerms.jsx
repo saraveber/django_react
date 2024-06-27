@@ -76,8 +76,8 @@ function MyTerms() {
         return (
             <div>
                 <div>
-                    
-                    <Calendar CurrUserId={CurrUserId}/>
+
+                    <Calendar CurrUserId={CurrUserId} role={role}/>
                 </div>
             </div>
         );
@@ -99,7 +99,7 @@ function MyTerms() {
                     </select>
                 </div>
                 <div>
-                    <Calendar CurrUserId={CurrUserId} />
+                    <Calendar CurrUserId={CurrUserId} role={role} />
                 </div>
             </div>
         );
