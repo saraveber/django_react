@@ -60,7 +60,9 @@ Now that your environment is set up, you can start your Django project:
 3. Watch [this YouTube video](https://www.youtube.com/watch?v=c-QsfbznSXI&t=505s) for additional guidance.
 
 4. Run the following commands when database changes:
-
+    ```bash
+    rm db.sqlite3
+    ```
     ```bash
     python manage.py makemigrations
     python manage.py migrate
@@ -103,6 +105,7 @@ check out this link https://react.dev/learn/react-developer-tools
 ```bash
     python manage.py createsuperuser
 ```
+
 
 1. Sara 
 Username: saraveber
