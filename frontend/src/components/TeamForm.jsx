@@ -69,12 +69,12 @@ const PlayerTeamForm = () => {
   };
 
   const handleCheckboxChange = (category, id) => {
-    if (selectedPlayer) {
+
       setSelectedCheckboxes((prevSelected) => ({
         ...prevSelected,
         [category]: id === prevSelected[category] ? null : id,
       }));
-    }
+
   };
 
   return (
@@ -110,7 +110,7 @@ const PlayerTeamForm = () => {
                     id={`maleSingle_${league.id}`}
                     checked={selectedCheckboxes.maleSingle === league.id}
                     onChange={() => handleCheckboxChange('maleSingle', league.id)}
-                    disabled={!selectedPlayer} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender == "F"}
                   />
                   <label htmlFor={`maleSingle_${league.id}`}>
                     {league.name}
@@ -129,7 +129,7 @@ const PlayerTeamForm = () => {
                     id={`femaleSingle_${league.id}`}
                     checked={selectedCheckboxes.femaleSingle === league.id}
                     onChange={() => handleCheckboxChange('femaleSingle', league.id)}
-                    disabled={!selectedPlayer} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender == "M"} // Disable checkbox if no player selected
                   />
                   <label htmlFor={`femaleSingle_${league.id}`}>
                     {league.name}
@@ -153,7 +153,7 @@ const PlayerTeamForm = () => {
                     id={`maleDouble_${league.id}`}
                     checked={selectedCheckboxes.maleDouble === league.id}
                     onChange={() => handleCheckboxChange('maleDouble', league.id)}
-                    disabled={!selectedPlayer} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender == "F"} // Disable checkbox if no player selected
                   />
                   <label htmlFor={`maleDouble_${league.id}`}>
                     {league.name}
@@ -172,7 +172,7 @@ const PlayerTeamForm = () => {
                     id={`femaleDouble_${league.id}`}
                     checked={selectedCheckboxes.femaleDouble === league.id}
                     onChange={() => handleCheckboxChange('femaleDouble', league.id)}
-                    disabled={!selectedPlayer} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender == "M"} // Disable checkbox if no player selected
                   />
                   <label htmlFor={`femaleDouble_${league.id}`}>
                     {league.name}
