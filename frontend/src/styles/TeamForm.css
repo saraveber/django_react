@@ -94,6 +94,34 @@ label {
   background-color: #f2f2f2; /* Light gray background on hover */
 }
 
+.checkbox-container input[type="checkbox"]:hover {
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.search-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 150px; /* limit the height of the list */
+  overflow-y: auto; /* make it scrollable */
+  background-color: #fff; /* white background */
+  border: 1px solid #ccc; /* border around the list */
+  border-radius: 4px; /* rounded corners */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* subtle shadow for depth */
+}
+
+/* Style for each search result item */
+.search-results li {
+  padding: 8px 12px; /* padding for each item */
+  cursor: pointer; /* pointer cursor on hover */
+}
+
+/* Highlight search result item on hover */
+.search-results li:hover {
+  background-color: #f0f0f0; /* light gray background on hover */
+}
+
+
 /* Media query for responsiveness */
 @media (max-width: 768px) {
   .columns {

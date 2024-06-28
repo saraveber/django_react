@@ -2,13 +2,18 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer , PlayerSerializer, LeagueSerializer
+from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer , PlayerSerializer, LeagueSerializer , TeamSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import AvailableTerm, Player, League
+from .models import AvailableTerm, Player, League, Team
+from rest_framework.exceptions import ValidationError
+
 
 from .permissions import IsAdminUser, IsPlayerUser, IsStaffUser, IsOnlyUser ,IsAdminOrStaffUser
 
 #Terms
+#TODO: Add permissions to the views; 
+#TODO: Add another view that is secure and only allows the user to see their own terms
+#TODO: Add another view that is secure and only allows the admin/staff to see all terms
 class AvailableTermsByUser(generics.ListAPIView):
     serializer_class = AvailableTermSerializer
     permission_classes = [AllowAny]
@@ -142,3 +147,24 @@ class PlayerListView(generics.ListAPIView):
     queryset = User.objects.filter(groups__name='player')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+
+
+class TeamListCreate(generics.ListCreateAPIView):
+    serializer_class = TeamSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Team.objects.all()
+
+    def perform_create(self, serializer):
+        p1 = serializer.validated_data.get('player1')
+        p2 = serializer.validated_data.get('player2')
+        
+        if Team.objects.filter(player1=p1, player2=p2).exists() or Team.objects.filter(player1=p2, player2=p1).exists():
+            print('This team already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)

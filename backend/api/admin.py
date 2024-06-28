@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import AvailableTerm, Player, League
-
+from .models import AvailableTerm, Player, League,  Team
 
 
 
@@ -8,3 +7,4 @@ from .models import AvailableTerm, Player, League
 admin.site.register(AvailableTerm)
 admin.site.register(Player)
 admin.site.register(League) 
+admin.site.register(Team)

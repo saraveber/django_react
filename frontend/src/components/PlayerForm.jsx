@@ -60,7 +60,6 @@ const PlayerForm = () => {
           <option value="">Izberi</option>
           <option value="M">Moški</option>
           <option value="F">Ženska</option>
-          <option value="O">Ostalo</option>
         </select>
       </div>
       <div className="form-group">

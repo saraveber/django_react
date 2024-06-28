@@ -10,6 +10,6 @@ urlpatterns = [
     path('users/get-all-players/', views.PlayerListView.as_view(), name='player-list'),
     path('players/', views.PlayerListCreate.as_view(), name='player-list-create'),
     path('leagues/',views.LeagueList.as_view(), name='league-list'),
-
+    path('teams/', views.TeamListCreate.as_view(), name='team-list-create'),
 ]
 
