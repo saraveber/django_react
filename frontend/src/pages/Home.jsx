@@ -1,47 +1,46 @@
 import React, { useState, useEffect } from "react";
-import { getProfile } from '../api';
 import api from "../api";
 import "../styles/Home.css";
 
-
 function Home() {
-    const [profile, setProfile] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    
+    const [CurrUser,setCurrUser] = useState(null);
+    const [role,setRole] = useState(null);
+    const [loading,setLoading] = useState(true);
+
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const profileData = await getProfile();
-                console.log('profileData:', profileData);
-                setProfile(profileData);
-                setLoading(false);
-            } catch (error) {
-                console.error('Failed to fetch profile:', error);
-                setError('Failed to load profile.');
-                setLoading(false);
-            }
-        };
-        try{
-        fetchProfile();
-        } catch (err){
-            setError(err.maessage);
+        getProfile();
+    }, []); 
+
+    useEffect(() => {
+        if (role) {
+            setLoading(false);
         }
-    }, []); // Empty dependency array means this effect runs once on mount
+    }, [role]); 
 
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+    
+    const getProfile = async () => {
+        console.log("Getting profile...");
+        api
+        .get("/api/user/")
+        .then((res) => res.data)
+        .then((data) => {
+            setCurrUser(data);
+            setRole(data.group_names[0]);
+            
+        })
+        .catch((error) => {
+            console.error("Error fetching profile:", error);
+        });
+    };
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div>
-            {profile && (
-                <div>
-                    <h2>Welcome {profile.user.username}</h2>
-                    <p>Your acces is:  {profile.user_type}</p>
-                    
-                </div>
-            )}
+            <h1>Home</h1>
+            <p>Welcome to the home page {CurrUser.username}!</p>
+            <p>Your role is {role}! </p>
         </div>
     );
 };

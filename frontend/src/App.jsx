@@ -31,14 +31,14 @@ function App() {
           path="/" 
           element={
             <ProtectedRoute>
-              <Home/>
+                <Home/>
             </ProtectedRoute>}
         />
         <Route 
           path="/my-terms" 
           element={
             <ProtectedRoute>
-              <MyTerms/>
+                <MyTerms/>
             </ProtectedRoute>}
         />
         <Route 

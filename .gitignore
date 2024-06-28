@@ -173,7 +173,7 @@ cython_debug/
 #.idea/
 backend/api/migrations/0001_initial.py
 backend/api/migrations/0002_availableterm.py
-backend/api/migrations/0002_rename_userprofile_userprofile_user_type_and_more.py
+backend/api/migrations/0002_rename_userprofile_userprofile_role_and_more.py
 backend/api/migrations/0003_alter_availableterm_end_date_and_more.py
 backend/api/migrations/__pycache__/__init__.cpython-310.pyc
 backend/api/migrations/__pycache__/0001_initial.cpython-310.pyc

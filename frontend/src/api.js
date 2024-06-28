@@ -20,16 +20,6 @@ api.interceptors.request.use(
     }
 );
 
-// Example function to get user profile using the api instance
-export const getProfile = async () => {
-    try {
-        const response = await api.get('api/profile/');
-        console.log("I am here")
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching user profile:', error);
-        throw error;
-    }
-};
+
 
 export default api;
