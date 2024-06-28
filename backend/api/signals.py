@@ -13,7 +13,7 @@ def create_user_for_player(sender, instance, created, **kwargs):
                                         email=instance.email,
                                         first_name=instance.name,
                                         last_name=instance.surname,
-                                        password="1234"
+                                        password="Geslo1234"
                                         )
         instance.user = user
         instance.save()

@@ -137,13 +137,15 @@ check out this link https://react.dev/learn/react-developer-tools
   - **Password:** user
   - **Groups:** user
 
+### User Accounts for Players
+- Users with the 'player' group are automatically added when a player is created.
+- **Username:** NameSurname(RR) where RR are 2 random numbers
+    - **Password:** Geslo1234
 
 ### User Management
 - To add users, simply register through the application.
 - To change a user's group, use Django Admin to assign groups.
-- Users with the 'player' group are automatically added when a player is created.
 
 ## IMPORTANT 
 -  In Django Admin remove automaticly generated group 'player' before using app
-
 - I am working on fixing that 
