@@ -52,6 +52,10 @@ function Navigation() {
                       <li className="nav-item">
                         <Link to="/logout" className="nav-link">Logout</Link>
                       </li>
+                      <li className="nav-item">
+                      <Link to="/change-password" className="nav-link">aaaa</Link>
+
+                      </li>
                     </>
                 ) : (
                     <>

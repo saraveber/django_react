@@ -7,6 +7,7 @@ import MyTerms from "./pages/MyTerms"
 import Register from "./pages/Register"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
+import ChangePassword from "./pages/ChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute"
 import PlayerForm from "./components/PlayerForm";
 import TeamForm from "./components/TeamForm";
@@ -57,6 +58,7 @@ function App() {
         />
         <Route path="/login" element={<Login/>}/>
         <Route path="/logout" element={<Logout/>}/>
+        <Route path="/change-password" element={<ChangePassword/>}/>
         <Route path="/register" element={<RegisterAndLogout/>}/>
         <Route path="*" element={<NotFound/>}/>
       </Routes>

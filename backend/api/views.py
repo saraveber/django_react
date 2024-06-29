@@ -1,12 +1,11 @@
-from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, update_session_auth_hash
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer , PlayerSerializer, LeagueSerializer , TeamSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.views import APIView
 from .models import AvailableTerm, Player, League, Team
-from rest_framework.exceptions import ValidationError
-
+from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer, PlayerSerializer, LeagueSerializer, TeamSerializer
 
 from .permissions import IsAdminUser, IsPlayerUser, IsStaffUser, IsOnlyUser ,IsAdminOrStaffUser
 
@@ -168,3 +167,22 @@ class TeamListCreate(generics.ListCreateAPIView):
                 serializer.save()
             else:
                 print(serializer.errors)
+
+
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        current_password = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+
+        if not user.check_password(current_password):
+            return Response({'error': 'Current password is incorrect'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+        update_session_auth_hash(request, user)  # Important for keeping the user logged in
+
+        return Response({'success': True}, status=status.HTTP_200_OK)
