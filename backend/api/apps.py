@@ -17,6 +17,8 @@ class ApiConfig(AppConfig):
         post_migrate.connect(create_groups, sender=self)
         post_migrate.connect(load_initial_league_data, sender=self)
         post_migrate.connect(create_user, sender=self)
+        post_migrate.connect(load_initial_player_data, sender=self)
+        post_migrate.connect(load_initial_team_data, sender=self)
 
 # This function is now outside the ApiConfig class
 @receiver(post_migrate)
@@ -74,4 +76,47 @@ def load_initial_league_data(sender, **kwargs):
                 for row in reader
             ]
             League.objects.bulk_create(leagues)
+        print("Leagues created")
+
+# Function to load initial player data
+def load_initial_player_data(sender, **kwargs):
+    from .models import Player
+
+    # Check if the table is already populated
+    if not Player.objects.exists():
+        csv_file_path = os.path.join(os.path.dirname(__file__), 'initial_players.csv')
+        with open(csv_file_path, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            players = [
+                Player(
+                    name=row['name'],
+                    surname=row['surname'],
+                    email=row['email'],
+                    phone_number=row['phone_number'],
+                    gender=row['gender'],
+                    birthdate=row['birthdate']
+                )
+                for row in reader
+            ]
+            Player.objects.bulk_create(players)
+        print("Players created")
+
+def load_initial_team_data(sender, **kwargs):
+    from .models import Team, Player, League
+    
+    if not Team.objects.exists():
+        csv_file_path = os.path.join(os.path.dirname(__file__), 'initial_teams.csv')
+        with open(csv_file_path, newline='') as csvfile:
+            reader = csv.DictReader(csvfile)
+            for row in reader:
+                league = League.objects.get(id=row['league_id'])
+                player1 = Player.objects.get(id=row['player1_id'])
+                player2 = Player.objects.get(id=row['player2_id']) if row['player2_id'] else None
+                Team.objects.create(
+                    league=league,
+                    player1=player1,
+                    player2=player2,
+                    type=row['type']
+                )
+        print("Teams created")
 

@@ -95,6 +95,7 @@ To install the frontend dependencies, run the following command:
     ```bash
     npm run dev
     ```
+    
 4. Install Bootstrap
     ```bash
     npm install react-bootstrap bootstrap
