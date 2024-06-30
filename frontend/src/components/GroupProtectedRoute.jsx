@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../api";
-import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
+import { REFRESH_TOKEN, ACCESS_TOKEN, USER_KEY} from "../constants";
 import { useState, useEffect } from "react";
 
 function GroupProtectedRoute({ children, requiredGroups }) {
@@ -32,17 +32,8 @@ function GroupProtectedRoute({ children, requiredGroups }) {
     };
 
     const getProfile = async () => {
-        console.log("Getting profile...");
-        api
-        .get("/api/user/")
-        .then((res) => res.data)
-        .then((data) => {
-            setUserGroups(data.group_names);
-            
-        })
-        .catch((error) => {
-            console.error("Error fetching profile:", error);
-        });
+        const user = JSON.parse(localStorage.getItem(USER_KEY));
+        setUserGroups(user.group_names);
     };
 
     const auth = async () => {
@@ -60,17 +51,13 @@ function GroupProtectedRoute({ children, requiredGroups }) {
             await refreshToken();
         } else {
             setIsAuthorized(true);
-
             getProfile().then(() => {
-                // Assuming getProfile has already set user groups via setCurrUser or similar
-                // setUserGroups is assumed to be adjusted within getProfile or elsewhere after fetching
+                console.log("User groups:", userGroups);
             }).catch(error => {
                 console.error("Failed to fetch user profile:", error);
             });
             // find who is currently logged in
             
-
-            setUserGroups(decoded.groups || []); // Assuming the groups are stored in the token
         }
     };
 
@@ -81,11 +68,15 @@ function GroupProtectedRoute({ children, requiredGroups }) {
     if (isAuthorized === null) {
         return <div>Loading...</div>; // Or any other loading indicator
     }
+    console.log("User groups:", userGroups);
     if (!isAuthorized) {
+        console.log("NotLogged in");
         return <Navigate to="/login" />;
     } else if (!hasRequiredGroup()) {
+        console.error("Unauthorized access");
         return <Navigate to="/" />;
     } else {
+        console.log("Authorized access");
         return children;
     }
 }
