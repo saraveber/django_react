@@ -1,0 +1,11 @@
+name,surname,email,phone_number,gender,birthdate
+Player1,Surname1,player1@example.com,1234567890,M,1990-01-01
+Player2,Surname2,player2@example.com,1234567891,F,1991-02-02
+Player3,Surname3,player3@example.com,1234567892,M,1992-03-03
+Player4,Surname4,player4@example.com,1234567893,F,1993-04-04
+Player5,Surname5,player5@example.com,1234567894,M,1994-05-05
+Player6,Surname6,player6@example.com,1234567895,F,1995-06-06
+Player7,Surname7,player7@example.com,1234567896,M,1996-07-07
+Player8,Surname8,player8@example.com,1234567897,F,1997-08-08
+Player9,Surname9,player9@example.com,1234567898,M,1998-09-09
+Player10,Surname10,player10@example.com,1234567899,F,1999-10-10
