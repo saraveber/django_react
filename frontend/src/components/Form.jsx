@@ -11,7 +11,6 @@ function Form({ route, method }) {
     const [newPassword, setNewPassword] = useState(""); // New state for new password
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
     // Adjust the name based on the method
     let name;
     switch (method) {
@@ -28,18 +27,46 @@ function Form({ route, method }) {
             name = "Submit";
     }
 
+    const getProfile = async () => {
+        console.log("Getting profile...");
+        const accessToken = localStorage.getItem('ACCESS_TOKEN'); // Retrieve the access token from local storage
+        if (!accessToken) {
+            console.error("Access token not found.");
+            return;
+        }
+        api.get("/api/user/", {
+            headers: {
+                'Authorization': `Bearer ${accessToken}` // Include the token in the request headers
+            }
+        })
+        .then((res) => {
+            const data = res.data;
+            console.log(data)
+            localStorage.setItem('userProfile', JSON.stringify(data)); // Store user data
+            // Navigate or perform further actions
+        })
+        .catch((error) => {
+            console.error("Error fetching profile:", error);
+        });
+    };
+
     const handleSubmit = async (e) => {
         setLoading(true);
         e.preventDefault();
 
-        const payload = method === "changePassword" ? { current_password: password, new_password: newPassword} : { username, password };
+        const payload = method === "changePassword" ? { current_password: password, new_password: newPassword } : { username, password };
 
         try {   
             const res = await api.post(route, payload);
             if (method === "login") {
-                localStorage.setItem(ACCESS_TOKEN, res.data.access);
-                localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
-                navigate("/");
+                localStorage.setItem('ACCESS_TOKEN', res.data.access);
+                localStorage.setItem('REFRESH_TOKEN', res.data.refresh);
+                // Fetch and store user profile after successful login
+                await getProfile()
+                .then(() => {
+                navigate("/"); // Navigate to the home page after successful login ð
+                            });
+
             } else if (method === "changePassword") {
                 alert("Password changed successfully.");
                 navigate("/");

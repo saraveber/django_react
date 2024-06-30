@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate ,useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import api from "../api";
 import { REFRESH_TOKEN, ACCESS_TOKEN } from "../constants";
@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 function GroupProtectedRoute({ children, requiredGroups }) {
     const [isAuthorized, setIsAuthorized] = useState(null);
     const [userGroups, setUserGroups] = useState([]);
+    const navigate = useNavigate(); // Use the useNavigate hook
 
     useEffect(() => {
         auth().catch(() => setIsAuthorized(false));
@@ -62,6 +63,7 @@ function GroupProtectedRoute({ children, requiredGroups }) {
             setIsAuthorized(true);
 
             getProfile().then(() => {
+                console.log("User groups:", userGroups);
                 // Assuming getProfile has already set user groups via setCurrUser or similar
                 // setUserGroups is assumed to be adjusted within getProfile or elsewhere after fetching
             }).catch(error => {
@@ -84,7 +86,11 @@ function GroupProtectedRoute({ children, requiredGroups }) {
     if (!isAuthorized) {
         return <Navigate to="/login" />;
     } else if (!hasRequiredGroup()) {
-        return <Navigate to="/" />;
+        console.log("User does not have the required groups");
+        console.log("User groups:", userGroups);    
+        // navigate to previos page
+        navigate(-1);
+        
     } else {
         return children;
     }

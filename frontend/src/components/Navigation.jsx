@@ -5,7 +5,6 @@ import api from "../api";
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import "../styles/Navigation.css"
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Navigation() {
     
