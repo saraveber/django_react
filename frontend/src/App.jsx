@@ -14,7 +14,6 @@ import ChangePassword from "./pages/ChangePassword";
 import GroupProtectedRoute from "./components/GroupProtectedRoute"
 import PlayerForm from "./components/PlayerForm";
 import TeamForm from "./components/TeamForm";
-import { UserProvider } from './contexts/UserContext';
 
 function Logout(){
   localStorage.clear()
@@ -29,9 +28,7 @@ function RegisterAndLogout(){
 function App() {
   return (
     <BrowserRouter>
-        <UserProvider>
         <Navigation /> 
-        </UserProvider>
       <Routes>
         
         <Route 
