@@ -1,4 +1,7 @@
 import React from "react"
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
 
 import Navigation from './components/Navigation';
@@ -7,7 +10,8 @@ import MyTerms from "./pages/MyTerms"
 import Register from "./pages/Register"
 import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
-import ProtectedRoute from "./components/ProtectedRoute"
+import ChangePassword from "./pages/ChangePassword";
+import GroupProtectedRoute from "./components/GroupProtectedRoute"
 import PlayerForm from "./components/PlayerForm";
 import TeamForm from "./components/TeamForm";
 
@@ -30,31 +34,41 @@ function App() {
         <Route 
           path="/" 
           element={
-            <ProtectedRoute>
+            <GroupProtectedRoute requiredGroups={['admin', 'user', 'staff','player']}>
                 <Home/>
-            </ProtectedRoute>}
+            </GroupProtectedRoute>}
         />
         <Route 
           path="/my-terms" 
           element={
-            <ProtectedRoute>
+            <GroupProtectedRoute requiredGroups={['admin', 'staff','player']}>
                 <MyTerms/>
-            </ProtectedRoute>}
+              </GroupProtectedRoute>}
         />
         <Route 
           path="/players" 
           element={
-            <ProtectedRoute>
+            <GroupProtectedRoute requiredGroups={['admin', 'staff']}>
               <PlayerForm/>
-            </ProtectedRoute>}
+            </GroupProtectedRoute>}
         />
         <Route 
           path="/player-team" 
           element={
-            <ProtectedRoute>
+            <GroupProtectedRoute requiredGroups={['admin', 'staff']}>
               <TeamForm/>
-            </ProtectedRoute>}
+            </GroupProtectedRoute>}
         />
+
+        <Route 
+          path="/change-password" 
+          element={
+            <GroupProtectedRoute requiredGroups={['admin', 'staff']}>
+              <ChangePassword/>
+            </GroupProtectedRoute>
+            }
+          />
+
         <Route path="/login" element={<Login/>}/>
         <Route path="/logout" element={<Logout/>}/>
         <Route path="/register" element={<RegisterAndLogout/>}/>

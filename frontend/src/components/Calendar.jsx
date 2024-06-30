@@ -139,7 +139,6 @@ const Calendar = ({ CurrUserId ,role}) => {
   // Function to create a term
   const createTerm = (start_date, end_date) => {
     console.log("Role in createTerm:", role);
-    console.log(role === "admin" || role === "staff")
     if (role === "admin" || role === "staff") {
       api
         .post("api/terms/by-user/", { user: CurrUserId, start_date, end_date })
@@ -175,7 +174,6 @@ const Calendar = ({ CurrUserId ,role}) => {
 
             // After successful deletion, create the new term
             selectedTimestamps.map((date) => {
-              console.log(date);
               createTerm(date, date);
             });
 
@@ -192,7 +190,6 @@ const Calendar = ({ CurrUserId ,role}) => {
 
             // After successful deletion, create the new term
             selectedTimestamps.map((date) => {
-              console.log(date);
               createTerm(date, date);
             });
 
