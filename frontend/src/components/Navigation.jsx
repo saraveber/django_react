@@ -10,7 +10,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 function Navigation() {
     
     const { currUser, role, loading } = useUser();
-    console.log(currUser, role, loading)
 
     return (
         <Navbar key='md' expand='md' className="bg-primary mb-3" variant="dark">
