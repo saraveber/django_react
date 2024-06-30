@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { useUser } from '../context/UserContext';
 import { USER_KEY} from "../constants";
 import { LinkContainer } from 'react-router-bootstrap';
 import "../styles/Navigation.css"
@@ -7,21 +8,20 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 function Navigation() {
-  const [role, setRole] = useState(null);
-  const [currUser, setCurrUser] = useState({});
-
-
-
+  const { currUser, role, authorised } = useUser();
+    
   useEffect(() => {
-      getProfile();
-  }, []);
+    // This effect will re-run whenever currUser, role, or authorised changes.
+    console.log('Navigation should update based on:', { currUser, role, authorised });
+    // Here you can add logic to adjust navigation items based on the current user's state
+  }, [currUser, role, authorised]); // Dependencies array
 
 
-  const getProfile = async () => {
-      const user = JSON.parse(localStorage.getItem(USER_KEY));
-      setCurrUser(user);
-      setRole(user.group_names[0]);
-  };
+
+  
+
+
+
 
     return (
         <Navbar key='md' expand='md' className="bg-primary mb-3" variant="dark">
