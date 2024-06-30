@@ -95,7 +95,14 @@ To install the frontend dependencies, run the following command:
     ```bash
     npm run dev
     ```
-
+4. Install Bootstrap
+    ```bash
+    npm install react-bootstrap bootstrap
+    npm install react-router-bootstrap
+    npm install bootstrap-icons
+    ```
+    https://react-bootstrap.netlify.app/docs/getting-started/introduction/
+    
 
 check out this link https://react.dev/learn/react-developer-tools
 
