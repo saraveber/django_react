@@ -60,7 +60,7 @@ function GroupProtectedRoute({ children, requiredGroups }) {
         if (tokenExpiration < now) {
             await refreshToken();
         } else {
-            setIsAuthorized(true);
+            setIsAuthorized(true)
 
             getProfile().then(() => {
                 console.log("User groups:", userGroups);
@@ -89,7 +89,6 @@ function GroupProtectedRoute({ children, requiredGroups }) {
         console.log("User does not have the required groups");
         console.log("User groups:", userGroups);    
         // navigate to previos page
-        navigate(-1);
         
     } else {
         return children;
