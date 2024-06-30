@@ -16,9 +16,6 @@ function MyTerms() {
     useEffect(() => {
         getProfile();
         setLoading(false);
-        console.log("Role:", role);
-        console.log("CurrUser:", CurrUser);
-        console.log("CurrUserId:", CurrUserId);
     }, []); // This useEffect runs once on component mount to get the profile
 
     useEffect(() => {
