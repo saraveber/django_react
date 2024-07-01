@@ -18,35 +18,34 @@ const Results = () => {
         setLoading(true);
         try {
             // Fetch leagues and teams data concurrently
-            const [leaguesResponse, teamsResponse, playersResponse] = await Promise.all([
+            const [leaguesResponse, teamsResponse] = await Promise.all([
                 api.get('/api/leagues/'),
                 api.get('/api/teams/'),
-                api.get('/api/players/'),
             ]);
 
             // Get data from response
             const leaguesData = leaguesResponse.data;
             const teamsData = teamsResponse.data;
-            const playersData = playersResponse.data;
-
-            // Create a player lookup map
-            const playerLookup = playersData.reduce((acc, player) => {
-                acc[player.id] = `${player.name} ${player.surname}`;
-                return acc;
-            }, {});
 
             const combinedData = leaguesData.map(league => {
                 // Filter and map teams for the current league
-                const leagueTeams = teamsData
-                    .filter(team => team.league === league.id)
-                    .map(team => ({
-                        ...team,
-                        player1_name: playerLookup[team.player1] || 'N/A',
-                        player2_name: team.player2 ? playerLookup[team.player2] : 'N/A'
-                    }));
+                const leagueTeams = teamsData.filter(team => team.league === league.id);
+
+                // Sort teams by points and wins to determine the place
+                leagueTeams.sort((a, b) => {
+                    if (a.points === b.points) {
+                        return b.wins - a.wins;
+                    }
+                    return b.points - a.points;
+                });
+
+                // Assign place to each team
+                leagueTeams.forEach((team, index) => {
+                    team.place = index + 1;
+                });
 
                 // Create matches (pairs of teams)
-                const matches = generateRandomMatches(leagueTeams, playersData);
+                const matches = generateRandomMatches(leagueTeams);
 
                 return {
                     ...league,
@@ -66,7 +65,7 @@ const Results = () => {
     };
 
     // Function to generate random matches
-    const generateRandomMatches = (teams, playersData) => {
+    const generateRandomMatches = (teams) => {
         const matches = [];
         const usedTeams = new Set(); // To track used teams
 
@@ -76,14 +75,8 @@ const Results = () => {
             const randomTeam2 = getRandomTeam(teams, usedTeams);
 
             matches.push({
-                team1: {
-                    ...randomTeam1,
-                    players: getTeamPlayers(randomTeam1, playersData)
-                },
-                team2: {
-                    ...randomTeam2,
-                    players: getTeamPlayers(randomTeam2, playersData)
-                }
+                team1: randomTeam1,
+                team2: randomTeam2
             });
         };
 
@@ -101,24 +94,6 @@ const Results = () => {
         }
 
         return randomTeam;
-    };
-
-    // Function to get players' names from team
-    const getTeamPlayers = (team, playersData) => {
-        const players = [];
-        if (team.player1) {
-            const player1 = playersData.find(player => player.id === team.player1);
-            if (player1) {
-                players.push(`${player1.name} ${player1.surname}`);
-            }
-        }
-        if (team.player2) {
-            const player2 = playersData.find(player => player.id === team.player2);
-            if (player2) {
-                players.push(`${player2.name} ${player2.surname}`);
-            }
-        }
-        return players.length > 0 ? players.join(' & ') : 'N/A';
     };
 
     const handleLeagueClick = (league) => {
@@ -167,7 +142,7 @@ const Results = () => {
                                     <tr>
                                         <th>Place</th>
                                         <th>Player 1</th>
-                                        <th>Player 2</th>
+                                        {selectedLeague.type !== 'S' && <th>Player 2</th>}
                                         <th>Matches Played</th>
                                         <th>Wins</th>
                                         <th>Losses</th>
@@ -178,8 +153,10 @@ const Results = () => {
                                     {selectedLeague.teams.map(team => (
                                         <tr key={team.id}>
                                             <td>{team.place}</td>
-                                            <td>{team.player1_name}</td>
-                                            <td>{team.player2_name ? team.player2_name : '-'}</td>
+                                            <td>{team.player1_obj ? `${team.player1_obj.name} ${team.player1_obj.surname}` : 'N/A'}</td>
+                                            {selectedLeague.type !== 'S' && (
+                                                <td>{team.player2_obj ? `${team.player2_obj.name} ${team.player2_obj.surname}` : '-'}</td>
+                                            )}
                                             <td>{team.number_of_played_matches}</td>
                                             <td>{team.wins}</td>
                                             <td>{team.losses}</td>
@@ -203,8 +180,14 @@ const Results = () => {
                                             {selectedLeague.matches.map((match, index) => (
                                                 <tr key={index}>
                                                     <td>{index + 1}</td>
-                                                    <td>{match.team1.player1_name} {match.team1.player2_name ? `& ${match.team1.player2_name}` : ''}</td>
-                                                    <td>{match.team2 ? `${match.team2.player1_name} ${match.team2.player2_name ? `& ${match.team2.player2_name}` : ''}` : 'N/A'}</td>
+                                                    <td>
+                                                        {match.team1.player1_obj ? `${match.team1.player1_obj.name} ${match.team1.player1_obj.surname}` : 'N/A'}
+                                                        {selectedLeague.type !== 'S' && match.team1.player2_obj ? ` & ${match.team1.player2_obj.name} ${match.team1.player2_obj.surname}` : ''}
+                                                    </td>
+                                                    <td>
+                                                        {match.team2.player1_obj ? `${match.team2.player1_obj.name} ${match.team2.player1_obj.surname}` : 'N/A'}
+                                                        {selectedLeague.type !== 'S' && match.team2.player2_obj ? ` & ${match.team2.player2_obj.name} ${match.team2.player2_obj.surname}` : ''}
+                                                    </td>
                                                 </tr>
                                             ))}
                                         </tbody>

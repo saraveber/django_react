@@ -35,6 +35,7 @@ class AvailableTermForUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AvailableTerm
         fields = ["id", "user", "start_date", "end_date", "created_at"]
+
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
@@ -46,6 +47,8 @@ class LeagueSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "gender", "type"]
 
 class TeamSerializer(serializers.ModelSerializer):
+    player1_obj = PlayerSerializer(source='player1', read_only=True)
+    player2_obj = PlayerSerializer(source='player2', allow_null=True, read_only=True)
     class Meta:
         model = Team
-        fields = ['id', 'league', 'player1', 'player2', 'number_of_played_matches', 'wins', 'losses', 'points', 'is_in_playoff', 'playoff_place', 'playoff_wins', 'type']
+        fields = ['id', 'league', 'player1', 'player2', 'number_of_played_matches', 'wins', 'losses', 'points', 'is_in_playoff', 'playoff_place', 'playoff_wins', 'type', 'player1_obj', 'player2_obj']
