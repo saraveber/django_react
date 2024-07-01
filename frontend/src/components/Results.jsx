@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api'; // Assuming you have an api module for making HTTP requests
-import { Button, Container, Row, Col, Table, ListGroup } from 'react-bootstrap';
+import { Button, Container, Row, Col, Table, ListGroup, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -9,6 +9,11 @@ const Results = () => {
     const [loading, setLoading] = useState(false);
     const [selectedLeague, setSelectedLeague] = useState(null);
     const [newRound, setNewRound] = useState(false);
+    const [newRoundData, setNewRoundData] = useState({
+        endDate: '',
+        playoffRound: null,
+        numberOfPlayers: null,
+    });
 
     useEffect(() => {
         getData();
@@ -17,21 +22,17 @@ const Results = () => {
     const getData = async () => {
         setLoading(true);
         try {
-            // Fetch leagues and teams data concurrently
             const [leaguesResponse, teamsResponse] = await Promise.all([
                 api.get('/api/leagues/'),
                 api.get('/api/teams/'),
             ]);
 
-            // Get data from response
             const leaguesData = leaguesResponse.data;
             const teamsData = teamsResponse.data;
 
             const combinedData = leaguesData.map(league => {
-                // Filter and map teams for the current league
                 const leagueTeams = teamsData.filter(team => team.league === league.id);
 
-                // Sort teams by points and wins to determine the place
                 leagueTeams.sort((a, b) => {
                     if (a.points === b.points) {
                         return b.wins - a.wins;
@@ -39,12 +40,10 @@ const Results = () => {
                     return b.points - a.points;
                 });
 
-                // Assign place to each team
                 leagueTeams.forEach((team, index) => {
                     team.place = index + 1;
                 });
 
-                // Create matches (pairs of teams)
                 const matches = generateRandomMatches(leagueTeams);
 
                 return {
@@ -55,21 +54,18 @@ const Results = () => {
             });
 
             setLeagues(combinedData);
-            setSelectedLeague(combinedData.length > 0 ? combinedData[0] : null); // Select the first league by default
+            setSelectedLeague(combinedData.length > 0 ? combinedData[0] : null);
         } catch (error) {
             console.error('Error fetching data:', error);
-            // Handle error state if needed
         } finally {
             setLoading(false);
         }
     };
 
-    // Function to generate random matches
     const generateRandomMatches = (teams) => {
         const matches = [];
-        const usedTeams = new Set(); // To track used teams
+        const usedTeams = new Set();
 
-        // Iterate through teams and pick random teams
         while (usedTeams.size < teams.length - 1) {
             const randomTeam1 = getRandomTeam(teams, usedTeams);
             const randomTeam2 = getRandomTeam(teams, usedTeams);
@@ -78,19 +74,18 @@ const Results = () => {
                 team1: randomTeam1,
                 team2: randomTeam2
             });
-        };
+        }
 
         return matches;
     };
 
-    // Function to get random team not already used
     const getRandomTeam = (teams, usedTeams) => {
         const availableTeams = teams.filter(team => !usedTeams.has(team.id));
         const randomIndex = Math.floor(Math.random() * availableTeams.length);
         const randomTeam = availableTeams[randomIndex];
 
         if (randomTeam) {
-            usedTeams.add(randomTeam.id); // Mark team as used
+            usedTeams.add(randomTeam.id);
         }
 
         return randomTeam;
@@ -101,7 +96,43 @@ const Results = () => {
     };
 
     const handleAddNewRound = async () => {
+        if (!newRoundData.endDate) {
+            alert("Please select an end date for the new round.");
+            return;
+        }
+
         setNewRound(true);
+
+        api.get("api/rounds/")
+            .then((res) => res.data)
+            .then((data) => {
+                const max_rounds = data.length;
+
+                const newRound = {
+                    league: selectedLeague.id,
+                    round_number: max_rounds + 1,
+                    end_date: newRoundData.endDate,
+                    playoff_round: newRoundData.playoffRound,
+                    number_of_players: newRoundData.numberOfPlayers,
+                };
+
+                try {
+                    setLoading(true);
+                    api.post("api/rounds/", newRound)
+                        .then((res) => {
+                            if (res.status === 201) console.log("Round saved!");
+                            else alert("Failed to make round.");
+                        })
+                        .catch((err) => alert(err));
+                } finally {
+                    setLoading(false);
+                }
+            })
+            .catch((err) => alert(err));
+    };
+
+    const handleDateChange = (event) => {
+        setNewRoundData({ ...newRoundData, endDate: event.target.value });
     };
 
     return (
@@ -112,6 +143,15 @@ const Results = () => {
                 </Col>
             </Row>
             <Row className="justify-content-md-center mt-3">
+                <Col md="auto">
+                    Choose end date for next round:
+                    <Form.Control 
+                        type="date" 
+                        value={newRoundData.endDate} 
+                        onChange={handleDateChange} 
+                        placeholder="Select end date" 
+                    />
+                </Col>
                 <Col md="auto">
                     <Button variant="primary" onClick={handleAddNewRound} disabled={loading}>
                         {loading ? 'Loading...' : 'Add New Round'}

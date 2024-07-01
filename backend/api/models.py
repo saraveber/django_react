@@ -67,3 +67,13 @@ class Team(models.Model):
 
     def __str__(self):
         return f"Team {self.id} - {self.league.name} - {self.player1} and {self.player2}"
+
+class Round(models.Model):
+    round_number = models.IntegerField()
+    start_date = models.DateField(auto_now_add=True)
+    end_date = models.DateField(null=True)
+    playoff_round = models.IntegerField(null=True, blank=True)
+    number_of_players = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Round {self.round_number} - Playoff {self.playoff_round}"

@@ -11,5 +11,6 @@ urlpatterns = [
     path('players/', views.PlayerListCreate.as_view(), name='player-list-create'),
     path('leagues/',views.LeagueList.as_view(), name='league-list'),
     path('teams/', views.TeamListCreate.as_view(), name='team-list-create'),
+    path('rounds/', views.RoundsListCreate.as_view(), name='team-list-create'),
 ]
 

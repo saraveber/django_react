@@ -4,8 +4,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
-from .models import AvailableTerm, Player, League, Team
-from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer, PlayerSerializer, LeagueSerializer, TeamSerializer
+from .models import AvailableTerm, Player, League, Team, Round
+from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer, PlayerSerializer, LeagueSerializer, TeamSerializer, RoundSerializer
 
 from .permissions import IsAdminUser, IsPlayerUser, IsStaffUser, IsOnlyUser ,IsAdminOrStaffUser
 
@@ -186,3 +186,21 @@ class ChangePasswordView(APIView):
         update_session_auth_hash(request, user)  # Important for keeping the user logged in
 
         return Response({'success': True}, status=status.HTTP_200_OK)
+
+class RoundsListCreate(generics.ListCreateAPIView):
+    serializer_class = RoundSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+    def get_queryset(self):
+        return Round.objects.all()
+
+    def perform_create(self, serializer):
+        r_num = serializer.validated_data.get('round_number')
+        
+        if Round.objects.filter(round_number=r_num).exists():
+            print('This round already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)

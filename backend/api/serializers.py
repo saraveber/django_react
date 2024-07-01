@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import AvailableTerm, Player, League, Team
+from .models import AvailableTerm, Player, League, Team, Round
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -52,3 +52,8 @@ class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
         fields = ['id', 'league', 'player1', 'player2', 'number_of_played_matches', 'wins', 'losses', 'points', 'is_in_playoff', 'playoff_place', 'playoff_wins', 'type', 'player1_obj', 'player2_obj']
+
+class RoundSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Round
+        fields = ['id', 'round_number', 'start_date', 'end_date', 'playoff_round', 'number_of_players']
