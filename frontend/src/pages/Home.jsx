@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from "react";
-import {  USER_KEY} from "../constants";
-import api from "../api";
+import { useUser } from '../context/UserContext';
 import "../styles/Home.css";
 
 function Home() {
-    const [role, setRole] = useState(null);
-    const [currUser, setCurrUser] = useState({});
-
-
-
+    const { currUser, role, authorised } = useUser();
+    
     useEffect(() => {
-        getProfile();
-    }, []);
-
-
-    const getProfile = async () => {
-        const user = JSON.parse(localStorage.getItem(USER_KEY));
-        setCurrUser(user);
-        setRole(user.group_names[0]);
-    };
+      // This effect will re-run whenever currUser, role, or authorised changes.
+      console.log('Navigation should update based on:', { currUser, role, authorised });
+      // Here you can add logic to adjust navigation items based on the current user's state
+    }, [currUser, role, authorised]); // Dependencies array
+  
+  
+  
+    
 
     return (
         <div>
             <h1>Home</h1>
             <p>Welcome to the home page {currUser.username} !</p>
-            <p>Your role is {role} ! </p>
+            <p>Your role is {currUser.id} ! </p>
         </div>
     );
 };

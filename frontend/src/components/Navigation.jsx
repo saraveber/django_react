@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { useUser } from '../context/UserContext';
-import { USER_KEY} from "../constants";
 import { LinkContainer } from 'react-router-bootstrap';
 import "../styles/Navigation.css"
 import 'bootstrap/dist/css/bootstrap.min.css';

@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import Calendar from '../components/Calendar';
+import CalendarReact from '../components/CalendarReact';
+
 import UserSelectionDropDown from '../components/UserSelectionDropDown';
 //import { useProfile } from "../contexts/ProfileContext";
 
 function MyTerms() {
+    
     const [users, setUsers] = useState([]); 
     const [CurrUserId, setCurrUserId] = useState(null);
     const [selectedUserId, setSelectedUserId] = useState(null); 
@@ -93,11 +96,21 @@ function MyTerms() {
                     handleUserChange={handleUserChange} 
                 />
                 {selectedUserId && ( 
-                <Calendar 
+                <CalendarReact
                     CurrUserId={selectedUserId} 
                     role={role} 
                 />
                 )}
+                
+                {selectedUserId && ( 
+                //<Calendar 
+                 //   CurrUserId={selectedUserId} 
+                   // role={role} 
+                ///>
+                <div></div>
+                )}
+
+                
             </div>
         
         );
