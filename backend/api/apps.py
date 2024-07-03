@@ -58,7 +58,7 @@ def create_user(sender, **kwargs):
             print(f"User {user.username} created and groups assigned.")
 
 
-
+@receiver(post_migrate)
 def load_initial_league_data(sender, **kwargs):
     from .models import League
     
@@ -78,9 +78,12 @@ def load_initial_league_data(sender, **kwargs):
             League.objects.bulk_create(leagues)
         print("Leagues created")
 
-# Function to load initial player data
+
+
+@receiver(post_migrate)
 def load_initial_player_data(sender, **kwargs):
     from .models import Player
+    from .signals import create_user_for_player  # Ensure this import is correct
 
     # Check if the table is already populated
     if not Player.objects.exists():
@@ -98,9 +101,18 @@ def load_initial_player_data(sender, **kwargs):
                 )
                 for row in reader
             ]
+            # Use bulk_create to insert all players at once
             Player.objects.bulk_create(players)
-        print("Players created")
+            print("Players created")
 
+            # After bulk creating players, manually create a user for each player
+            # This is necessary because bulk_create does not trigger post_save signals
+            for player in players:
+                # Assuming create_user_for_player can be called directly with the correct parameters
+                # You might need to adjust this call based on the actual implementation of create_user_for_player
+                create_user_for_player(sender=None, instance=player, created=True)
+
+@receiver(post_migrate)
 def load_initial_team_data(sender, **kwargs):
     from .models import Team, Player, League
     
