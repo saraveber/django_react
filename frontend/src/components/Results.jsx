@@ -8,11 +8,9 @@ const Results = () => {
     const [leagues, setLeagues] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedLeague, setSelectedLeague] = useState(null);
-    const [newRound, setNewRound] = useState(false);
+    const [rounds, setRounds] = useState(0);
     const [newRoundData, setNewRoundData] = useState({
         endDate: '',
-        playoffRound: null,
-        numberOfPlayers: null,
     });
 
     useEffect(() => {
@@ -22,13 +20,17 @@ const Results = () => {
     const getData = async () => {
         setLoading(true);
         try {
-            const [leaguesResponse, teamsResponse] = await Promise.all([
+            const [leaguesResponse, teamsResponse, roundsResponse, matchesResponse] = await Promise.all([
                 api.get('/api/leagues/'),
                 api.get('/api/teams/'),
+                api.get('/api/rounds/'),
+                api.get('/api/matches/'),
             ]);
 
             const leaguesData = leaguesResponse.data;
             const teamsData = teamsResponse.data;
+            const roundsData = roundsResponse.data;
+            const matchesData = matchesResponse.data;
 
             const combinedData = leaguesData.map(league => {
                 const leagueTeams = teamsData.filter(team => team.league === league.id);
@@ -44,17 +46,44 @@ const Results = () => {
                     team.place = index + 1;
                 });
 
-                const matches = generateRandomMatches(leagueTeams);
+                const leagueRounds = roundsData;
+                const leagueMatches = matchesData.filter(match => match.league === league.id);
+
+                const roundsWithMatches = leagueRounds.map(round => {
+                    const matchesForRound = leagueMatches
+                        .filter(match => match.round_number === round.round_number)
+                        .map(match => ({
+                            ...match,
+                            team_host: {
+                                ...match.team_host,
+                                player1_obj: teamsData.find(team => team.id === match.team_host)?.player1_obj || null,
+                                player2_obj: teamsData.find(team => team.id === match.team_host)?.player2_obj || null,
+                            },
+                            team_guest: {
+                                ...match.team_guest,
+                                player1_obj: teamsData.find(team => team.id === match.team_guest)?.player1_obj || null,
+                                player2_obj: teamsData.find(team => team.id === match.team_guest)?.player2_obj || null,
+                            },
+                        }));
+                    
+                    return {
+                        ...round,
+                        matches: matchesForRound,
+                    };
+                });
 
                 return {
                     ...league,
                     teams: leagueTeams,
-                    matches: matches
+                    rounds: roundsWithMatches,
                 };
             });
 
             setLeagues(combinedData);
             setSelectedLeague(combinedData.length > 0 ? combinedData[0] : null);
+
+            const maxRounds = Math.max(...combinedData.map(league => league.rounds.length));
+            setRounds(maxRounds);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -62,7 +91,8 @@ const Results = () => {
         }
     };
 
-    const generateRandomMatches = (teams) => {
+
+    const generateRandomMatches = async (leagueId, roundNumber, teams) => {
         const matches = [];
         const usedTeams = new Set();
 
@@ -70,10 +100,19 @@ const Results = () => {
             const randomTeam1 = getRandomTeam(teams, usedTeams);
             const randomTeam2 = getRandomTeam(teams, usedTeams);
 
-            matches.push({
-                team1: randomTeam1,
-                team2: randomTeam2
-            });
+            const match = {
+                league: leagueId,
+                round_number: roundNumber,
+                team_host: randomTeam1.id,
+                team_guest: randomTeam2.id,
+            };
+
+            try {
+                const response = await api.post('/api/matches/', match);
+                matches.push(response.data);
+            } catch (error) {
+                console.error('Error saving match:', error.response.data);
+            }
         }
 
         return matches;
@@ -101,34 +140,35 @@ const Results = () => {
             return;
         }
 
-        setNewRound(true);
+        setLoading(true);
+        try {
+            const newRounds = [];
 
-        api.get("api/rounds/")
-            .then((res) => res.data)
-            .then((data) => {
-                const max_rounds = data.length;
-
+            for (let i = 0; i < 2; i++) {
+                const roundNumber = rounds + i + 1;
                 const newRound = {
-                    league: selectedLeague.id,
-                    round_number: max_rounds + 1,
+                    round_number: roundNumber,
+                    start_date: new Date(),
                     end_date: newRoundData.endDate,
-                    playoff_round: newRoundData.playoffRound,
-                    number_of_players: newRoundData.numberOfPlayers,
                 };
 
-                try {
-                    setLoading(true);
-                    api.post("api/rounds/", newRound)
-                        .then((res) => {
-                            if (res.status === 201) console.log("Round saved!");
-                            else alert("Failed to make round.");
-                        })
-                        .catch((err) => alert(err));
-                } finally {
-                    setLoading(false);
+                await api.post('/api/rounds/', newRound);
+                newRounds.push(newRound);
+            }
+
+            for (const league of leagues) {
+                for (const round of newRounds) {
+                    await generateRandomMatches(league.id, round.round_number, league.teams);
                 }
-            })
-            .catch((err) => alert(err));
+            }
+
+            setRounds(rounds + 2);
+            getData();
+        } catch (error) {
+            console.error('Error generating rounds:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleDateChange = (event) => {
@@ -205,33 +245,38 @@ const Results = () => {
                                     ))}
                                 </tbody>
                             </Table>
-                            {newRound && selectedLeague.matches && selectedLeague.matches.length > 0 && (
+                            {selectedLeague.rounds && selectedLeague.rounds.length > 0 && (
                                 <>
                                     <h3>New Matches</h3>
-                                    <Table striped bordered hover>
-                                        <thead>
-                                            <tr>
-                                                <th>Match</th>
-                                                <th>Team 1</th>
-                                                <th>Team 2</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {selectedLeague.matches.map((match, index) => (
-                                                <tr key={index}>
-                                                    <td>{index + 1}</td>
-                                                    <td>
-                                                        {match.team1.player1_obj ? `${match.team1.player1_obj.name} ${match.team1.player1_obj.surname}` : 'N/A'}
-                                                        {selectedLeague.type !== 'S' && match.team1.player2_obj ? ` & ${match.team1.player2_obj.name} ${match.team1.player2_obj.surname}` : ''}
-                                                    </td>
-                                                    <td>
-                                                        {match.team2.player1_obj ? `${match.team2.player1_obj.name} ${match.team2.player1_obj.surname}` : 'N/A'}
-                                                        {selectedLeague.type !== 'S' && match.team2.player2_obj ? ` & ${match.team2.player2_obj.name} ${match.team2.player2_obj.surname}` : ''}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </Table>
+                                    {selectedLeague.rounds.map(round => (
+                                        <div key={round.round_number}>
+                                            <h4>Round {round.round_number}</h4>
+                                            <Table striped bordered hover>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Match</th>
+                                                        <th>Team 1</th>
+                                                        <th>Team 2</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {round.matches.map((match, index) => (
+                                                        <tr key={index}>
+                                                            <td>{index + 1}</td>
+                                                            <td>
+                                                                {match.team_host.player1_obj ? `${match.team_host.player1_obj.name} ${match.team_host.player1_obj.surname}` : 'N/A'}
+                                                                {selectedLeague.type !== 'S' && match.team_host.player2_obj ? ` & ${match.team_host.player2_obj.name} ${match.team_host.player2_obj.surname}` : ''}
+                                                            </td>
+                                                            <td>
+                                                                {match.team_guest.player1_obj ? `${match.team_guest.player1_obj.name} ${match.team_guest.player1_obj.surname}` : 'N/A'}
+                                                                {selectedLeague.type !== 'S' && match.team_guest.player2_obj ? ` & ${match.team_guest.player2_obj.name} ${match.team_guest.player2_obj.surname}` : ''}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    ))}
                                 </>
                             )}
                         </div>
