@@ -56,7 +56,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class RoundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Round
-        fields = ['round_number', 'start_date', 'end_date']
+        fields = ['round_number', 'start_date', 'end_date', 'is_active']
 
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
