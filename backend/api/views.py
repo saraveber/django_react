@@ -4,8 +4,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
-from .models import AvailableTerm, Player, League, Team
-from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer, PlayerSerializer, LeagueSerializer, TeamSerializer
+from .models import AvailableTerm, Player, League, Team, Round, Match
+from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer, PlayerSerializer, LeagueSerializer, TeamSerializer, RoundSerializer, MatchSerializer
 
 from .permissions import IsAdminUser, IsPlayerUser, IsStaffUser, IsOnlyUser ,IsAdminOrStaffUser
 
@@ -186,3 +186,44 @@ class ChangePasswordView(APIView):
         update_session_auth_hash(request, user)  # Important for keeping the user logged in
 
         return Response({'success': True}, status=status.HTTP_200_OK)
+
+class RoundsListCreate(generics.ListCreateAPIView):
+    serializer_class = RoundSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+    def get_queryset(self):
+        return Round.objects.all()
+
+    def perform_create(self, serializer):
+        r_num = serializer.validated_data.get('round_number')
+        
+        if Round.objects.filter(round_number=r_num).exists():
+            print('This round already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
+
+class MatchListCreate(generics.ListCreateAPIView):
+    serializer_class = MatchSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+    def get_queryset(self):
+        queryset = Match.objects.all()
+        league_id  = self.request.query_params.get('league_id ', None)
+        if league_id:
+            queryset = queryset.filter(league_id =league_id)
+        return queryset
+
+    def perform_create(self, serializer):
+        host = serializer.validated_data.get('team_host')
+        guest = serializer.validated_data.get('team_guest')
+        
+        if Match.objects.filter(team_guest=guest,team_host=host).exists() or Match.objects.filter(team_guest=host,team_host=guest).exists():
+            print('This match already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
