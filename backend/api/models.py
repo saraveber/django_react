@@ -70,8 +70,9 @@ class Team(models.Model):
 
 class Round(models.Model):
     round_number = models.IntegerField(primary_key=True)
-    start_date = models.DateField(auto_now_add=True)
+    start_date = models.DateField(null=True)
     end_date = models.DateField(null=True)
+    is_active = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Round {self.round_number}"

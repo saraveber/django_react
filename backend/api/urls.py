@@ -12,6 +12,7 @@ urlpatterns = [
     path('leagues/',views.LeagueList.as_view(), name='league-list'),
     path('teams/', views.TeamListCreate.as_view(), name='team-list-create'),
     path('rounds/', views.RoundsListCreate.as_view(), name='round-list-create'),
+    path('rounds/<int:pk>/', views.RoundUpdateAPIView.as_view(), name='round-update'),
     path('matches/', views.MatchListCreate.as_view(), name='match-list-create'),
 ]
 

@@ -8,7 +8,8 @@ const Results = () => {
     const [leagues, setLeagues] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedLeague, setSelectedLeague] = useState(null);
-    const [rounds, setRounds] = useState(0);
+    const [totalRounds, setTotalRounds] = useState(8); // Total number of rounds to generate
+    const [displayedRounds, setDisplayedRounds] = useState(0); // Number of rounds to display initially
     const [newRoundData, setNewRoundData] = useState({
         endDate: '',
     });
@@ -31,6 +32,9 @@ const Results = () => {
             const teamsData = teamsResponse.data;
             const roundsData = roundsResponse.data;
             const matchesData = matchesResponse.data;
+
+            const activeRoundsCount = roundsData.filter(round => round.is_active).length;
+            setDisplayedRounds(activeRoundsCount)
 
             const combinedData = leaguesData.map(league => {
                 const leagueTeams = teamsData.filter(team => team.league === league.id);
@@ -81,9 +85,6 @@ const Results = () => {
 
             setLeagues(combinedData);
             setSelectedLeague(combinedData.length > 0 ? combinedData[0] : null);
-
-            const maxRounds = Math.max(...combinedData.map(league => league.rounds.length));
-            setRounds(maxRounds);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -91,84 +92,107 @@ const Results = () => {
         }
     };
 
-
-    const generateRandomMatches = async (leagueId, roundNumber, teams) => {
+    const generateRoundRobinMatches = async (leagueId, teams) => {
         const matches = [];
-        const usedTeams = new Set();
-
-        while (usedTeams.size < teams.length - 1) {
-            const randomTeam1 = getRandomTeam(teams, usedTeams);
-            const randomTeam2 = getRandomTeam(teams, usedTeams);
-
-            const match = {
-                league: leagueId,
-                round_number: roundNumber,
-                team_host: randomTeam1.id,
-                team_guest: randomTeam2.id,
-            };
-
-            try {
-                const response = await api.post('/api/matches/', match);
-                matches.push(response.data);
-            } catch (error) {
-                console.error('Error saving match:', error.response.data);
-            }
+        const teamCount = teams.length;
+    
+        // If odd number of teams, add a dummy team for bye
+        const isOdd = teamCount % 2 !== 0;
+        if (isOdd) {
+            teams.push({ id: -1, name: 'Bye' }); // -1 denotes a bye week
         }
-
+    
+        const totalRounds = teams.length - 1; // Total rounds for round-robin
+        const half = teams.length / 2;
+    
+        for (let roundNumber = 1; roundNumber <= totalRounds; roundNumber++) {
+            const roundMatches = [];
+    
+            for (let i = 0; i < half; i++) {
+                const team1 = teams[i];
+                const team2 = teams[teams.length - 1 - i];
+    
+                if (team1.id !== -1 && team2.id !== -1) {
+                    const match = {
+                        league: leagueId,
+                        round_number: roundNumber,
+                        team_host: team1.id,
+                        team_guest: team2.id,
+                    };
+    
+                    try {
+                        const response = await api.post('/api/matches/', match);
+                        roundMatches.push(response.data);
+                    } catch (error) {
+                        console.error('Error saving match:', error.response.data);
+                    }
+                }
+            }
+    
+            matches.push(...roundMatches);
+    
+            // Rotate teams, keep the first team in place
+            teams.splice(1, 0, teams.pop());
+        }
+    
         return matches;
     };
-
-    const getRandomTeam = (teams, usedTeams) => {
-        const availableTeams = teams.filter(team => !usedTeams.has(team.id));
-        const randomIndex = Math.floor(Math.random() * availableTeams.length);
-        const randomTeam = availableTeams[randomIndex];
-
-        if (randomTeam) {
-            usedTeams.add(randomTeam.id);
-        }
-
-        return randomTeam;
-    };
-
-    const handleLeagueClick = (league) => {
-        setSelectedLeague(league);
-    };
-
+    
     const handleAddNewRound = async () => {
         if (!newRoundData.endDate) {
             alert("Please select an end date for the new round.");
             return;
         }
-
+    
         setLoading(true);
         try {
-            const newRounds = [];
 
-            for (let i = 0; i < 2; i++) {
-                const roundNumber = rounds + i + 1;
-                const newRound = {
-                    round_number: roundNumber,
-                    start_date: new Date(),
-                    end_date: newRoundData.endDate,
-                };
+            const currentDate = new Date();
+            const year = currentDate.getFullYear();
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');  // Adding 1 to month index, padding with 0 if necessary
+            const day = String(currentDate.getDate()).padStart(2, '0');  // Padding with 0 if necessary
+            const formattedDate = `${year}-${month}-${day}`;
 
-                await api.post('/api/rounds/', newRound);
-                newRounds.push(newRound);
-            }
+            if (displayedRounds == 0) {
 
-            for (const league of leagues) {
-                for (const round of newRounds) {
-                    await generateRandomMatches(league.id, round.round_number, league.teams);
+                const newRounds = [];
+                for (let i = 0; i < totalRounds; i++) {
+                    const roundNumber = i + 1;
+                    const newRound = {
+                        round_number: roundNumber,
+                        start_date: roundNumber <= 2 ? formattedDate : null,
+                        end_date: roundNumber <= 2 ? newRoundData.endDate : null,
+                        is_active: roundNumber <= 2 ? true : false,
+                    };
+        
+                    try {
+                        await api.post('/api/rounds/', newRound);
+                    } catch (error) {
+                        console.error('Error saving match:', error.response.data);
+                    }
+
+                    newRounds.push(newRound);
+                }
+        
+                for (const league of leagues) {
+                    await generateRoundRobinMatches(league.id, league.teams);
                 }
             }
-
-            setRounds(rounds + 2);
+            else {
+                await api.put(`/api/rounds/${displayedRounds+1}/`, {is_active: true, start_date: formattedDate, end_date: newRoundData.endDate});
+                await api.put(`/api/rounds/${displayedRounds+2}/`, {is_active: true, start_date: formattedDate, end_date: newRoundData.endDate});
+            }
+    
             getData();
         } catch (error) {
             console.error('Error generating rounds:', error);
         } finally {
             setLoading(false);
         }
+    };    
+
+    const handleLeagueClick = (league) => {
+        setSelectedLeague(league);
     };
 
     const handleDateChange = (event) => {
@@ -248,7 +272,7 @@ const Results = () => {
                             {selectedLeague.rounds && selectedLeague.rounds.length > 0 && (
                                 <>
                                     <h3>New Matches</h3>
-                                    {selectedLeague.rounds.map(round => (
+                                    {selectedLeague.rounds.slice(0, displayedRounds).map(round => (
                                         <div key={round.round_number}>
                                             <h4>Round {round.round_number}</h4>
                                             <Table striped bordered hover>

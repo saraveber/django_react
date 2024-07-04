@@ -205,6 +205,25 @@ class RoundsListCreate(generics.ListCreateAPIView):
             else:
                 print(serializer.errors)
 
+class RoundUpdateAPIView(generics.UpdateAPIView):
+    queryset = Round.objects.all()  # Queryset to fetch Round instances
+    serializer_class = RoundSerializer  # Serializer class for validation
+    permission_classes = [IsAdminOrStaffUser]  # Permissions for accessing this view
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')  # Retrieve the primary key from URL kwargs
+        try:
+            instance = Round.objects.get(pk=pk)  # Fetch the specific instance
+        except Round.DoesNotExist:
+            return Response({'error': 'Round not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update fields based on request data
+        serializer = RoundSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class MatchListCreate(generics.ListCreateAPIView):
     serializer_class = MatchSerializer
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
