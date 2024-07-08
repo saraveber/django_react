@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, update_session_auth_hash
+from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -154,7 +156,15 @@ class TeamListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Team.objects.all()
+        """
+        Optionally restricts the returned teams to a given league,
+        by filtering against a `league` query parameter in the URL.
+        """
+        queryset = Team.objects.all()
+        league_id = self.request.query_params.get('league', None)
+        if league_id is not None:
+            queryset = queryset.filter(league=league_id)
+        return queryset
 
     def perform_create(self, serializer):
         p1 = serializer.validated_data.get('player1')
@@ -230,10 +240,16 @@ class MatchListCreate(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Match.objects.all()
-        league_id  = self.request.query_params.get('league_id ', None)
+        league_id = self.request.query_params.get('league_id', None)
+        team_id = self.request.query_params.get('team_id', None)
+        
         if league_id:
-            queryset = queryset.filter(league_id =league_id)
+            queryset = queryset.filter(league_id=league_id)
+        if team_id:
+            queryset = queryset.filter(Q(team_host_id=team_id) | Q(team_guest_id=team_id))
+        
         return queryset
+
 
     def perform_create(self, serializer):
         host = serializer.validated_data.get('team_host')
