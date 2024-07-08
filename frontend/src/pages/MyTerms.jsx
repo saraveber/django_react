@@ -1,10 +1,16 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import Calendar from '../components/Calendar';
+import CalendarReact from '../components/CalendarReact';
+import DropdownSearch from "../components/Dropdownsearch";
+import UserColorSquare from "../components/UserColorSquare";
+
+
 import UserSelectionDropDown from '../components/UserSelectionDropDown';
 //import { useProfile } from "../contexts/ProfileContext";
 
 function MyTerms() {
+    
     const [users, setUsers] = useState([]); 
     const [CurrUserId, setCurrUserId] = useState(null);
     const [selectedUserId, setSelectedUserId] = useState(null); 
@@ -62,6 +68,11 @@ function MyTerms() {
     const handleUserChange = (event) => {
         setSelectedUserId(event.target.value);
       };
+
+    const colorDict = {1: "#A459D1", 2: "#F266AB", 3: "#FFB84C"};
+
+
+
     // if role = null we return loading
     // if role = player than we return the calander with the user
     // if role = admin or staff we return dropdown of all users and od selected user
@@ -82,22 +93,42 @@ function MyTerms() {
             </div>
         );
     }
+
+
         
 
     if (role === "admin" || role === "staff") {
         return (
             <div>
+                <DropdownSearch/>
+
+                <UserColorSquare username= "CURRENTLY EDITING:" colorId={"currid"} />
+                <UserColorSquare username= "Sara Veber" colorId={1} />
+                <UserColorSquare username="Tina POSTUVAN" colorId={2} />
+                <UserColorSquare username="ADMIN" colorId={3} />
                 <UserSelectionDropDown
                     CurrUserId={selectedUserId} 
                     users={users} 
                     handleUserChange={handleUserChange} 
                 />
                 {selectedUserId && ( 
-                <Calendar 
+                <CalendarReact
                     CurrUserId={selectedUserId} 
+                    OnlyShowUserIdList = {[1,2,3]}
+                    colorDict = {colorDict}// colorDict = {id:color} "#2CD3E1"
                     role={role} 
                 />
                 )}
+                
+                {selectedUserId && ( 
+                //<Calendar 
+                 //   CurrUserId={selectedUserId} 
+                   // role={role} 
+                ///>
+                <div></div>
+                )}
+
+                
             </div>
         
         );

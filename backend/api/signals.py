@@ -8,7 +8,7 @@ from .models import Player  # Import your Player model
 @receiver(post_save, sender=Player)
 def create_user_for_player(sender, instance, created, **kwargs):
     if created:  # Check if a new instance was created
-        username = instance.name + instance.surname + str(random.randint(10, 99))
+        username = instance.name + instance.surname + str(random.randint(100,1000))
         user = User.objects.create_user(username=username, 
                                         email=instance.email,
                                         first_name=instance.name,
@@ -17,6 +17,8 @@ def create_user_for_player(sender, instance, created, **kwargs):
                                         )
         instance.user = user
         instance.save()
+
+
         
 
 
