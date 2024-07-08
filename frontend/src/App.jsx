@@ -16,6 +16,7 @@ import ChangePassword from "./pages/ChangePassword";
 import GroupProtectedRoute from "./components/GroupProtectedRoute"
 import PlayerForm from "./components/PlayerForm";
 import TeamForm from "./components/TeamForm";
+import Results from "./components/Results";
 
 
 function Logout(){
@@ -61,6 +62,13 @@ function App() {
             element={
               <GroupProtectedRoute requiredGroups={['admin', 'staff']}>
                 <TeamForm/>
+              </GroupProtectedRoute>}
+          />
+          <Route 
+            path="/results" 
+            element={
+              <GroupProtectedRoute requiredGroups={['admin', 'staff','player']}>
+                <Results/>
               </GroupProtectedRoute>}
           />
 

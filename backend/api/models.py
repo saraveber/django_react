@@ -67,3 +67,21 @@ class Team(models.Model):
 
     def __str__(self):
         return f"Team {self.id} - {self.league.name} - {self.player1} and {self.player2}"
+
+class Round(models.Model):
+    round_number = models.IntegerField(primary_key=True)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Round {self.round_number}"
+
+class Match(models.Model):
+    league = models.ForeignKey(League, on_delete=models.CASCADE)
+    round_number = models.IntegerField(default=0)
+    team_host = models.ForeignKey(Team, related_name='team_host', on_delete=models.CASCADE)
+    team_guest = models.ForeignKey(Team, related_name='team_guest', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Match {self.league} - {self.team_host} vs {self.team_guest}"
