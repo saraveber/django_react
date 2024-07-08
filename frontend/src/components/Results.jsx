@@ -102,7 +102,6 @@ const Results = () => {
             teams.push({ id: -1, name: 'Bye' }); // -1 denotes a bye week
         }
     
-        const totalRounds = teams.length - 1; // Total rounds for round-robin
         const half = teams.length / 2;
     
         for (let roundNumber = 1; roundNumber <= totalRounds; roundNumber++) {
