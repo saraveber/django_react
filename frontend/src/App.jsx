@@ -17,6 +17,7 @@ import GroupProtectedRoute from "./components/GroupProtectedRoute"
 import PlayerForm from "./components/PlayerForm";
 import TeamForm from "./components/TeamForm";
 import Results from "./components/Results";
+import Matches from "./components/Matches";
 
 
 function Logout(){
@@ -69,6 +70,13 @@ function App() {
             element={
               <GroupProtectedRoute requiredGroups={['admin', 'staff','player']}>
                 <Results/>
+              </GroupProtectedRoute>}
+          />
+          <Route 
+            path="/matches" 
+            element={
+              <GroupProtectedRoute requiredGroups={['admin', 'staff']}>
+                <Matches/>
               </GroupProtectedRoute>}
           />
 

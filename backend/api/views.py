@@ -6,8 +6,8 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
-from .models import AvailableTerm, Player, League, Team, Round, Match
-from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer, PlayerSerializer, LeagueSerializer, TeamSerializer, RoundSerializer, MatchSerializer
+from .models import AvailableTerm, Player, League, Team, Round, Match, AssignedMatch
+from .serializers import UserSerializer, AvailableTermSerializer, AvailableTermForUserSerializer, PlayerSerializer, LeagueSerializer, TeamSerializer, RoundSerializer, MatchSerializer, AssignedMatchSerializer
 
 from .permissions import IsAdminUser, IsPlayerUser, IsStaffUser, IsOnlyUser ,IsAdminOrStaffUser
 
@@ -286,6 +286,48 @@ class MatchListCreate(generics.ListCreateAPIView):
         
         if Match.objects.filter(team_guest=guest,team_host=host).exists() or Match.objects.filter(team_guest=host,team_host=guest).exists():
             print('This match already exists.')
+        else:
+            if serializer.is_valid():
+                serializer.save()
+            else:
+                print(serializer.errors)
+
+class MatchUpdateAPIView(generics.UpdateAPIView):
+    queryset = Match.objects.all()  # Queryset to fetch Round instances
+    serializer_class = MatchSerializer  # Serializer class for validation
+    permission_classes = [IsAdminOrStaffUser]  # Permissions for accessing this view
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')  # Retrieve the primary key from URL kwargs
+        try:
+            instance = Match.objects.get(pk=pk)  # Fetch the specific instance
+        except Match.DoesNotExist:
+            return Response({'error': 'Match not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update fields based on request data
+        serializer = MatchSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class AssignedMatchesListCreate(generics.ListCreateAPIView):
+    serializer_class = AssignedMatchSerializer
+    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+    def get_queryset(self):
+        queryset = AssignedMatch.objects.filter(
+            is_cancelled=False,
+            match__is_finished=False
+        )
+        return queryset
+    
+
+    def perform_create(self, serializer):
+        match = serializer.validated_data.get('match')
+        
+        if AssignedMatch.objects.filter(match=match,is_cancelled=False).exists():
+            print('This assigned match already exists.')
         else:
             if serializer.is_valid():
                 serializer.save()
