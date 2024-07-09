@@ -79,7 +79,7 @@ class Round(models.Model):
 
 class Match(models.Model):
     league = models.ForeignKey(League, on_delete=models.CASCADE)
-    round_number = models.IntegerField(default=0)
+    round_number = models.ForeignKey(Round, on_delete=models.CASCADE)
     team_host = models.ForeignKey(Team, related_name='team_host', on_delete=models.CASCADE)
     team_guest = models.ForeignKey(Team, related_name='team_guest', on_delete=models.CASCADE)
 
