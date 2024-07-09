@@ -60,6 +60,7 @@ const Matches = () => {
     try {
       const response = await api.post("/api/assignedmatches/", assignedMatchData);
       alert("Match assigned successfully!");
+      await api.put(`/api/matches/${selectedMatch}/`, {is_assigned: true});
       // Reset form fields
       setSelectedMatch("");
       setCourtNumber(1);
