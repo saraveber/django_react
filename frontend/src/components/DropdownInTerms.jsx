@@ -1,110 +1,82 @@
 import React, { useEffect, useState } from "react";
-import api from "../api"; // Import the 'api' module or define it before using it
+import api from "../api";
+
 function DropdownInTerms() {
   const [players, setPlayers] = useState([]);
   const [leagues, setLeagues] = useState([]);
   const [matches, setMatches] = useState([]);
   const [rounds, setRounds] = useState([]);
-
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [selectedLeague, setSelectedLeague] = useState(null);
-  const [showPlayers, setShowPlayers] = useState([]); // Added state to show/hide players
   const [selectedMatch, setSelectedMatch] = useState(null);
 
   useEffect(() => {
-    const fetchLeagues = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get("api/leagues/");
-        setLeagues(response.data);
-        console.log("League:", response.data);
+        const responses = await Promise.all([
+          api.get("api/leagues/"),
+          api.get("api/players/"),
+          api.get("api/rounds/?is_active=true"),
+        ]);
+        setLeagues(responses[0].data);
+        setPlayers(responses[1].data);
+        setRounds(responses[2].data);
       } catch (error) {
-        console.error("Error fetching leagues:", error);
+        console.error("Error fetching initial data:", error);
       }
     };
-
-    const fetchPlayers = async () => {
-      try {
-        const response = await api.get("api/players/");
-        setPlayers(response.data);
-        console.log("Player:", response.data);
-      } catch (error) {
-        console.error("Error fetching players:", error);
-      }
-    };
-
-    const fetchRounds = async () => {
-      try {
-        const response = await api.get("api/rounds/?is_active=true");
-        setRounds(response.data);
-        console.log("Rounds:", response.data);
-      } catch (error) {
-        console.error("Error fetching rounds:", error);
-      }
-    };
-    fetchLeagues();
-    fetchPlayers();
-    fetchRounds();
+    fetchData();
   }, []);
 
-  // useffect that loads all matches when player is sellected and is not null. only fetches matches with player_id = player.id
   useEffect(() => {
-    if (selectedPlayer) {
-      const fetchMatches = async () => {
+    const fetchMatches = async () => {
+      if (selectedPlayer) {
         try {
-          //TODO: ADD OTHER FILTERS BASED ON FINISHED MATCHES, ACTIVE MATCHES, ETC
           let apiUrl = `api/matches/?player_id=${selectedPlayer.id}&is_active_round=true`;
           if (selectedLeague) {
             apiUrl += `&league_id=${selectedLeague.id}`;
           }
           const response = await api.get(apiUrl);
           setMatches(response.data);
-          console.log("Matches:", response.data);
         } catch (error) {
           console.error("Error fetching matches:", error);
         }
-      };
-      fetchMatches();
-    } else {
-      setMatches([]);
-    }
+      } else {
+        setMatches([]);
+      }
+    };
+    fetchMatches();
   }, [selectedPlayer, selectedLeague]);
 
-  // add useEfect that loads leagues when player is selected and is not null. only fetches leagues with player_id = player.id
   useEffect(() => {
-    if (selectedPlayer) {
-      const fetchLeagues = async () => {
+    const fetchLeagues = async () => {
+      if (selectedPlayer) {
         try {
-          const response = await api.get(
-            `api/leagues/?player_id=${selectedPlayer.id}`
-          );
+          const response = await api.get(`api/leagues/?player_id=${selectedPlayer.id}`);
           setLeagues(response.data);
         } catch (error) {
-          console.error("Error fetching leagues:", error);
+          console.error("Error fetching leagues for player:", error);
         }
-      };
-      fetchLeagues();
-    }
+      }
+    };
+    fetchLeagues();
   }, [selectedPlayer]);
 
   const handleDropdownChange = (event) => {
     const playerId = event.target.value;
     const player = players.find((p) => p.id.toString() === playerId);
     setSelectedPlayer(player);
-    console.log("Selected player:", player);
   };
 
   const handleLeagueDropdownChange = (event) => {
     const leagueId = event.target.value;
     const league = leagues.find((l) => l.id.toString() === leagueId);
     setSelectedLeague(league);
-    console.log("Selected league:", league);
   };
 
   const handleRadioChange = (event) => {
     const matchId = event.target.value;
-    const selectedMatch = matches.find(
-      (match) => match.id.toString() === matchId
-    );
+    const selectedMatch = matches.find((match) => match.id.toString() === matchId);
     setSelectedMatch(selectedMatch);
   };
 
@@ -125,10 +97,7 @@ function DropdownInTerms() {
   return (
     <div>
       <div>
-        <select
-          onChange={handleDropdownChange}
-          value={selectedPlayer ? selectedPlayer.id : ""}
-        >
+        <select onChange={handleDropdownChange} value={selectedPlayer ? selectedPlayer.id : ""}>
           <option value="">Select a player</option>
           {players.map((player) => (
             <option key={player.id} value={player.id}>
@@ -137,12 +106,8 @@ function DropdownInTerms() {
           ))}
         </select>
       </div>
-
       <div>
-        <select
-          onChange={handleLeagueDropdownChange}
-          value={selectedLeague ? selectedLeague.id : ""}
-        >
+        <select onChange={handleLeagueDropdownChange} value={selectedLeague ? selectedLeague.id : ""}>
           <option value="">Select a league</option>
           {leagues.map((league) => (
             <option key={league.id} value={league.id}>
@@ -151,17 +116,15 @@ function DropdownInTerms() {
           ))}
         </select>
       </div>
-
       <table>
         <thead>
           <tr>
             <th>League</th>
             <th>Team 1</th>
             <th>Team 2</th>
-            <th>Select</th> {/* Added header for radio buttons */}
+            <th>Select</th>
           </tr>
         </thead>
-
         <tbody>
           {matches.map((match) => {
             const league = leagues.find((l) => l.id === match.league);
@@ -193,12 +156,11 @@ function DropdownInTerms() {
                 <td>{team1}</td>
                 <td>{team2}</td>
                 <td>
-                  {/* Radio button for selecting a match */}
                   <input
                     type="radio"
                     name="selectedMatch"
                     value={match.id}
-                    onChange={handleRadioChange} // You need to define this function to handle radio changes
+                    onChange={handleRadioChange}
                   />
                 </td>
               </tr>
