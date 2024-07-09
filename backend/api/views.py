@@ -190,6 +190,25 @@ class TeamListCreate(generics.ListCreateAPIView):
             else:
                 print(serializer.errors)
 
+class TeamUpdateAPIView(generics.UpdateAPIView):
+    queryset = Team.objects.all()  # Queryset to fetch Round instances
+    serializer_class = TeamSerializer  # Serializer class for validation
+    permission_classes = [IsAdminOrStaffUser]  # Permissions for accessing this view
+
+    def put(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')  # Retrieve the primary key from URL kwargs
+        try:
+            instance = Team.objects.get(pk=pk)  # Fetch the specific instance
+        except Team.DoesNotExist:
+            return Response({'error': 'Team not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Update fields based on request data
+        serializer = TeamSerializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class ChangePasswordView(APIView):
