@@ -122,11 +122,23 @@ class LeagueList(generics.ListCreateAPIView):
         queryset = League.objects.all()
         gender = self.request.query_params.get('gender', None)
         league_type = self.request.query_params.get('type', None)
+        player_id = self.request.query_params.get('player_id', None)
+        print(player_id)
         if gender:
             queryset = queryset.filter(gender=gender)
         if league_type:
             queryset = queryset.filter(type=league_type)
+        if player_id:
+            # Filter leagues that have teams where the player is either player1 or player2
+            teams_with_player = Team.objects.filter(
+                Q(player1=player_id) | Q(player2=player_id)
+            ).values_list('league', flat=True)
+
+            queryset = queryset.filter(id__in=teams_with_player)
+
         return queryset
+    
+
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -202,7 +214,13 @@ class RoundsListCreate(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
 
     def get_queryset(self):
-        return Round.objects.all()
+        queryset = Round.objects.all()
+        is_active = self.request.query_params.get('is_active', None)
+
+        if is_active == 'true':
+            queryset = queryset.filter(is_active=True)
+
+        return queryset
 
     def perform_create(self, serializer):
         r_num = serializer.validated_data.get('round_number')
@@ -242,11 +260,22 @@ class MatchListCreate(generics.ListCreateAPIView):
         queryset = Match.objects.all()
         league_id = self.request.query_params.get('league_id', None)
         team_id = self.request.query_params.get('team_id', None)
-        
+        player_id = self.request.query_params.get('player_id', None)
+        is_active_round = self.request.query_params.get('is_active_round', None)
+        #TODO: ADD OTHER FILTERS BASED ON FINISHED MATCHES, ACTIVE MATCHES, ETC
         if league_id:
             queryset = queryset.filter(league_id=league_id)
         if team_id:
             queryset = queryset.filter(Q(team_host_id=team_id) | Q(team_guest_id=team_id))
+        if player_id:
+            queryset = queryset.filter(
+                Q(team_host__player1_id=player_id) | Q(team_host__player2_id=player_id) |
+                Q(team_guest__player1_id=player_id) | Q(team_guest__player2_id=player_id)
+            )
+        if is_active_round == 'true':
+            queryset = queryset.filter(round_number__is_active=True)
+
+
         
         return queryset
 
