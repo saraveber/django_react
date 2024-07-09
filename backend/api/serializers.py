@@ -61,9 +61,10 @@ class RoundSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     team_host_obj = TeamSerializer(source='team_host', read_only=True)
     team_guest_obj = TeamSerializer(source='team_guest', read_only=True)
+    round_obj = RoundSerializer(source='round', read_only=True)
     class Meta:
         model = Match
-        fields = ['id', 'league', 'round_number', 'team_host', 'team_guest', 'is_assigned', 'is_finished','gem_result', 'set_result','team_host_obj', 'team_guest_obj']
+        fields = ['id', 'league', 'round_number', 'team_host', 'team_guest', 'is_assigned', 'is_finished','gem_result', 'set_result','team_host_obj', 'team_guest_obj', 'round_obj']
 
 class AssignedMatchSerializer(serializers.ModelSerializer):
     match_obj = MatchSerializer(source='match', read_only=True)

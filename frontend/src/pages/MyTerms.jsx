@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import api from "../api";
 import Calendar from '../components/Calendar';
 import CalendarReact from '../components/CalendarReact';
-import DropdownSearch from "../components/Dropdownsearch";
+import DropdownInTerms from "../components/DropdownInTerms";
 import UserColorSquare from "../components/UserColorSquare";
 
 
@@ -100,7 +100,7 @@ function MyTerms() {
     if (role === "admin" || role === "staff") {
         return (
             <div>
-                <DropdownSearch/>
+                <DropdownInTerms/>
 
                 <UserColorSquare username= "CURRENTLY EDITING:" colorId={"currid"} />
                 <UserColorSquare username= "Sara Veber" colorId={1} />
