@@ -14,5 +14,7 @@ urlpatterns = [
     path('rounds/', views.RoundsListCreate.as_view(), name='round-list-create'),
     path('rounds/<int:pk>/', views.RoundUpdateAPIView.as_view(), name='round-update'),
     path('matches/', views.MatchListCreate.as_view(), name='match-list-create'),
+    path('matches/<int:pk>/', views.MatchUpdateAPIView.as_view(), name='match-update'),
+    path('assignedmatches/', views.AssignedMatchesListCreate.as_view(), name='assignedMatch-list-create'),
 ]
 

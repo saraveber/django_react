@@ -57,6 +57,9 @@ function Navigation() {
                     <LinkContainer to="/results">
                       <Nav.Link>Results</Nav.Link>
                     </LinkContainer>
+                    <LinkContainer to="/matches">
+                      <Nav.Link>Matches</Nav.Link>
+                    </LinkContainer>
                     <NavDropdown title={<i className="bi bi-gear-fill"></i>} id={`navbarDropdown-expand-'md'`} align="end">
                       <LinkContainer to="/change-password">
                         <NavDropdown.Item>Change Password</NavDropdown.Item>
