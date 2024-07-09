@@ -94,9 +94,9 @@ const Matches = () => {
     fetchAssignedMatches();
   }, []);
 
-  const handleUpdateResults = async (matchId,id) => {
+  const handleUpdateResults = async (assignedMatch) => {
+    const matchId = assignedMatch.id
     const currentGemResults = gemResults[matchId];
-    console.log(currentGemResults)
 
     // Calculate set result based on gem results
     let hostSets = 0;
@@ -118,12 +118,32 @@ const Matches = () => {
     };
 
     try {
-      const response = await api.put(`/api/matches/${id}/`, {
+      let response = await api.put(`/api/matches/${assignedMatch.match}/`, {
         gem_result: matchResults.gem_result,
         set_result: matchResults.set_result,
         is_finished: true,
       });
       alert("Match results updated successfully!");
+
+      // Fetch current team data
+        const hostTeam = assignedMatch.match_obj.team_host_obj
+        const guestTeam = assignedMatch.match_obj.team_guest_obj
+
+      // update host team results
+      response = await api.put(`/api/teams/${assignedMatch.match_obj.team_host}/`, {
+        number_of_played_matches: hostTeam.number_of_played_matches + 1,
+        wins: hostSets > guestSets ? hostTeam.wins + 1 : hostTeam.wins,
+        losses: hostSets > guestSets ? hostTeam.losses : hostTeam.losses + 1,
+        points: hostSets > guestSets ? hostTeam.points + 3 : hostTeam.points + 1,
+      });
+      // update guest team results
+      response = await api.put(`/api/teams/${assignedMatch.match_obj.team_guest}/`, {
+        number_of_played_matches: guestTeam.number_of_played_matches + 1,
+        wins: guestSets > hostSets ? guestTeam.wins + 1 : guestTeam.wins,
+        losses: guestSets > hostSets ? guestTeam.losses : guestTeam.losses + 1,
+        points: guestSets > hostSets ? guestTeam.points + 3 : guestTeam.points + 1,
+      });
+
       fetchAssignedMatches(); // Refresh the assigned matches list
       // Reset gem results after submission
       const updatedGemResults = { ...gemResults };
@@ -225,8 +245,10 @@ const Matches = () => {
                 </div>
               ))}
             </div>
+            {/* {console.log(assignedMatch)} */}
+            {/* posli v handleUpdateResults assigned match in pol mas notr v match_obj host pa guest id in tistmu teamu s tem idjem povecas wins, loses pa points */}
             <button
-              onClick={() => handleUpdateResults(assignedMatch.id,assignedMatch.match)}
+              onClick={() => handleUpdateResults(assignedMatch)}
               className="btn btn-success mt-2"
               disabled={gemResults[assignedMatch.id]?.filter(result => result.host && result.guest).length < 2} // Disable button if less than 2 gem results are filled
             >
