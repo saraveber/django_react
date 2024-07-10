@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 
-function DropdownInTerms() {
+function DropdownInTerms({
+  selectedMatch,
+  setSelectedMatch,
+  selectedPlayer,
+  setSelectedPlayer,
+}) {
   const [players, setPlayers] = useState([]);
   const [leagues, setLeagues] = useState([]);
   const [matches, setMatches] = useState([]);
   const [rounds, setRounds] = useState([]);
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
+
   const [selectedLeague, setSelectedLeague] = useState(null);
-  const [selectedMatch, setSelectedMatch] = useState(null);
 
   const [showSecondDropdownAndTable, setShowSecondDropdownAndTable] =
     useState(false);
@@ -46,11 +50,11 @@ function DropdownInTerms() {
         }
       } else {
         setMatches([]);
+        setSelectedMatch(null);
       }
     };
     fetchMatches();
     setSelectedMatch(null);
-
   }, [selectedPlayer, selectedLeague]);
 
   useEffect(() => {
@@ -146,7 +150,7 @@ function DropdownInTerms() {
         </div>
       </div>
 
-      {showSecondDropdownAndTable && (
+      {(showSecondDropdownAndTable && selectedPlayer !== null && selectedPlayer !== undefined) && (
         <div className="mt-3">
           <div className="row">
             <div className="col">
@@ -181,28 +185,24 @@ function DropdownInTerms() {
                     const isSelectedPlayerInHost =
                       selectedPlayer &&
                       ((match.team_host_obj.player1 &&
-                        match.team_host_obj.player1_obj.id ===
+                        match.team_host_obj.player1_obj?.id ===
                           parseInt(selectedPlayer.id, 10)) ||
                         (match.team_host_obj.player2 &&
-                          match.team_host_obj.player2_obj.id ===
+                          match.team_host_obj.player2_obj?.id ===
                             parseInt(selectedPlayer.id, 10)));
                     const team1 = isSelectedPlayerInHost
                       ? formatTeamPlayers(
-                          match.team_host_obj,
-                          selectedPlayer.id
+                          match.team_host_obj, selectedPlayer.id
                         )
                       : formatTeamPlayers(
-                          match.team_guest_obj,
-                          selectedPlayer.id
+                          match.team_guest_obj, selectedPlayer.id
                         );
                     const team2 = isSelectedPlayerInHost
                       ? formatTeamPlayers(
-                          match.team_guest_obj,
-                          selectedPlayer.id
+                          match.team_guest_obj, selectedPlayer.id
                         )
                       : formatTeamPlayers(
-                          match.team_host_obj,
-                          selectedPlayer.id
+                          match.team_host_obj,selectedPlayer.id
                         );
 
                     return (
@@ -229,6 +229,7 @@ function DropdownInTerms() {
                   })}
                 </tbody>
               </table>
+        
             </div>
           </div>
         </div>

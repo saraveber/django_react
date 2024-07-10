@@ -6,7 +6,7 @@ import api from "../api";
 
 const localizer = momentLocalizer(moment);
 
-const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role}) => {
+const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, selectedMatch}) => {
   console.log("currUserId in CalendarReact:", CurrUserId);
   const [currentView, setCurrentView] = useState("month");
   const [events, setEvents] = useState([]);
@@ -20,41 +20,63 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role}) => {
   maxTime.setHours(endHour, 0, 0);
 
 
+  useEffect(() => {
+    fetchEventsForCurrUser();
+  }, [CurrUserId]);
+
+
+
+
 
   useEffect(() => {
-    fetchEvents();
-  }, [CurrUserId, OnlyShowUserIdList]);
+    
+      
+    fetchEventsForOtherUsers();
+  
+ 
+  }, [OnlyShowUserIdList]);
 
-  const fetchEvents = () => {
-    // empty the events array
-    setEvents([]);
-    OnlyShowUserIdList.map((id) => {
+
+  const fetchEventsForCurrUser = async () => {
+    try {
+      const res = await api.get("api/terms/user/" + CurrUserId + "/");
+      const formattedEvents = res.data.map((event) => ({
+        start: new Date(event.start_date),
+        end: new Date(event.end_date),
+        player_id: CurrUserId,
+        type: "edit",
+      }));
+      setEvents(formattedEvents);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+  
+  const fetchEventsForOtherUsers = async () => {
+    let tempEvents = []; // Step 1: Initialize a temporary array
+  
+    for (const id of OnlyShowUserIdList) { // Changed to a for...of loop for async/await
       console.log("Fetching events for user with id:", id);
-      api
-        .get("api/terms/user/" + id + "/")
-        .then((res) => {
-          const formattedEvents = res.data.map((event) => ({
-            start: new Date(event.start_date),
-            end: new Date(event.end_date),
-            player_id: id,
-            type: "show",
-          }));
-          setEvents((prevEvents) => [...prevEvents, ...formattedEvents]);
-        })
-        .catch((error) => console.error("Error fetching events:", error));
-    })
-      api
-        .get("api/terms/user/" + CurrUserId + "/")
-        .then((res) => {
-          const formattedEvents = res.data.map((event) => ({
-            start: new Date(event.start_date),
-            end: new Date(event.end_date),
-            player_id: CurrUserId,
-            type: "edit",
-          }));
-          setEvents((prevEvents) => [...prevEvents, ...formattedEvents]);
-        })
-        .catch((error) => console.error("Error fetching events:", error));
+      try {
+        const res = await api.get("api/terms/user/" + id + "/");
+        const formattedEvents = res.data.map((event) => ({
+          start: new Date(event.start_date),
+          end: new Date(event.end_date),
+          player_id: id,
+          type: "show",
+        }));
+  
+        tempEvents = [...tempEvents, ...formattedEvents]; // Step 2: Accumulate formatted events
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    }
+  
+    // Step 3: Set events after the loop
+    setEvents((prevEvents) => [
+      ...prevEvents.filter(event => event.type === "edit"),
+      ...tempEvents
+    ]);
   };
 
   const handleDeleteEvent = (event) => {
@@ -154,7 +176,6 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role}) => {
 
   // Define the eventPropGetter function
   const eventPropGetter = (event) => {
-    console.log("event:", event);
     let color_edge = "#0d6efd"; // Declare color variable outside the if-else blocks
     let color_background = "#0d6efd";
     let color_text = "white";
@@ -199,7 +220,6 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role}) => {
       //marginLeft: "5px",
     };
 
-    console.log("event in EventComponent:", event);
     
     return (
       <div
@@ -230,7 +250,7 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role}) => {
         min = {minTime}
         max = {maxTime}
         selectable
-        style={{ height: 1000 }}
+        style={{ height: 700 }}
         onSelectSlot={handleSelectSlot}
         onView={handleViewChange}
         view="week"
