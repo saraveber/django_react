@@ -131,7 +131,18 @@ const CalendarReact = ({
           else alert("Failed to make term.");
         })
         .catch((err) => alert(err));
+    }else{
+      console.log("Role is not admin or staff");
+      api
+        .post("api/terms/", {start_date, end_date })
+        .then((res) => {
+          if (res.status === 201) console.log("Term saved!");
+          else alert("Failed to make term.");
+        }
+        )
+        .catch((err) => alert(err));
     }
+
   };
 
   const handleSubmit = async () => {
@@ -154,6 +165,25 @@ const CalendarReact = ({
             createTerm(event.start, event.end);
           });
       });
+    }else if (role === "player") {
+      // Delete all terms first
+      api.delete(`api/terms/delete-all/`)
+        .then((res) => {
+          if (res.status === 204) {
+            console.log("All terms deleted!");
+
+            // After successful deletion, create the new terms
+            events
+              .filter((event) => event.type === "edit")
+              .map((event) => {
+                createTerm(event.start, event.end);
+              });
+
+          } else {
+            alert("Failed to delete terms.");
+          }
+        })
+        .catch((error) => alert(error));
     }
   };
   const slotPropGetter = (date) => {
