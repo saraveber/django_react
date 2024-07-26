@@ -2,11 +2,17 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import moment from "moment";
-import api from "../api"; 
+import api from "../api";
 
 const localizer = momentLocalizer(moment);
 
-const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, selectedMatch}) => {
+const CalendarReact = ({
+  CurrUserId,
+  OnlyShowUserIdList,
+  colorDict,
+  role,
+  selectedMatch,
+}) => {
   console.log("currUserId in CalendarReact:", CurrUserId);
   const [currentView, setCurrentView] = useState("month");
   const [events, setEvents] = useState([]);
@@ -19,23 +25,13 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
   const maxTime = new Date();
   maxTime.setHours(endHour, 0, 0);
 
-
   useEffect(() => {
     fetchEventsForCurrUser();
   }, [CurrUserId]);
 
-
-
-
-
   useEffect(() => {
-    
-      
     fetchEventsForOtherUsers();
-  
- 
   }, [OnlyShowUserIdList]);
-
 
   const fetchEventsForCurrUser = async () => {
     try {
@@ -51,11 +47,12 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
       console.error("Error fetching events:", error);
     }
   };
-  
+
   const fetchEventsForOtherUsers = async () => {
     let tempEvents = []; // Step 1: Initialize a temporary array
-  
-    for (const id of OnlyShowUserIdList) { // Changed to a for...of loop for async/await
+
+    for (const id of OnlyShowUserIdList) {
+      // Changed to a for...of loop for async/await
       console.log("Fetching events for user with id:", id);
       try {
         const res = await api.get("api/terms/user/" + id + "/");
@@ -65,17 +62,17 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
           player_id: id,
           type: "show",
         }));
-  
+
         tempEvents = [...tempEvents, ...formattedEvents]; // Step 2: Accumulate formatted events
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     }
-  
+
     // Step 3: Set events after the loop
     setEvents((prevEvents) => [
-      ...prevEvents.filter(event => event.type === "edit"),
-      ...tempEvents
+      ...prevEvents.filter((event) => event.type === "edit"),
+      ...tempEvents,
     ]);
   };
 
@@ -101,13 +98,18 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
     }
     const startDate = moment(start).format("YYYY-MM-DD");
     const endDate = moment(end).format("YYYY-MM-DD");
-    events.filter(event => event.type === "edit").map((event) => {
-      if (event.start <= end && start <= event.end) {
-        start = start < event.start ? start : event.start;
-        end = end > event.end ? end : event.end;
-      }
-    });
-    const filteredEvents = events.filter(event => event.type !== 'edit' || !(event.start < end && start < event.end));
+    events
+      .filter((event) => event.type === "edit")
+      .map((event) => {
+        if (event.start <= end && start <= event.end) {
+          start = start < event.start ? start : event.start;
+          end = end > event.end ? end : event.end;
+        }
+      });
+    const filteredEvents = events.filter(
+      (event) =>
+        event.type !== "edit" || !(event.start < end && start < event.end)
+    );
     const newEvent = {
       start,
       end,
@@ -117,8 +119,6 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
     setEvents([...filteredEvents, newEvent]);
     console.log("FINISHED FILTERING");
   };
-
-
 
   const createTerm = (start_date, end_date) => {
     console.log("Role in createTerm:", role);
@@ -135,8 +135,12 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
   };
 
   const handleSubmit = async () => {
-    const eventsString = events.map(event => `Start: ${event.start}, End: ${event.end}`).join('\n');
-    const isConfirmed = window.confirm(`Submitting these terms:\n${eventsString}\nDo you want to proceed?`);
+    const eventsString = events
+      .map((event) => `Start: ${event.start}, End: ${event.end}`)
+      .join("\n");
+    const isConfirmed = window.confirm(
+      `Submitting these terms:\n${eventsString}\nDo you want to proceed?`
+    );
     if (!isConfirmed) return;
     // map through the events and send a POST request for each one
     if (role === "admin" || role === "staff") {
@@ -144,9 +148,11 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
         if (res.status === 204) {
           console.log("All terms deleted!");
         }
-        events.filter(event => event.type === 'edit').map((event) => {
-          createTerm(event.start, event.end);
-        });
+        events
+          .filter((event) => event.type === "edit")
+          .map((event) => {
+            createTerm(event.start, event.end);
+          });
       });
     }
   };
@@ -159,20 +165,17 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
     if (date < now || hour < startHour || hour > endHour) {
       return {
         style: {
-          backgroundColor: '#e9ecef', // Set background color to gray
+          backgroundColor: "#e9ecef", // Set background color to gray
         },
       };
-    }
-    else {
+    } else {
       return {
         style: {
-          backgroundColor: 'white', // Set background color to white
+          backgroundColor: "white", // Set background color to white
         },
       };
     }
   };
-
-
 
   // Define the eventPropGetter function
   const eventPropGetter = (event) => {
@@ -181,10 +184,9 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
     let color_text = "white";
     if (event.type === "show") {
       color_edge = colorDict[event.player_id];
-      color_background = "#fafafa"
+      color_background = "#fafafa";
       color_text = "gray";
     }
-  
 
     let newStyle = {
       backgroundColor: color_background, // Very light gray for background
@@ -200,8 +202,6 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
 
   const EventComponent = ({ event }) => {
     const buttonStyle = {
-      //marginLeft: "10px",
-      //marginRight: "10px",
       color: "#007bff",
       border: "none",
       backgroundColor: "transparent",
@@ -220,16 +220,15 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
       //marginLeft: "5px",
     };
 
-    
     return (
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
+          flexDirection: "column", // Stack children vertically
+          justifyContent: "flex-start", // Align children to the start of the container
+          height: "100%", // Ensure the div takes full height of its parent
         }}
       >
-        <span>{event.title}</span>
         {event.type === "edit" && (
           <button onClick={() => handleDeleteEvent(event)} style={buttonStyle}>
             <i className="bi bi-x-lg" style={iconStyle}></i>
@@ -239,16 +238,17 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
     );
   };
 
+
   return (
     <div>
       <Calendar
-        dayLayoutAlgorithm={"no-overlap"}
+        dayLayoutAlgorithm= "no-overlap"
         localizer={localizer}
         events={events}
         startAccessor="start"
         endAccessor="end"
-        min = {minTime}
-        max = {maxTime}
+        min={minTime}
+        max={maxTime}
         selectable
         style={{ height: 700 }}
         onSelectSlot={handleSelectSlot}
@@ -256,7 +256,6 @@ const CalendarReact = ({ CurrUserId ,OnlyShowUserIdList, colorDict, role, select
         view="week"
         views={["week"]}
         defaultView={currentView}
-        //dayPropGetter={dayPropGetter}
         eventPropGetter={eventPropGetter}
         slotPropGetter={slotPropGetter}
         components={{
