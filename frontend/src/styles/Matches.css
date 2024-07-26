@@ -1,0 +1,24 @@
+.gem-results-container {
+    align-items: center;
+  }
+  
+  .gem-result-inputs {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Adjust spacing between gem result rows */
+  }
+  
+  .gem-result-inputs .gem-input {
+    width: 80px; /* Adjust width of gem input fields */
+    text-align: center;
+  }
+  
+  .gem-result-inputs span {
+    margin: 10px 5px; /* Adjust spacing between host and guest inputs */
+  }
+
+  .gem-result-inputs span {
+    margin-right: 10px; /* Add space between gem index and input fields */
+    font-weight: bold; /* Optional: Makes the index bold */
+  }
+  

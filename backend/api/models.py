@@ -82,6 +82,23 @@ class Match(models.Model):
     round_number = models.ForeignKey(Round, on_delete=models.CASCADE)
     team_host = models.ForeignKey(Team, related_name='team_host', on_delete=models.CASCADE)
     team_guest = models.ForeignKey(Team, related_name='team_guest', on_delete=models.CASCADE)
+    is_assigned = models.BooleanField(default=False)
+    is_finished = models.BooleanField(default=False)
+    gem_result = models.CharField(max_length=255, null=True, blank=True)
+    set_result = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f"Match {self.league} - {self.team_host} vs {self.team_guest}"
+
+# Define the AssignedMatch model
+class AssignedMatch(models.Model):
+    match = models.ForeignKey(Match, on_delete=models.CASCADE)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    tennis_field = models.IntegerField()
+    is_cancelled = models.BooleanField(default=False)
+    team_who_cancelled = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, blank=True)
+    reason_for_cancellation = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Assigned Match for {self.match}"

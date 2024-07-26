@@ -117,6 +117,8 @@ const Results = () => {
                         round_number: roundNumber,
                         team_host: team1.id,
                         team_guest: team2.id,
+                        gem_result: null,
+                        set_result: null,
                     };
     
                     try {

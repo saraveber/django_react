@@ -11,8 +11,11 @@ urlpatterns = [
     path('players/', views.PlayerListCreate.as_view(), name='player-list-create'),
     path('leagues/',views.LeagueList.as_view(), name='league-list'),
     path('teams/', views.TeamListCreate.as_view(), name='team-list-create'),
+    path('teams/<int:pk>/', views.TeamUpdateAPIView.as_view(), name='team-update'),
     path('rounds/', views.RoundsListCreate.as_view(), name='round-list-create'),
     path('rounds/<int:pk>/', views.RoundUpdateAPIView.as_view(), name='round-update'),
     path('matches/', views.MatchListCreate.as_view(), name='match-list-create'),
+    path('matches/<int:pk>/', views.MatchUpdateAPIView.as_view(), name='match-update'),
+    path('assignedmatches/', views.AssignedMatchesListCreate.as_view(), name='assignedMatch-list-create'),
 ]
 
