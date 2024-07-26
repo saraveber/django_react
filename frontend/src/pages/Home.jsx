@@ -7,7 +7,7 @@ function Home() {
     
     useEffect(() => {
       // This effect will re-run whenever currUser, role, or authorised changes.
-      console.log('Navigation should update based on:', { currUser, role, authorised });
+      console.log('Home updated:', { currUser, role, authorised });
       // Here you can add logic to adjust navigation items based on the current user's state
     }, [currUser, role, authorised]); // Dependencies array
   
