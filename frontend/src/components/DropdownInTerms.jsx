@@ -39,7 +39,7 @@ function DropdownInTerms({
     const fetchMatches = async () => {
       if (selectedPlayer) {
         try {
-          let apiUrl = `api/matches/?player_id=${selectedPlayer.id}&is_active_round=true`;
+          let apiUrl = `api/matches/?player_id=${selectedPlayer.id}&is_active_round=true&is_assigned=false&is_finished=false`;
           if (selectedLeague) {
             apiUrl += `&league_id=${selectedLeague.id}`;
           }
