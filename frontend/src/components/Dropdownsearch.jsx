@@ -49,7 +49,7 @@ const DropdownSearch = ({ onMatchChange }) => {
     if (selectedTeam !== "") {
       try {
         const matches = await api.get(
-          `/api/matches/?team_id=${selectedTeam}&league_id=${selectedLeague}`
+          `/api/matches/?team_id=${selectedTeam}&league_id=${selectedLeague}&is_active_round=true`
         );
         setMatches(matches.data);
       } catch (error) {
