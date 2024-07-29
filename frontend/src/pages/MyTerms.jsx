@@ -95,17 +95,18 @@ useEffect(() => {
   if (role === "player") {
     return (
         <div>
+          <div className="container mt-3">
           <div className="row">
-            <div className="col-md-10">
+            <div className="col-md-12">
               <CalendarReact
                 CurrUserId={currUser.id} 
                 OnlyShowUserIdList={[]}
                 colorDict={[]}
                 role={role}
-                selectedMatch={[]}
               />
             </div>
           </div>
+        </div>
         </div>
       
 
