@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 
-const DropdownSearch = ({ onMatchChange }) => {
+const DropdownSearch = ({ onMatchChange, is_assigned = false, is_finished = false}) => {
   const [leagues, setLeagues] = useState([]);
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -49,7 +49,7 @@ const DropdownSearch = ({ onMatchChange }) => {
     if (selectedTeam !== "") {
       try {
         const matches = await api.get(
-          `/api/matches/?team_id=${selectedTeam}&league_id=${selectedLeague}&is_active_round=true`
+          `/api/matches/?team_id=${selectedTeam}&league_id=${selectedLeague}&is_active_round=true&is_assigned=${is_assigned}&is_finished=${is_finished}`
         );
         setMatches(matches.data);
       } catch (error) {
