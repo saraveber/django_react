@@ -11,7 +11,6 @@ const CalendarReact = ({
   OnlyShowUserIdList,
   colorDict,
   role,
-  selectedMatch,
 }) => {
   console.log("currUserId in CalendarReact:", CurrUserId);
   const [currentView, setCurrentView] = useState("month");
@@ -36,46 +35,79 @@ const CalendarReact = ({
   const fetchEventsForCurrUser = async () => {
     try {
       const res = await api.get("api/terms/user/" + CurrUserId + "/");
-      const formattedEvents = res.data.map((event) => ({
-        start: new Date(event.start_date),
-        end: new Date(event.end_date),
-        player_id: CurrUserId,
-        type: "edit",
-      }));
+      const now = new Date();
+      now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30);
+  
+      const formattedEvents = res.data
+        .filter((event) => {
+          const start = new Date(event.start_date);
+          const end = new Date(event.end_date);
+          return end >= now;
+        })
+        .map((event) => {
+          let start = new Date(event.start_date);
+          const end = new Date(event.end_date);
+          if (start < now) {
+            start = now;
+          }
+          return {
+            start,
+            end,
+            player_id: CurrUserId,
+            type: "edit",
+          };
+        });
+  
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error fetching events:", error);
     }
   };
-
+  
   const fetchEventsForOtherUsers = async () => {
     let tempEvents = []; // Step 1: Initialize a temporary array
-
+  
     for (const id of OnlyShowUserIdList) {
       // Changed to a for...of loop for async/await
       console.log("Fetching events for user with id:", id);
       try {
         const res = await api.get("api/terms/user/" + id + "/");
-        const formattedEvents = res.data.map((event) => ({
-          start: new Date(event.start_date),
-          end: new Date(event.end_date),
-          player_id: id,
-          type: "show",
-        }));
-
-        tempEvents = [...tempEvents, ...formattedEvents]; // Step 2: Accumulate formatted events
+        const now = new Date();
+        now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30);
+  
+        const filteredEvents = res.data
+          .filter((event) => {
+            const start = new Date(event.start_date);
+            const end = new Date(event.end_date);
+            return end >= now;
+          })
+          .map((event) => {
+            let start = new Date(event.start_date);
+            const end = new Date(event.end_date);
+            if (start < now) {
+              start = now;
+            }
+            return {
+              start,
+              end,
+              player_id: id,
+              type: "show",
+            };
+          });
+  
+        tempEvents = [...tempEvents, ...filteredEvents]; // Step 2: Accumulate formatted events
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     }
-
+  
     // Step 3: Set events after the loop
     setEvents((prevEvents) => [
       ...prevEvents.filter((event) => event.type === "edit"),
       ...tempEvents,
     ]);
   };
-
+  
   const handleDeleteEvent = (event) => {
     setEvents(
       events.filter((e) => e.start !== event.start && e.end !== event.end)
@@ -131,7 +163,18 @@ const CalendarReact = ({
           else alert("Failed to make term.");
         })
         .catch((err) => alert(err));
+    }else{
+      console.log("Role is not admin or staff");
+      api
+        .post("api/terms/", {start_date, end_date })
+        .then((res) => {
+          if (res.status === 201) console.log("Term saved!");
+          else alert("Failed to make term.");
+        }
+        )
+        .catch((err) => alert(err));
     }
+
   };
 
   const handleSubmit = async () => {
@@ -154,18 +197,37 @@ const CalendarReact = ({
             createTerm(event.start, event.end);
           });
       });
+    }else if (role === "player") {
+      // Delete all terms first
+      api.delete(`api/terms/delete-all/`)
+        .then((res) => {
+          if (res.status === 204) {
+            console.log("All terms deleted!");
+
+            // After successful deletion, create the new terms
+            events
+              .filter((event) => event.type === "edit")
+              .map((event) => {
+                createTerm(event.start, event.end);
+              });
+
+          } else {
+            alert("Failed to delete terms.");
+          }
+        })
+        .catch((error) => alert(error));
     }
   };
   const slotPropGetter = (date) => {
     const now = new Date();
     now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30); // Normalize to start of day for comparison
-    // Check if the slot is in the past, before the start hour, or after the end hour
+    now.setSeconds(0);
     const hour = date.getHours();
-
-    if (date < now || hour < startHour || hour > endHour) {
+    now.setMinutes(now.getMinutes() - 15);
+    if (date <= now || hour < startHour || hour > endHour) {
       return {
         style: {
-          backgroundColor: "#e9ecef", // Set background color to gray
+          backgroundColor: "#eeeeee", // Set background color to gray
         },
       };
     } else {

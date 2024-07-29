@@ -94,11 +94,22 @@ useEffect(() => {
   }
   if (role === "player") {
     return (
-      <div>
         <div>
-          <Calendar CurrUserId={currUser.id} role={role} />
+          <div className="container mt-3">
+          <div className="row">
+            <div className="col-md-12">
+              <CalendarReact
+                CurrUserId={currUser.id} 
+                OnlyShowUserIdList={[]}
+                colorDict={[]}
+                role={role}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+        </div>
+      
+
     );
   }
 

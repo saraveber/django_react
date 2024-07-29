@@ -289,6 +289,9 @@ class MatchListCreate(generics.ListCreateAPIView):
         team_id = self.request.query_params.get('team_id', None)
         player_id = self.request.query_params.get('player_id', None)
         is_active_round = self.request.query_params.get('is_active_round', None)
+        is_assigned = self.request.query_params.get('is_assigned', None)
+        is_finished = self.request.query_params.get('is_finished', None)
+
         #TODO: ADD OTHER FILTERS BASED ON FINISHED MATCHES, ACTIVE MATCHES, ETC
         if league_id:
             queryset = queryset.filter(league_id=league_id)
@@ -299,11 +302,16 @@ class MatchListCreate(generics.ListCreateAPIView):
                 Q(team_host__player1_id=player_id) | Q(team_host__player2_id=player_id) |
                 Q(team_guest__player1_id=player_id) | Q(team_guest__player2_id=player_id)
             )
+        if is_assigned == 'true':
+            queryset = queryset.filter(is_assigned=True)
+        if is_assigned == 'false':
+            queryset = queryset.filter(is_assigned=False)
+        if is_finished == 'true':
+            queryset = queryset.filter(is_finished=True)
+        if is_finished == 'false':  
+            queryset = queryset.filter(is_finished=False)
         if is_active_round == 'true':
             queryset = queryset.filter(round_number__is_active=True)
-
-
-        
         return queryset
 
 
