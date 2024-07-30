@@ -195,7 +195,7 @@ const Matches = () => {
 
       {currentView === "assignMatch" && (
         <div>
-          <h3 className="my-4">Assign Match</h3>
+          <h3 className="mt-4">Assign Match</h3>
           <DropdownSearch is_assigned={false} is_finished={false} onMatchChange={handleMatchChange} />
 
           <form onSubmit={handleSubmit}>
