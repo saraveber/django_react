@@ -17,5 +17,6 @@ urlpatterns = [
     path('matches/', views.MatchListCreate.as_view(), name='match-list-create'),
     path('matches/<int:pk>/', views.MatchUpdateAPIView.as_view(), name='match-update'),
     path('assignedmatches/', views.AssignedMatchesListCreate.as_view(), name='assignedMatch-list-create'),
+    path('matches/sorted/', views.SortMatchesByTermsView.as_view(), name='sorted-matches'),
 ]
 
