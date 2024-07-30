@@ -169,7 +169,7 @@ const Matches = () => {
   return (
     <div className="container">
       <h3 className="my-4">Assign Match</h3>
-      <DropdownSearch onMatchChange={handleMatchChange} />
+      <DropdownSearch is_assigned = {false} is_finished = {false} onMatchChange={handleMatchChange}/>
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
@@ -223,6 +223,7 @@ const Matches = () => {
 
       <div className="mt-4">
         <h3>Update Match Results</h3>
+        <DropdownSearch is_assigned = {true} is_finished = {false} onMatchChange={handleMatchChange}/>
         {assignedMatches.map((assignedMatch) => (
           <div key={assignedMatch.id} className="mb-3">
             <h4>{getTeamNames(assignedMatch)}</h4>

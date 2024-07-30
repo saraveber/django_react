@@ -14,6 +14,15 @@ const PlayerTeamForm = () => {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [showSearchResults, setShowSearchResults] = useState(false); // State to control visibility of search results
 
+  // const [singles, setSingles] = useState(false);
+  // const [doubles, setDoubles] = useState(false);
+  // const [mixed, setMixed] = useState(false);
+  const [playerLeagues, setPlayerLeagues] = useState({
+    singles: false,
+    doubles: false,
+    mixed: false,
+  });
+
   const [selectedCheckboxes, setSelectedCheckboxes] = useState({
     maleSingle: null,
     femaleSingle: null,
@@ -79,10 +88,48 @@ const PlayerTeamForm = () => {
     setShowSearchResults(true); // Show search results when typing
   };
 
-  const handlePlayerClick = (player) => {
+  useEffect(() => {
+    setPlayerLeagues({
+      singles: false,
+      doubles: false,
+      mixed: false,
+    });
+  }, [selectedPlayer]);
+
+  const handlePlayerClick = async (player) => {
     setSelectedPlayer(player);
     setSearchTerm(`${player.name} ${player.surname}`);
     setShowSearchResults(false); // Hide search results when a player is clicked
+
+    try {
+      const response = await api.get(`/api/leagues/?player_id=${player.id}`);
+      const leaguesPlayer = response.data
+      console.log(leaguesPlayer)
+      for (var i in leaguesPlayer) {
+        if (leaguesPlayer[i].type === "S") {
+          setPlayerLeagues(prevState => ({
+            ...prevState,
+            singles: true,
+          }));
+        }
+        else if (leaguesPlayer[i].gender === "X") {
+          setPlayerLeagues(prevState => ({
+            ...prevState,
+            mixed: true,
+          }));
+        }
+        else if (leaguesPlayer[i].type === "D" && leaguesPlayer[i].gender !== "X") {
+          setPlayerLeagues(prevState => ({
+            ...prevState,
+            doubles: true,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error state if needed
+    }
+    
   };
 
   const handleCheckboxChange = (category, id) => {
@@ -107,11 +154,7 @@ const PlayerTeamForm = () => {
     }));
   };
 
-  const handleDoublesPlayerClick = (player, category) => {
-    setDoublesSelectedPlayers((prevSelected) => ({
-      ...prevSelected,
-      [category]: player,
-    }));
+  const handleDoublesPlayerClick = async (player, category, league) => {
     setDoublesSearch((prevSearch) => ({
       ...prevSearch,
       [category]: `${player.name} ${player.surname}`,
@@ -119,6 +162,29 @@ const PlayerTeamForm = () => {
     setShowDoublesSearchResults((prevShow) => ({
       ...prevShow,
       [category]: false,
+    }));
+    
+    try {
+      const response = await api.get(`/api/leagues/?player_id=${player.id}`);
+      const leaguesPlayer = response.data
+      for (var i in leaguesPlayer) {
+        if (leaguesPlayer[i].type === league.type && leaguesPlayer[i].gender === league.gender) {
+          alert("This player is already enroled in this league")
+          setDoublesSearch((prevSearch) => ({
+            ...prevSearch,
+            [category]: "",
+          }));
+          return
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      // Handle error state if needed
+    }
+
+    setDoublesSelectedPlayers((prevSelected) => ({
+      ...prevSelected,
+      [category]: player,
     }));
   };
 
@@ -151,11 +217,23 @@ const PlayerTeamForm = () => {
     try {
       selectedLeagues.forEach((league) => {
         if (selectedCheckboxes.maleDouble === league) {
-          createTeam(league, selectedPlayer, doublesSelectedPlayers.maleDouble);
+          if (doublesSelectedPlayers.maleDouble) {
+            createTeam(league, selectedPlayer, doublesSelectedPlayers.maleDouble);
+          } else {
+            alert("Choose partner for male doubles")
+          }
         } else if (selectedCheckboxes.femaleDouble === league) {
-          createTeam(league, selectedPlayer, doublesSelectedPlayers.femaleDouble);
+          if (doublesSelectedPlayers.femaleDouble) {
+            createTeam(league, selectedPlayer, doublesSelectedPlayers.femaleDouble);
+          } else {
+            alert("Choose partner for female doubles")
+          }
         } else if (selectedCheckboxes.mixedDouble === league) {
-          createTeam(league, selectedPlayer, doublesSelectedPlayers.mixedDouble);
+          if (doublesSelectedPlayers.femaleDouble) {
+            createTeam(league, selectedPlayer, doublesSelectedPlayers.mixedDouble);
+          } else {
+            alert("Choose partner for mixed doubles")
+          }
         } else {
           createTeam(league, selectedPlayer);
         }
@@ -227,7 +305,7 @@ const PlayerTeamForm = () => {
                     id={`maleSingle_${league.id}`}
                     checked={selectedCheckboxes.maleSingle === league.id}
                     onChange={() => handleCheckboxChange('maleSingle', league.id)}
-                    disabled={!selectedPlayer || selectedPlayer.gender === 'F'}
+                    disabled={!selectedPlayer || selectedPlayer.gender === 'F' || playerLeagues.singles}
                   />
                   <label htmlFor={`maleSingle_${league.id}`}>
                     {league.name}
@@ -246,7 +324,7 @@ const PlayerTeamForm = () => {
                     id={`femaleSingle_${league.id}`}
                     checked={selectedCheckboxes.femaleSingle === league.id}
                     onChange={() => handleCheckboxChange('femaleSingle', league.id)}
-                    disabled={!selectedPlayer || selectedPlayer.gender === 'M'} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender === 'M' || playerLeagues.singles} // Disable checkbox if no player selected
                   />
                   <label htmlFor={`femaleSingle_${league.id}`}>
                     {league.name}
@@ -270,7 +348,7 @@ const PlayerTeamForm = () => {
                     id={`maleDouble_${league.id}`}
                     checked={selectedCheckboxes.maleDouble === league.id}
                     onChange={() => handleCheckboxChange('maleDouble', league.id)}
-                    disabled={!selectedPlayer || selectedPlayer.gender === 'F'} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender === 'F' || playerLeagues.doubles} // Disable checkbox if no player selected
                   />
                   <label htmlFor={`maleDouble_${league.id}`}>
                     {league.name}
@@ -286,7 +364,7 @@ const PlayerTeamForm = () => {
                       {showDoublesSearchResults.maleDouble && filteredPlayers(doublesSearch.maleDouble, 'M').length > 0 && (
                         <ul className="search-results">
                           {filteredPlayers(doublesSearch.maleDouble, 'M').map((player) => (
-                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'maleDouble')}>
+                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'maleDouble', league)}>
                               {player.name} {player.surname}
                             </li>
                           ))}
@@ -308,7 +386,7 @@ const PlayerTeamForm = () => {
                     id={`femaleDouble_${league.id}`}
                     checked={selectedCheckboxes.femaleDouble === league.id}
                     onChange={() => handleCheckboxChange('femaleDouble', league.id)}
-                    disabled={!selectedPlayer || selectedPlayer.gender === 'M'} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender === 'M' || playerLeagues.doubles} // Disable checkbox if no player selected
                   />
                   <label htmlFor={`femaleDouble_${league.id}`}>
                     {league.name}
@@ -324,7 +402,7 @@ const PlayerTeamForm = () => {
                       {showDoublesSearchResults.femaleDouble && filteredPlayers(doublesSearch.femaleDouble, 'F').length > 0 && (
                         <ul className="search-results">
                           {filteredPlayers(doublesSearch.femaleDouble, 'F').map((player) => (
-                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'femaleDouble')}>
+                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'femaleDouble', league)}>
                               {player.name} {player.surname}
                             </li>
                           ))}
@@ -346,7 +424,7 @@ const PlayerTeamForm = () => {
                     id={`mixedDouble_${league.id}`}
                     checked={selectedCheckboxes.mixedDouble === league.id}
                     onChange={() => handleCheckboxChange('mixedDouble', league.id)}
-                    disabled={!selectedPlayer} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || playerLeagues.mixed} // Disable checkbox if no player selected
                   />
                   <label htmlFor={`mixedDouble_${league.id}`}>
                     {league.name}
@@ -363,7 +441,7 @@ const PlayerTeamForm = () => {
                         filteredPlayers(doublesSearch.mixedDouble, selectedPlayer.gender === 'M' ? 'F' : 'M').length > 0 && (
                         <ul className="search-results">
                           {filteredPlayers(doublesSearch.mixedDouble, selectedPlayer.gender === 'M' ? 'F' : 'M').map((player) => (
-                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'mixedDouble')}>
+                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'mixedDouble', league)}>
                               {player.name} {player.surname}
                             </li>
                           ))}
