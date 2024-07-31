@@ -368,3 +368,45 @@ class AssignedMatchesListCreate(generics.ListCreateAPIView):
                 serializer.save()
             else:
                 print(serializer.errors)
+
+
+
+
+class SortMatchesByTermsView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MatchSerializer
+
+    def get_queryset(self):
+        # Step 2: Fetch matches with is_assigned = false
+        queryset = Match.objects.filter(
+            is_assigned=False, 
+            is_finished=False,
+            round_number__is_active=True
+        )
+        league_id = self.request.query_params.get('league_id')
+        if league_id:
+            queryset = queryset.filter(league_id=league_id)
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        sorted_matches = {
+            'group1': [],
+            'group2': [],
+            # Add more groups as needed
+        }
+
+        for match in queryset:
+            overlap_terms = MatchSerializer(match).data['overlap_terms']
+            if not overlap_terms:
+                sorted_matches['group1'].append(match)
+            else:
+                sorted_matches['group2'].append(match)
+
+        response_data = {
+            'group1': MatchSerializer(sorted_matches['group1'], many=True).data,
+            'group2': MatchSerializer(sorted_matches['group2'], many=True).data,
+            # Add more groups as needed
+        }
+
+        return Response(response_data)

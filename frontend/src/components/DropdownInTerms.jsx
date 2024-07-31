@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
+import MatchTable from "./MatchTable"; // Import the new component
 
 function DropdownInTerms({
   selectedMatch,
@@ -11,9 +12,7 @@ function DropdownInTerms({
   const [leagues, setLeagues] = useState([]);
   const [matches, setMatches] = useState([]);
   const [rounds, setRounds] = useState([]);
-
   const [selectedLeague, setSelectedLeague] = useState(null);
-
   const [showSecondDropdownAndTable, setShowSecondDropdownAndTable] =
     useState(false);
 
@@ -39,7 +38,7 @@ function DropdownInTerms({
     const fetchMatches = async () => {
       if (selectedPlayer) {
         try {
-          let apiUrl = `api/matches/?player_id=${selectedPlayer.id}&is_active_round=true`;
+          let apiUrl = `api/matches/?player_id=${selectedPlayer.id}&is_active_round=true&is_assigned=false&is_finished=false`;
           if (selectedLeague) {
             apiUrl += `&league_id=${selectedLeague.id}`;
           }
@@ -61,9 +60,8 @@ function DropdownInTerms({
     const fetchLeagues = async () => {
       if (selectedPlayer) {
         try {
-          const response = await api.get(
-            `api/leagues/?player_id=${selectedPlayer.id}`
-          );
+          let apiUrl =`api/leagues/?player_id=${selectedPlayer.id}`
+          const response = await api.get(apiUrl);        
           setLeagues(response.data);
         } catch (error) {
           console.error("Error fetching leagues for player:", error);
@@ -87,32 +85,15 @@ function DropdownInTerms({
 
   const handleCheckboxChange = (event) => {
     const matchId = event.target.value;
-    // Check if the checkbox for the currently selected match is being unchecked
     if (
       selectedMatch &&
       parseInt(selectedMatch.id, 10) === parseInt(matchId, 10)
     ) {
-      setSelectedMatch(null); // Uncheck and set no match as selected
+      setSelectedMatch(null);
     } else {
       const match = matches.find((m) => m.id.toString() === matchId);
-      setSelectedMatch(match); // Update with the newly selected match
+      setSelectedMatch(match);
     }
-  };
-
-  const formatTeamPlayers = (team, selectedPlayerId) => {
-    const players = [team.player1_obj, team.player2_obj]
-      .map((player) => (player ? `${player.name} ${player.surname}` : ""))
-      .filter(Boolean);
-    const selectedIndex = players.findIndex(
-      (_, index) =>
-        team[`player${index + 1}_obj`] &&
-        team[`player${index + 1}_obj`].id === selectedPlayerId
-    );
-
-    if (selectedIndex > 0) {
-      [players[0], players[1]] = [players[1], players[0]];
-    }
-    return players.join(", ");
   };
 
   const toggleDropdownAndTable = () => {
@@ -149,8 +130,7 @@ function DropdownInTerms({
           </button>
         </div>
       </div>
-
-      {(showSecondDropdownAndTable && selectedPlayer !== null && selectedPlayer !== undefined) && (
+      {showSecondDropdownAndTable && selectedPlayer && (
         <div className="mt-3">
           <div className="row">
             <div className="col">
@@ -170,66 +150,13 @@ function DropdownInTerms({
           </div>
           <div className="row mt-3">
             <div className="col">
-              <table className="table">
-                <thead className="thead-dark">
-                  <tr>
-                    <th>League</th>
-                    <th>Team 1</th>
-                    <th>Team 2</th>
-                    <th>Select</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {matches.map((match) => {
-                    const league = leagues.find((l) => l.id === match.league);
-                    const isSelectedPlayerInHost =
-                      selectedPlayer &&
-                      ((match.team_host_obj.player1 &&
-                        match.team_host_obj.player1_obj?.id ===
-                          parseInt(selectedPlayer.id, 10)) ||
-                        (match.team_host_obj.player2 &&
-                          match.team_host_obj.player2_obj?.id ===
-                            parseInt(selectedPlayer.id, 10)));
-                    const team1 = isSelectedPlayerInHost
-                      ? formatTeamPlayers(
-                          match.team_host_obj, selectedPlayer.id
-                        )
-                      : formatTeamPlayers(
-                          match.team_guest_obj, selectedPlayer.id
-                        );
-                    const team2 = isSelectedPlayerInHost
-                      ? formatTeamPlayers(
-                          match.team_guest_obj, selectedPlayer.id
-                        )
-                      : formatTeamPlayers(
-                          match.team_host_obj,selectedPlayer.id
-                        );
-
-                    return (
-                      <tr key={match.id}>
-                        <td>{league ? league.name : "League not found"}</td>
-                        <td>{team1}</td>
-                        <td>{team2}</td>
-                        <td>
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            name="selectedMatch"
-                            value={match.id}
-                            checked={
-                              !!selectedMatch &&
-                              parseInt(selectedMatch.id, 10) ===
-                                parseInt(match.id, 10)
-                            }
-                            onChange={handleCheckboxChange}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-        
+              <MatchTable
+                matches={matches}
+                leagues={leagues}
+                selectedMatch={selectedMatch}
+                handleCheckboxChange={handleCheckboxChange}
+                selectedPlayer={selectedPlayer}
+              />
             </div>
           </div>
         </div>

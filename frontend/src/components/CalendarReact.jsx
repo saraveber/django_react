@@ -324,7 +324,7 @@ const CalendarReact = ({
           event: EventComponent,
         }}
       />
-      <button className="submit-button" onClick={handleSubmit}>
+      <button className="submit-button full-width-button" onClick={handleSubmit}>
         Submit
       </button>
     </div>

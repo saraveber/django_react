@@ -45,6 +45,9 @@ function Navigation() {
                 <Navbar.Toggle aria-controls={`navbar-expand-'md'`} />
                 <Navbar.Collapse id={`navbar-expand-'md'`}>
                   <Nav className="justify-content-end flex-grow-1 pe-3">
+                    <LinkContainer to="/sorted-matches">
+                      <Nav.Link>Sorted Matches</Nav.Link>
+                    </LinkContainer>
                     <LinkContainer to="/my-terms">
                       <Nav.Link>Edit Player Terms</Nav.Link>
                     </LinkContainer>
