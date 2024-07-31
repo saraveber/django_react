@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api'; // Assuming you have an api module for making HTTP requests
+import { useUser } from "../context/UserContext";
 import { Button, Container, Row, Col, Table, ListGroup, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Results = () => {
+    const { currUser, role, authorised } = useUser();
     const [leagues, setLeagues] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedLeague, setSelectedLeague] = useState(null);
@@ -207,22 +209,24 @@ const Results = () => {
                     <h1>Match Results</h1>
                 </Col>
             </Row>
-            <Row className="justify-content-md-center mt-3">
-                <Col md="auto">
-                    Choose end date for next round:
-                    <Form.Control 
-                        type="date" 
-                        value={newRoundData.endDate} 
-                        onChange={handleDateChange} 
-                        placeholder="Select end date" 
-                    />
-                </Col>
-                <Col md="auto">
-                    <Button variant="primary" onClick={handleAddNewRound} disabled={loading}>
-                        {loading ? 'Loading...' : 'Add New Round'}
-                    </Button>
-                </Col>
-            </Row>
+            {role === 'staff' || role === 'admin' ? (
+                <Row className="justify-content-md-center mt-3">
+                    <Col md="auto">
+                        Choose end date for next round:
+                        <Form.Control 
+                            type="date" 
+                            value={newRoundData.endDate} 
+                            onChange={handleDateChange} 
+                            placeholder="Select end date" 
+                        />
+                    </Col>
+                    <Col md="auto">
+                        <Button variant="primary" onClick={handleAddNewRound} disabled={loading}>
+                            {loading ? 'Loading...' : 'Add New Round'}
+                        </Button>
+                    </Col>
+                </Row>
+            ) : null}
             <Row className="mt-3">
                 <Col md="auto">
                     <ListGroup>

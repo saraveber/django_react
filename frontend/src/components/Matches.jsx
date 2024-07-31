@@ -156,9 +156,14 @@ const Matches = () => {
   };
 
   const getTeamNames = (assignedMatch) => {
-    const hostPlayer1 = assignedMatch.match_obj.team_host_obj.player1_obj.name;
-    const guestPlayer1 = assignedMatch.match_obj.team_guest_obj.player1_obj.name;
-    return `Match: ${hostPlayer1} vs ${guestPlayer1}`;
+    const hostPlayer1 = assignedMatch.match_obj.team_host_obj.player1_obj;
+    const hostPlayer2 = assignedMatch.match_obj.team_host_obj.player2_obj;
+    const guestPlayer1 = assignedMatch.match_obj.team_guest_obj.player1_obj;
+    const guestPlayer2 = assignedMatch.match_obj.team_guest_obj.player2_obj;
+    if (hostPlayer2) {
+      return `${hostPlayer1.name} ${hostPlayer1.surname} and ${hostPlayer2.name} ${hostPlayer2.surname} : ${guestPlayer1.name} ${guestPlayer1.surname} and ${guestPlayer2.name} ${guestPlayer2.surname}`;
+    }
+    return `${hostPlayer1.name} ${hostPlayer1.surname} : ${guestPlayer1.name} ${guestPlayer1.surname}`;
   };
 
   return (

@@ -230,7 +230,11 @@ class ChangePasswordView(APIView):
 
 class RoundsListCreate(generics.ListCreateAPIView):
     serializer_class = RoundSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+    
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAdminOrStaffUser()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         queryset = Round.objects.all()
@@ -273,7 +277,11 @@ class RoundUpdateAPIView(generics.UpdateAPIView):
 
 class MatchListCreate(generics.ListCreateAPIView):
     serializer_class = MatchSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+    
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAdminOrStaffUser()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         queryset = Match.objects.all()
