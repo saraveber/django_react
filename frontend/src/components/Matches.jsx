@@ -164,7 +164,7 @@ const Matches = () => {
   return (
     <div className="container">
       <h3 className="my-4">Assign Match</h3>
-      <DropdownSearch onMatchChange={handleMatchChange} />
+      <DropdownSearch onMatchChange={handleMatchChange}  />
 
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
