@@ -14,10 +14,10 @@ import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import ChangePassword from "./pages/ChangePassword";
 import GroupProtectedRoute from "./components/GroupProtectedRoute"
-import PlayerForm from "./components/PlayerForm";
-import TeamForm from "./components/TeamForm";
-import Results from "./components/Results";
-import Matches from "./components/Matches";
+import PlayerForm from "./pages/PlayerForm";
+import TeamForm from "./pages/TeamForm";
+import Results from "./pages/Results";
+import Matches from "./pages/Matches";
 import SortedMatches from "./pages/SortedMatches";
 
 
