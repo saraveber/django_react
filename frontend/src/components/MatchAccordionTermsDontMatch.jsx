@@ -1,10 +1,18 @@
-import React, { useState } from "react";
-import { Accordion, Card, Button } from 'react-bootstrap';
-import AvailableTerm from "./AvailableTerm";
+import React, { useState, useEffect } from "react";
+import { Accordion, Card, Button } from "react-bootstrap";
+import CalendarReact from "./CalendarReact"; // Assuming you have this component
+import UserColorSquare from "./UserColorSquare"; // Assuming you have this component
+import { getOtherPlayers } from "../utils/playerUtils";
 
 function MatchAccordionTermsDontMatch({ matches, leagues }) {
-  const [selectedTerm, setSelectedTerm] = useState(null);
   const [activeKey, setActiveKey] = useState("0");
+
+  const [selectedMatch, setSelectedMatch] = useState(null);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
+
+  const [otherPlayers, setOtherPlayers] = useState([]);
+  const [currentColorDict, setCurrentColorDict] = useState({});
+  const [userIdList, setUserIdList] = useState([]);
 
   const formatTeamPlayers = (team) => {
     return [team.player1_obj, team.player2_obj]
@@ -13,25 +21,24 @@ function MatchAccordionTermsDontMatch({ matches, leagues }) {
       .join(", ");
   };
 
-  const handleSelectTerm = (term) => {
-    setSelectedTerm(term === selectedTerm ? null : term);
-  };
-
-  const handleReserve = () => {
-    if (selectedTerm) {
-      // Add reservation logic here
-      console.log("Reserved term:", selectedTerm);
-    }
-  };
-
-  const handleAccordionClick = (index) => {
+  const handleAccordionClick = (index, match) => {
     if (activeKey === index.toString()) {
       setActiveKey(null); // Close the accordion if it's already open
     } else {
-      setSelectedTerm(null);
       setActiveKey(index.toString());
+      setSelectedMatch(match);
     }
   };
+
+  useEffect(() => {
+    if (selectedMatch) {
+      const { currOtherPlayers, newColorDict, OtherUserIdList } =
+        getOtherPlayers(selectedMatch);
+      setOtherPlayers(currOtherPlayers);
+      setCurrentColorDict(newColorDict);
+      setUserIdList(OtherUserIdList);
+    }
+  }, [selectedMatch, selectedPlayer]);
 
   return (
     <Accordion activeKey={activeKey}>
@@ -43,12 +50,34 @@ function MatchAccordionTermsDontMatch({ matches, leagues }) {
         return (
           <Accordion.Item eventKey={index.toString()} key={match.id}>
             <Accordion.Header
-              onClick={() => handleAccordionClick(index)}
+              onClick={() => handleAccordionClick(index, match)}
             >
               {league ? league.name : "League not found"}: {team1} vs {team2}
             </Accordion.Header>
             <Accordion.Body>
-              
+              <div className="container mt-3">
+                <div className="row">
+                  {isSelected && (
+                    <div className="col-md-10">
+                      <CalendarReact
+                        CurrUserId={selectedPlayer?.user}
+                        OnlyShowUserIdList={userIdList}
+                        colorDict={currentColorDict} // colorDict = {id:color} "#2CD3E1"
+                        role={"role"} // Replace with actual role if needed
+                        selectedMatch={selectedMatch}
+                      />
+                    </div>
+                  )}
+                  <div className="col-md-2">
+                    <UserColorSquare
+                      selectedPlayer={selectedPlayer?.user}
+                      otherPlayers={otherPlayers}
+                      mainColor={"#0d6efd"}
+                      colorDict={currentColorDict}
+                    />
+                  </div>
+                </div>
+              </div>
             </Accordion.Body>
           </Accordion.Item>
         );

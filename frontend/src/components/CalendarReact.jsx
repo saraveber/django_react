@@ -11,12 +11,14 @@ const CalendarReact = ({
   OnlyShowUserIdList,
   colorDict,
   role,
+  startDate = moment(), 
+  endDate = moment().add(1, 'month') 
 }) => {
   console.log("currUserId in CalendarReact:", CurrUserId);
-  const [currentView, setCurrentView] = useState("month");
-  const [events, setEvents] = useState([]);
+  const [currentView, setCurrentView] = useState('week');
+  const [dateRange, setDateRange] = useState({ start: startDate, end: endDate });
 
-  // to do FILTER CALANDER BASED ON THIS
+
   const startHour = 7;
   const endHour = 22;
   const minTime = new Date();
@@ -25,19 +27,21 @@ const CalendarReact = ({
   maxTime.setHours(endHour, 0, 0);
 
   useEffect(() => {
-    fetchEventsForCurrUser();
+    if (CurrUserId) fetchEventsForCurrUser();
   }, [CurrUserId]);
 
   useEffect(() => {
     fetchEventsForOtherUsers();
   }, [OnlyShowUserIdList]);
 
+
+
   const fetchEventsForCurrUser = async () => {
     try {
       const res = await api.get("api/terms/user/" + CurrUserId + "/");
       const now = new Date();
       now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30);
-  
+
       const formattedEvents = res.data
         .filter((event) => {
           const start = new Date(event.start_date);
@@ -57,24 +61,23 @@ const CalendarReact = ({
             type: "edit",
           };
         });
-  
+
       setEvents(formattedEvents);
     } catch (error) {
       console.error("Error fetching events:", error);
     }
   };
-  
+
   const fetchEventsForOtherUsers = async () => {
-    let tempEvents = []; // Step 1: Initialize a temporary array
-  
+    let tempEvents = [];
+
     for (const id of OnlyShowUserIdList) {
-      // Changed to a for...of loop for async/await
       console.log("Fetching events for user with id:", id);
       try {
         const res = await api.get("api/terms/user/" + id + "/");
         const now = new Date();
         now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30);
-  
+
         const filteredEvents = res.data
           .filter((event) => {
             const start = new Date(event.start_date);
@@ -94,20 +97,19 @@ const CalendarReact = ({
               type: "show",
             };
           });
-  
-        tempEvents = [...tempEvents, ...filteredEvents]; // Step 2: Accumulate formatted events
+
+        tempEvents = [...tempEvents, ...filteredEvents];
       } catch (error) {
         console.error("Error fetching events:", error);
       }
     }
-  
-    // Step 3: Set events after the loop
+
     setEvents((prevEvents) => [
       ...prevEvents.filter((event) => event.type === "edit"),
       ...tempEvents,
     ]);
   };
-  
+
   const handleDeleteEvent = (event) => {
     setEvents(
       events.filter((e) => e.start !== event.start && e.end !== event.end)
@@ -120,7 +122,6 @@ const CalendarReact = ({
 
   const handleSelectSlot = ({ start, end }) => {
     const now = new Date();
-    // round now to 30 minutes
     now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30);
     if (end < now) {
       return;
@@ -163,18 +164,16 @@ const CalendarReact = ({
           else alert("Failed to make term.");
         })
         .catch((err) => alert(err));
-    }else{
+    } else {
       console.log("Role is not admin or staff");
       api
-        .post("api/terms/", {start_date, end_date })
+        .post("api/terms/", { start_date, end_date })
         .then((res) => {
           if (res.status === 201) console.log("Term saved!");
           else alert("Failed to make term.");
-        }
-        )
+        })
         .catch((err) => alert(err));
     }
-
   };
 
   const handleSubmit = async () => {
@@ -185,7 +184,6 @@ const CalendarReact = ({
       `Submitting these terms:\n${eventsString}\nDo you want to proceed?`
     );
     if (!isConfirmed) return;
-    // map through the events and send a POST request for each one
     if (role === "admin" || role === "staff") {
       api.delete(`api/terms/delete-all/user/${CurrUserId}/`).then((res) => {
         if (res.status === 204) {
@@ -197,20 +195,16 @@ const CalendarReact = ({
             createTerm(event.start, event.end);
           });
       });
-    }else if (role === "player") {
-      // Delete all terms first
+    } else if (role === "player") {
       api.delete(`api/terms/delete-all/`)
         .then((res) => {
           if (res.status === 204) {
             console.log("All terms deleted!");
-
-            // After successful deletion, create the new terms
             events
               .filter((event) => event.type === "edit")
               .map((event) => {
                 createTerm(event.start, event.end);
               });
-
           } else {
             alert("Failed to delete terms.");
           }
@@ -218,30 +212,30 @@ const CalendarReact = ({
         .catch((error) => alert(error));
     }
   };
+
   const slotPropGetter = (date) => {
     const now = new Date();
-    now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30); // Normalize to start of day for comparison
+    now.setMinutes(Math.ceil(now.getMinutes() / 30) * 30);
     now.setSeconds(0);
     const hour = date.getHours();
     now.setMinutes(now.getMinutes() - 15);
     if (date <= now || hour < startHour || hour > endHour) {
       return {
         style: {
-          backgroundColor: "#eeeeee", // Set background color to gray
+          backgroundColor: "#eeeeee",
         },
       };
     } else {
       return {
         style: {
-          backgroundColor: "white", // Set background color to white
+          backgroundColor: "white",
         },
       };
     }
   };
 
-  // Define the eventPropGetter function
   const eventPropGetter = (event) => {
-    let color_edge = "#0d6efd"; // Declare color variable outside the if-else blocks
+    let color_edge = "#0d6efd";
     let color_background = "#0d6efd";
     let color_text = "white";
     if (event.type === "show") {
@@ -251,10 +245,10 @@ const CalendarReact = ({
     }
 
     let newStyle = {
-      backgroundColor: color_background, // Very light gray for background
-      color: color_text, // White for text color
-      border: "none", // No border on all sides
-      borderLeft: `5px solid ${color_edge}`, // Colored left border only
+      backgroundColor: color_background,
+      color: color_text,
+      border: "none",
+      borderLeft: `5px solid ${color_edge}`,
     };
 
     return {
@@ -279,16 +273,15 @@ const CalendarReact = ({
       backgroundColor: "white",
       borderRadius: "50%",
       color: "#007bff",
-      //marginLeft: "5px",
     };
 
     return (
       <div
         style={{
           display: "flex",
-          flexDirection: "column", // Stack children vertically
-          justifyContent: "flex-start", // Align children to the start of the container
-          height: "100%", // Ensure the div takes full height of its parent
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          height: "100%",
         }}
       >
         {event.type === "edit" && (
@@ -300,11 +293,10 @@ const CalendarReact = ({
     );
   };
 
-
   return (
     <div>
       <Calendar
-        dayLayoutAlgorithm= "no-overlap"
+        dayLayoutAlgorithm="no-overlap"
         localizer={localizer}
         events={events}
         startAccessor="start"
@@ -324,9 +316,11 @@ const CalendarReact = ({
           event: EventComponent,
         }}
       />
-      <button className="submit-button full-width-button" onClick={handleSubmit}>
-        Submit
-      </button>
+      {CurrUserId && (
+        <button className="submit-button full-width-button" onClick={handleSubmit}>
+          Submit
+        </button>
+      )}
     </div>
   );
 };

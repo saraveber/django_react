@@ -5,9 +5,10 @@ import Calendar from "../components/Calendar";
 import CalendarReact from "../components/CalendarReact";
 import DropdownInTerms from "../components/DropdownInTerms";
 import UserColorSquare from "../components/UserColorSquare";
+import { getOtherPlayers } from "../utils/playerUtils";
 
 // Assuming colorDict is defined outside the component for global access
-const colorDict = { 0: "#A459D1", 1: "#F266AB", 2: "#FFB84C" };
+
 const mainColor = "#0d6efd";
 
 
@@ -24,56 +25,10 @@ function MyTerms() {
 
 
   useEffect(() => {
-    let currOtherPlayers = [];
-    // add players to OtherPlayers
-    if (selectedMatch != null) {
-      // add selectedMatch.team_guest_obj.player1_obj if electedMatch.team_guest_obj.player1 and player1_obj is not selectedPlayer
-      if (
-        selectedMatch.team_guest_obj.player1 &&
-        selectedMatch.team_guest_obj.player1_obj.id !== selectedPlayer.id
-      ) {
-        currOtherPlayers.push(selectedMatch.team_guest_obj.player1_obj);
-      }
-      // add selectedMatch.team_guest_obj.player2_obj if electedMatch.team_guest_obj.player2 and player2_obj is not selectedPlayer
-      if (
-        selectedMatch.team_guest_obj.player2 &&
-        selectedMatch.team_guest_obj.player2_obj.id !== selectedPlayer.id
-      ) {
-        currOtherPlayers.push(selectedMatch.team_guest_obj.player2_obj);
-      }
-      // add selectedMatch.team_host_obj.player1_obj if electedMatch.team_host_obj.player1 and player1_obj is not selectedPlayer
-      if (
-        selectedMatch.team_host_obj.player1 &&
-        selectedMatch.team_host_obj.player1_obj.id !== selectedPlayer.id
-      ) {
-        currOtherPlayers.push(selectedMatch.team_host_obj.player1_obj);
-      }
-      // add selectedMatch.team_host_obj.player2_obj if electedMatch.team_host_obj.player2 and player2_obj is not selectedPlayer
-      if (
-        selectedMatch.team_host_obj.player2 &&
-        selectedMatch.team_host_obj.player2_obj.id !== selectedPlayer.id
-      ) {
-        currOtherPlayers.push(selectedMatch.team_host_obj.player2_obj);
-      }
-
-      console.log("Other players:", currOtherPlayers);
-
-      setOtherPlayers(currOtherPlayers);
-    } else {
-      setOtherPlayers([]);
-    }
-
-    // set colorDict based on the number of otherPlayers
-    const newColorDict = {};
-    const OtherUserIdList = [];
-    currOtherPlayers.forEach((player, index) => {
-      newColorDict[player.user] = colorDict[index];
-      OtherUserIdList.push(player.user);
-    });
+    const { currOtherPlayers, newColorDict, OtherUserIdList } = getOtherPlayers(selectedMatch, selectedPlayer);
+    setOtherPlayers(currOtherPlayers);
     setCurrentColorDict(newColorDict);
     setUserIdList(OtherUserIdList);
-
-
   }, [selectedMatch]);
 
 
@@ -141,7 +96,7 @@ useEffect(() => {
       <UserColorSquare
         selectedPlayer={selectedPlayer}
         otherPlayers={otherPlayers}
-        mainColor={mainColor}
+        mainColor={"#0d6efd"}
         colorDict={currentColorDict}
       />
     </div>
