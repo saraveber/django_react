@@ -11,7 +11,6 @@ import { getOtherPlayers } from "../utils/playerUtils";
 
 const mainColor = "#0d6efd";
 
-
 function MyTerms() {
   const { currUser, role, authorised } = useUser();
 
@@ -22,39 +21,34 @@ function MyTerms() {
   const [currentColorDict, setCurrentColorDict] = useState({});
   const [userIdList, setUserIdList] = useState([]);
 
-
-
   useEffect(() => {
-    const { currOtherPlayers, newColorDict, OtherUserIdList } = getOtherPlayers(selectedMatch, selectedPlayer);
+    const { currOtherPlayers, newColorDict, OtherUserIdList } = getOtherPlayers(
+      selectedMatch,
+      selectedPlayer
+    );
     setOtherPlayers(currOtherPlayers);
     setCurrentColorDict(newColorDict);
     setUserIdList(OtherUserIdList);
   }, [selectedMatch]);
 
-
-
-useEffect(() => { 
+  useEffect(() => {
     console.log("currentId in MyTerms:", currUser.id);
     console.log("OtherUserIdList:", userIdList);
     console.log("Current color dict:", currentColorDict);
     console.log("Other players:", otherPlayers);
   }, [currUser, userIdList, currentColorDict, otherPlayers]);
 
-
-
-
-
   if (role === null) {
     return <div>Loading...</div>;
   }
   if (role === "player") {
     return (
-        <div>
-          <div className="container mt-3">
+      <div>
+        <div className="container mt-3">
           <div className="row">
             <div className="col-md-12">
               <CalendarReact
-                CurrUserId={currUser.id} 
+                CurrUserId={currUser.id}
                 OnlyShowUserIdList={[]}
                 colorDict={[]}
                 role={role}
@@ -62,9 +56,7 @@ useEffect(() => {
             </div>
           </div>
         </div>
-        </div>
-      
-
+      </div>
     );
   }
 
@@ -77,32 +69,29 @@ useEffect(() => {
           selectedPlayer={selectedPlayer}
           setSelectedPlayer={setSelectedPlayer}
         />
-       <div className="container mt-3">
-  <div className="row">
-    
-
-    {selectedPlayer && (
-      <div className="col-md-10">
-        <CalendarReact
-          CurrUserId={selectedPlayer.user}
-          OnlyShowUserIdList={userIdList}
-          colorDict={currentColorDict} // colorDict = {id:color} "#2CD3E1"
-          role={role}
-          selectedMatch={selectedMatch}
-        />
-      </div>
-    )}
-<div className="col-md-2">
-      <UserColorSquare
-        selectedPlayer={selectedPlayer}
-        otherPlayers={otherPlayers}
-        mainColor={"#0d6efd"}
-        colorDict={currentColorDict}
-      />
-    </div>
-
-  </div>
-</div>
+        <div className="container mt-3">
+          <div className="row">
+            {selectedPlayer && (
+              <div className="col-md-10">
+                <CalendarReact
+                  CurrUserId={selectedPlayer.user}
+                  OnlyShowUserIdList={userIdList}
+                  colorDict={currentColorDict} // colorDict = {id:color} "#2CD3E1"
+                  role={role}
+                  selectedMatch={selectedMatch}
+                />
+              </div>
+            )}
+            <div className="col-md-2">
+              <UserColorSquare
+                selectedPlayer={selectedPlayer}
+                otherPlayers={otherPlayers}
+                mainColor={"#0d6efd"}
+                colorDict={currentColorDict}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
