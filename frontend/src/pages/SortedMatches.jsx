@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Card, Form } from "react-bootstrap";
 import { useUser } from "../context/UserContext";
-import "../styles/Home.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import api from "../api";
 import MatchAccordion from "../components/MatchAccordion";
 
 const SortedMatches = () => {
   const { currUser, role, authorised } = useUser();
   const [leagues, setLeagues] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [sortedMatches, setSortedMatches] = useState({
     group1: [],
     group2: [],
@@ -51,6 +53,40 @@ const SortedMatches = () => {
 
   return (
     <div className="container mt-3">
+
+<div className="row mt-3">
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="startDate" className="form-label">
+              Start Date:
+            </label>
+            <input
+              type="date"
+              id="startDate"
+              value={startDate ? startDate.toISOString().split('T')[0] : ""}
+              onChange={(e) => setStartDate(new Date(e.target.value))}
+              className="form-control"
+              placeholder="mm/dd/yyyy"
+            />
+          </div>
+        </div>
+        <div className="col">
+          <div className="mb-3">
+            <label htmlFor="endDate" className="form-label">
+              End Date:
+            </label>
+            <input
+              type="date"
+              id="endDate"
+              value={endDate ? endDate.toISOString().split('T')[0] : ""}
+              onChange={(e) => setEndDate(new Date(e.target.value))}
+              className="form-control"
+              placeholder="mm/dd/yyyy"
+            />
+          </div>
+        </div>
+      </div>
+      
       <div className="row mt-3">
         <div className="col">
         <Card
