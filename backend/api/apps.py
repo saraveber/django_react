@@ -65,7 +65,7 @@ def load_initial_league_data(sender, **kwargs):
     # Check if the table is already populated
     if not League.objects.exists():
         csv_file_path = os.path.join(os.path.dirname(__file__), 'initial_leagues.csv')
-        with open(csv_file_path, newline='') as csvfile:
+        with open(csv_file_path, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             leagues = [
                 League(

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api'; // Assuming you have an api module for making HTTP requests
-import '../styles/TeamForm.css'; // Import the CSS file for styling
+import { Container, Row, Col, Form, Button, ListGroup } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const PlayerTeamForm = () => {
   const [maleSingles, setMaleSingles] = useState([]);
@@ -12,11 +13,8 @@ const PlayerTeamForm = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [players, setPlayers] = useState([]);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [showSearchResults, setShowSearchResults] = useState(false); // State to control visibility of search results
+  const [showSearchResults, setShowSearchResults] = useState(false); 
 
-  // const [singles, setSingles] = useState(false);
-  // const [doubles, setDoubles] = useState(false);
-  // const [mixed, setMixed] = useState(false);
   const [playerLeagues, setPlayerLeagues] = useState({
     singles: false,
     doubles: false,
@@ -31,7 +29,6 @@ const PlayerTeamForm = () => {
     mixedDouble: null,
   });
 
-  // State to control search for doubles players
   const [doublesSearch, setDoublesSearch] = useState({
     maleDouble: '',
     femaleDouble: '',
@@ -65,11 +62,10 @@ const PlayerTeamForm = () => {
         setMaleDoubles(maleDoublesResponse.data);
         setFemaleDoubles(femaleDoublesResponse.data);
         setMixedDoubles(mixedDoublesResponse.data);
-        setPlayers(playersResponse.data); // Assuming response.data is an array of player objects
+        setPlayers(playersResponse.data);
 
       } catch (error) {
         console.error('Error fetching data:', error);
-        // Handle error state if needed
       }
     };
 
@@ -83,9 +79,9 @@ const PlayerTeamForm = () => {
   );
 
   const handleSearchChange = (event) => {
-    setSelectedPlayer(null); // Reset selected player when typing in search field
+    setSelectedPlayer(null);
     setSearchTerm(event.target.value);
-    setShowSearchResults(true); // Show search results when typing
+    setShowSearchResults(true);
   };
 
   useEffect(() => {
@@ -103,8 +99,7 @@ const PlayerTeamForm = () => {
 
     try {
       const response = await api.get(`/api/leagues/?player_id=${player.id}`);
-      const leaguesPlayer = response.data
-      console.log(leaguesPlayer)
+      const leaguesPlayer = response.data;
       for (var i in leaguesPlayer) {
         if (leaguesPlayer[i].type === "S") {
           setPlayerLeagues(prevState => ({
@@ -127,9 +122,7 @@ const PlayerTeamForm = () => {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      // Handle error state if needed
     }
-    
   };
 
   const handleCheckboxChange = (category, id) => {
@@ -166,20 +159,19 @@ const PlayerTeamForm = () => {
     
     try {
       const response = await api.get(`/api/leagues/?player_id=${player.id}`);
-      const leaguesPlayer = response.data
+      const leaguesPlayer = response.data;
       for (var i in leaguesPlayer) {
         if (leaguesPlayer[i].type === league.type && leaguesPlayer[i].gender === league.gender) {
-          alert("This player is already enroled in this league")
+          alert("This player is already enrolled in this league");
           setDoublesSearch((prevSearch) => ({
             ...prevSearch,
             [category]: "",
           }));
-          return
+          return;
         }
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      // Handle error state if needed
     }
 
     setDoublesSelectedPlayers((prevSelected) => ({
@@ -226,13 +218,13 @@ const PlayerTeamForm = () => {
           if (doublesSelectedPlayers.femaleDouble) {
             createTeam(league, selectedPlayer, doublesSelectedPlayers.femaleDouble);
           } else {
-            alert("Choose partner for female doubles")
+            alert("Choose partner for female doubles");
           }
         } else if (selectedCheckboxes.mixedDouble === league) {
-          if (doublesSelectedPlayers.femaleDouble) {
+          if (doublesSelectedPlayers.mixedDouble) {
             createTeam(league, selectedPlayer, doublesSelectedPlayers.mixedDouble);
           } else {
-            alert("Choose partner for mixed doubles")
+            alert("Choose partner for mixed doubles");
           }
         } else {
           createTeam(league, selectedPlayer);
@@ -264,7 +256,6 @@ const PlayerTeamForm = () => {
         femaleDouble: false,
         mixedDouble: false,
       });
-      //alert('Teams successfully created!');
     }
     catch (error) {
       console.error('Error creating team:', error);
@@ -273,191 +264,202 @@ const PlayerTeamForm = () => {
   };
 
   return (
-    <div className="PlayerTeamForm">
-      <div className="search-container">
-        <input
-          type="text"
-          placeholder="Search players..."
-          value={selectedPlayer ? `${selectedPlayer.name} ${selectedPlayer.surname}` : searchTerm}
-          onChange={handleSearchChange}
-        />
-        {showSearchResults && filteredPlayers(searchTerm).length > 0 && (
-          <ul className="search-results">
-            {filteredPlayers(searchTerm).map((player) => (
-              <li key={player.id} onClick={() => handlePlayerClick(player)}>
-                {player.name} {player.surname}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-      <div className="columns">
+    <Container className="mt-4">
+      <Row className="d-flex justify-content-center">
+        <Col md={4}>
+          <Form.Group className="my-4">
+            <Form.Control
+              type="text"
+              placeholder="Search players..."
+              value={selectedPlayer ? `${selectedPlayer.name} ${selectedPlayer.surname}` : searchTerm}
+              onChange={handleSearchChange}
+            />
+            {showSearchResults && filteredPlayers(searchTerm).length > 0 && (
+              <ListGroup className="mt-2">
+                {filteredPlayers(searchTerm).map((player) => (
+                  <ListGroup.Item
+                    key={player.id}
+                    action
+                    onClick={() => handlePlayerClick(player)}
+                  >
+                    {player.name} {player.surname}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            )}
+          </Form.Group>
+        </Col>
+      </Row>
+      <Row>
         {/* Singles Column */}
-        <div className="column">
-          <h3>Singles</h3>
-          <div className="checkbox-container">
+        <Col md={6}>
+          <h3 className="text-center">Singles</h3>
+          <Form.Group className="mb-3">
             <h4>Male Singles</h4>
-            <ul>
+            <ListGroup>
               {maleSingles.map((league) => (
-                <li key={league.id}>
-                  <input
+                <ListGroup.Item key={league.id}>
+                  <Form.Check
                     type="checkbox"
                     id={`maleSingle_${league.id}`}
+                    label={league.name}
                     checked={selectedCheckboxes.maleSingle === league.id}
                     onChange={() => handleCheckboxChange('maleSingle', league.id)}
                     disabled={!selectedPlayer || selectedPlayer.gender === 'F' || playerLeagues.singles}
                   />
-                  <label htmlFor={`maleSingle_${league.id}`}>
-                    {league.name}
-                  </label>
-                </li>
+                </ListGroup.Item>
               ))}
-            </ul>
-          </div>
-          <div className="checkbox-container">
+            </ListGroup>
+          </Form.Group>
+          <Form.Group className="mb-3">
             <h4>Female Singles</h4>
-            <ul>
+            <ListGroup>
               {femaleSingles.map((league) => (
-                <li key={league.id}>
-                  <input
+                <ListGroup.Item key={league.id}>
+                  <Form.Check
                     type="checkbox"
                     id={`femaleSingle_${league.id}`}
+                    label={league.name}
                     checked={selectedCheckboxes.femaleSingle === league.id}
                     onChange={() => handleCheckboxChange('femaleSingle', league.id)}
-                    disabled={!selectedPlayer || selectedPlayer.gender === 'M' || playerLeagues.singles} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender === 'M' || playerLeagues.singles}
                   />
-                  <label htmlFor={`femaleSingle_${league.id}`}>
-                    {league.name}
-                  </label>
-                </li>
+                </ListGroup.Item>
               ))}
-            </ul>
-          </div>
-        </div>
-
+            </ListGroup>
+          </Form.Group>
+        </Col>
+  
         {/* Doubles Column */}
-        <div className="column">
-          <h3>Doubles</h3>
-          <div className="checkbox-container">
+        <Col md={6}>
+          <h3 className="text-center">Doubles</h3>
+          <Form.Group className="mb-3">
             <h4>Male Doubles</h4>
-            <ul>
+            <ListGroup>
               {maleDoubles.map((league) => (
-                <li key={league.id}>
-                  <input
+                <ListGroup.Item key={league.id}>
+                  <Form.Check
                     type="checkbox"
                     id={`maleDouble_${league.id}`}
+                    label={league.name}
                     checked={selectedCheckboxes.maleDouble === league.id}
                     onChange={() => handleCheckboxChange('maleDouble', league.id)}
-                    disabled={!selectedPlayer || selectedPlayer.gender === 'F' || playerLeagues.doubles} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender === 'F' || playerLeagues.doubles}
                   />
-                  <label htmlFor={`maleDouble_${league.id}`}>
-                    {league.name}
-                  </label>
                   {selectedCheckboxes.maleDouble === league.id && (
-                    <div className="doubles-search-container">
-                      <input
+                    <div className="mt-2">
+                      <Form.Control
                         type="text"
                         placeholder="Search doubles partner..."
                         value={doublesSelectedPlayers.maleDouble ? `${doublesSelectedPlayers.maleDouble.name} ${doublesSelectedPlayers.maleDouble.surname}` : doublesSearch.maleDouble}
                         onChange={(e) => handleDoublesSearchChange(e, 'maleDouble')}
                       />
                       {showDoublesSearchResults.maleDouble && filteredPlayers(doublesSearch.maleDouble, 'M').length > 0 && (
-                        <ul className="search-results">
+                        <ListGroup className="mt-2">
                           {filteredPlayers(doublesSearch.maleDouble, 'M').map((player) => (
-                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'maleDouble', league)}>
+                            <ListGroup.Item
+                              key={player.id}
+                              action
+                              onClick={() => handleDoublesPlayerClick(player, 'maleDouble', league)}
+                            >
                               {player.name} {player.surname}
-                            </li>
+                            </ListGroup.Item>
                           ))}
-                        </ul>
+                        </ListGroup>
                       )}
                     </div>
                   )}
-                </li>
+                </ListGroup.Item>
               ))}
-            </ul>
-          </div>
-          <div className="checkbox-container">
+            </ListGroup>
+          </Form.Group>
+          <Form.Group className="mb-3">
             <h4>Female Doubles</h4>
-            <ul>
+            <ListGroup>
               {femaleDoubles.map((league) => (
-                <li key={league.id}>
-                  <input
+                <ListGroup.Item key={league.id}>
+                  <Form.Check
                     type="checkbox"
                     id={`femaleDouble_${league.id}`}
+                    label={league.name}
                     checked={selectedCheckboxes.femaleDouble === league.id}
                     onChange={() => handleCheckboxChange('femaleDouble', league.id)}
-                    disabled={!selectedPlayer || selectedPlayer.gender === 'M' || playerLeagues.doubles} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || selectedPlayer.gender === 'M' || playerLeagues.doubles}
                   />
-                  <label htmlFor={`femaleDouble_${league.id}`}>
-                    {league.name}
-                  </label>
                   {selectedCheckboxes.femaleDouble === league.id && (
-                    <div className="doubles-search-container">
-                      <input
+                    <div className="mt-2">
+                      <Form.Control
                         type="text"
                         placeholder="Search doubles partner..."
                         value={doublesSelectedPlayers.femaleDouble ? `${doublesSelectedPlayers.femaleDouble.name} ${doublesSelectedPlayers.femaleDouble.surname}` : doublesSearch.femaleDouble}
                         onChange={(e) => handleDoublesSearchChange(e, 'femaleDouble')}
                       />
                       {showDoublesSearchResults.femaleDouble && filteredPlayers(doublesSearch.femaleDouble, 'F').length > 0 && (
-                        <ul className="search-results">
+                        <ListGroup className="mt-2">
                           {filteredPlayers(doublesSearch.femaleDouble, 'F').map((player) => (
-                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'femaleDouble', league)}>
+                            <ListGroup.Item
+                              key={player.id}
+                              action
+                              onClick={() => handleDoublesPlayerClick(player, 'femaleDouble', league)}
+                            >
                               {player.name} {player.surname}
-                            </li>
+                            </ListGroup.Item>
                           ))}
-                        </ul>
+                        </ListGroup>
                       )}
                     </div>
                   )}
-                </li>
+                </ListGroup.Item>
               ))}
-            </ul>
-          </div>
-          <div className="checkbox-container">
+            </ListGroup>
+          </Form.Group>
+          <Form.Group className="mb-3">
             <h4>Mixed Doubles</h4>
-            <ul>
+            <ListGroup>
               {mixedDoubles.map((league) => (
-                <li key={league.id}>
-                  <input
+                <ListGroup.Item key={league.id}>
+                  <Form.Check
                     type="checkbox"
                     id={`mixedDouble_${league.id}`}
+                    label={league.name}
                     checked={selectedCheckboxes.mixedDouble === league.id}
                     onChange={() => handleCheckboxChange('mixedDouble', league.id)}
-                    disabled={!selectedPlayer || playerLeagues.mixed} // Disable checkbox if no player selected
+                    disabled={!selectedPlayer || playerLeagues.mixed}
                   />
-                  <label htmlFor={`mixedDouble_${league.id}`}>
-                    {league.name}
-                  </label>
                   {selectedCheckboxes.mixedDouble === league.id && (
-                    <div className="doubles-search-container">
-                      <input
+                    <div className="mt-2">
+                      <Form.Control
                         type="text"
                         placeholder="Search doubles partner..."
                         value={doublesSelectedPlayers.mixedDouble ? `${doublesSelectedPlayers.mixedDouble.name} ${doublesSelectedPlayers.mixedDouble.surname}` : doublesSearch.mixedDouble}
                         onChange={(e) => handleDoublesSearchChange(e, 'mixedDouble')}
                       />
-                      {showDoublesSearchResults.mixedDouble && 
-                        filteredPlayers(doublesSearch.mixedDouble, selectedPlayer.gender === 'M' ? 'F' : 'M').length > 0 && (
-                        <ul className="search-results">
+                      {showDoublesSearchResults.mixedDouble && filteredPlayers(doublesSearch.mixedDouble, selectedPlayer.gender === 'M' ? 'F' : 'M').length > 0 && (
+                        <ListGroup className="mt-2">
                           {filteredPlayers(doublesSearch.mixedDouble, selectedPlayer.gender === 'M' ? 'F' : 'M').map((player) => (
-                            <li key={player.id} onClick={() => handleDoublesPlayerClick(player, 'mixedDouble', league)}>
+                            <ListGroup.Item
+                              key={player.id}
+                              action
+                              onClick={() => handleDoublesPlayerClick(player, 'mixedDouble', league)}
+                            >
                               {player.name} {player.surname}
-                            </li>
+                            </ListGroup.Item>
                           ))}
-                        </ul>
+                        </ListGroup>
                       )}
                     </div>
                   )}
-                </li>
+                </ListGroup.Item>
               ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-      <button className="submit-button" onClick={handleSubmit}>Submit</button>
-    </div>
-  );
+            </ListGroup>
+          </Form.Group>
+        </Col>
+      </Row>
+      <Row className="d-flex justify-content-center">
+        <Button variant="primary" className="mt-3 w-25" onClick={handleSubmit}>Submit</Button>
+      </Row>
+    </Container>
+  ); 
 };
 
 export default PlayerTeamForm;
