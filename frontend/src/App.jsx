@@ -19,6 +19,7 @@ import TeamForm from "./pages/TeamForm";
 import Results from "./pages/Results";
 import Matches from "./pages/Matches";
 import SortedMatches from "./pages/SortedMatches";
+import MyUpcomingMatches from "./pages/MyUpcomingMatches";
 
 
 function Logout(){
@@ -78,6 +79,13 @@ function App() {
             element={
               <GroupProtectedRoute requiredGroups={['admin', 'staff']}>
                 <Matches/>
+              </GroupProtectedRoute>}
+          />
+          <Route 
+            path="/upcomingMatches" 
+            element={
+              <GroupProtectedRoute requiredGroups={['player']}>
+                <MyUpcomingMatches/>
               </GroupProtectedRoute>}
           />
 
