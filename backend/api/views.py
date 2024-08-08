@@ -348,13 +348,27 @@ class MatchUpdateAPIView(generics.UpdateAPIView):
 
 class AssignedMatchesListCreate(generics.ListCreateAPIView):
     serializer_class = AssignedMatchSerializer
-    permission_classes = [IsAuthenticated, IsAdminOrStaffUser]
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsAuthenticated(), IsAdminOrStaffUser()]
+        return [IsAuthenticated()]
 
     def get_queryset(self):
+        queryset = AssignedMatch.objects.all()
+        myId = self.request.query_params.get('id', None)
+        if myId:
+            queryset = queryset.filter(
+                Q(match__team_host__player1=myId) |
+                Q(match__team_host__player2=myId) |
+                Q(match__team_guest__player1=myId) |
+                Q(match__team_guest__player2=myId)
+            )
         queryset = AssignedMatch.objects.filter(
             is_cancelled=False,
             match__is_finished=False
         )
+        
         return queryset
     
 
