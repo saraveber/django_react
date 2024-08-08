@@ -3,7 +3,9 @@ import { Card, Form } from "react-bootstrap";
 import { useUser } from "../context/UserContext";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import api from "../api";
-import MatchAccordion from "../components/MatchAccordion";
+import MatchAccordionTermsMatch from "../components/MatchAccordionTermsMatch";
+import MatchAccordionTermsDontMatch from "../components/MatchAccordionTermsDontMatch";
+
 
 const SortedMatches = () => {
   const { currUser, role, authorised } = useUser();
@@ -124,13 +126,13 @@ const SortedMatches = () => {
       <div className="row mt-3">
         <div className="col">
           {selectedGroup === "termsMatch" && (
-            <MatchAccordion
+            <MatchAccordionTermsMatch
               matches={sortedMatches["group2"]}
               leagues={leagues}
             />
           )}
           {selectedGroup === "termsDontMatch" && (
-            <MatchAccordion
+            <MatchAccordionTermsDontMatch
               matches={sortedMatches["group1"]}
               leagues={leagues}
             />
