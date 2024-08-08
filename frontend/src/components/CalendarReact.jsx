@@ -15,9 +15,8 @@ const CalendarReact = ({
   endDate = moment().add(1, 'month') 
 }) => {
   console.log("currUserId in CalendarReact:", CurrUserId);
-  const [currentView, setCurrentView] = useState('week');
-  const [dateRange, setDateRange] = useState({ start: startDate, end: endDate });
-
+  const [currentView, setCurrentView] = useState("month");
+  const [events, setEvents] = useState([]);
 
   const startHour = 7;
   const endHour = 22;
@@ -33,8 +32,6 @@ const CalendarReact = ({
   useEffect(() => {
     fetchEventsForOtherUsers();
   }, [OnlyShowUserIdList]);
-
-
 
   const fetchEventsForCurrUser = async () => {
     try {
