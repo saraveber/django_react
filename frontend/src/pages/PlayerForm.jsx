@@ -53,27 +53,27 @@ const PlayerForm = () => {
     <Container>
       <Row className="justify-content-md-center mt-5">
         <Col md={6}>
-          <h1 className="text-center mb-4">Dodaj igralca</h1>
+          <h1 className="text-center mb-4">Add player</h1>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="name" className="mb-3">
-              <Form.Label>Ime</Form.Label>
+              <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
                 name="name"
                 value={player.name}
                 onChange={handleChange}
-                placeholder="Vnesite ime"
+                placeholder="Name"
                 required
               />
             </Form.Group>
             <Form.Group controlId="surname" className="mb-3">
-              <Form.Label>Priimek</Form.Label>
+              <Form.Label>Surname</Form.Label>
               <Form.Control
                 type="text"
                 name="surname"
                 value={player.surname}
                 onChange={handleChange}
-                placeholder="Vnesite priimek"
+                placeholder="Surname"
                 required
               />
             </Form.Group>
@@ -84,23 +84,23 @@ const PlayerForm = () => {
                 name="email"
                 value={player.email}
                 onChange={handleChange}
-                placeholder="Vnesite email"
+                placeholder="Email"
                 required
               />
             </Form.Group>
             <Form.Group controlId="phone_number" className="mb-3">
-              <Form.Label>Telefonska številka</Form.Label>
+              <Form.Label>Phone number</Form.Label>
               <Form.Control
                 type="text"
                 name="phone_number"
                 value={player.phone_number}
                 onChange={handleChange}
-                placeholder="Vnesite telefonsko številko"
+                placeholder="Phone number"
                 required
               />
             </Form.Group>
             <Form.Group controlId="gender" className="mb-3">
-              <Form.Label>Spol</Form.Label>
+              <Form.Label>Gender</Form.Label>
               <Form.Control
                 as="select"
                 name="gender"
@@ -109,12 +109,12 @@ const PlayerForm = () => {
                 required
               >
                 <option value="">Izberi</option>
-                <option value="M">Moški</option>
-                <option value="F">Ženska</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="birthdate" className="mb-3">
-              <Form.Label>Rojstni datum</Form.Label>
+              <Form.Label>Birthday</Form.Label>
               <Form.Control
                 type="date"
                 name="birthdate"
@@ -124,7 +124,7 @@ const PlayerForm = () => {
               />
             </Form.Group>
             <Button variant="primary" type="submit" className="w-100">
-              Dodaj igralca
+              Add player
             </Button>
           </Form>
         </Col>
