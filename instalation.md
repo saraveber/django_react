@@ -93,6 +93,7 @@ To install the frontend dependencies, run the following command:
     npm install react-datepicker react-bootstrap
     npm install react-bootstrap-datetimepicker
     npm install react-datetime
+    npm install @fullcalendar/bootstrap5
 npm install moment
     ```
 

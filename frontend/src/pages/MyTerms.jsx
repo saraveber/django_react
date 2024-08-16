@@ -1,15 +1,11 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import { useUser } from "../context/UserContext";
-import Calendar from "../components/Calendar";
+import CalendarResource from "../components/CalanderResource";
 import CalendarReact from "../components/CalendarReact";
 import DropdownInTerms from "../components/DropdownInTerms";
 import UserColorSquare from "../components/UserColorSquare";
 import { getOtherPlayers } from "../utils/playerUtils";
-
-// Assuming colorDict is defined outside the component for global access
-
-const mainColor = "#0d6efd";
 
 function MyTerms() {
   const { currUser, role, authorised } = useUser();
@@ -17,26 +13,21 @@ function MyTerms() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
-  const [otherPlayers, setOtherPlayers] = useState([]);
-  const [currentColorDict, setCurrentColorDict] = useState({});
-  const [userIdList, setUserIdList] = useState([]);
+
+  const [players, setPlayers] = useState([]);
+  const [colorDict, setColorDict] = useState({});
+
 
   useEffect(() => {
-    const { currOtherPlayers, newColorDict, OtherUserIdList } = getOtherPlayers(
-      selectedMatch,
-      selectedPlayer
-    );
-    setOtherPlayers(currOtherPlayers);
-    setCurrentColorDict(newColorDict);
-    setUserIdList(OtherUserIdList);
-  }, [selectedMatch]);
-
-  useEffect(() => {
-    console.log("currentId in MyTerms:", currUser.id);
-    console.log("OtherUserIdList:", userIdList);
-    console.log("Current color dict:", currentColorDict);
-    console.log("Other players:", otherPlayers);
-  }, [currUser, userIdList, currentColorDict, otherPlayers]);
+    if (selectedPlayer !== null) {
+      const { players, colorDict } = getOtherPlayers(
+        selectedMatch,
+        selectedPlayer
+      );
+      setPlayers(players);  
+      setColorDict(colorDict);
+    }
+  }, [selectedMatch, selectedPlayer]);
 
   if (role === null) {
     return <div>Loading...</div>;
@@ -69,6 +60,17 @@ function MyTerms() {
           selectedPlayer={selectedPlayer}
           setSelectedPlayer={setSelectedPlayer}
         />
+        {selectedPlayer && (
+        <div className="container mt-3">
+          <CalendarResource
+            currUserId={selectedPlayer ? selectedPlayer.user : null}
+            playerList={players}
+            colorDict={colorDict}
+            role={role}
+          />
+        </div>
+        )}
+        {/*
         <div className="container mt-3">
           <div className="row">
             {selectedPlayer && (
@@ -78,7 +80,6 @@ function MyTerms() {
                   OnlyShowUserIdList={userIdList}
                   colorDict={currentColorDict} // colorDict = {id:color} "#2CD3E1"
                   role={role}
-                  selectedMatch={selectedMatch}
                 />
               </div>
             )}
@@ -92,6 +93,7 @@ function MyTerms() {
             </div>
           </div>
         </div>
+        */}
       </div>
     );
   }
@@ -99,4 +101,5 @@ function MyTerms() {
     return <div>You are not authorized</div>;
   }
 }
+
 export default MyTerms;
