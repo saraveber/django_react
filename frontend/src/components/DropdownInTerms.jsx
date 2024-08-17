@@ -101,7 +101,7 @@ function DropdownInTerms({
   };
 
   return (
-    <div className="container mt-3">
+    <div className="container mt-3 mb-3">
       <div className="row">
         <div className="col-6">
           <select

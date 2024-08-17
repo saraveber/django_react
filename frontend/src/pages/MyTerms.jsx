@@ -39,7 +39,7 @@ function MyTerms() {
           <div className="row">
             <div className="col-md-12">
               <CalendarReact
-                CurrUserId={currUser.id}
+                //CurrUserId={currUser.id}
                 OnlyShowUserIdList={[]}
                 colorDict={[]}
                 role={role}
@@ -70,30 +70,7 @@ function MyTerms() {
           />
         </div>
         )}
-        {/*
-        <div className="container mt-3">
-          <div className="row">
-            {selectedPlayer && (
-              <div className="col-md-10">
-                <CalendarReact
-                  CurrUserId={selectedPlayer.user}
-                  OnlyShowUserIdList={userIdList}
-                  colorDict={currentColorDict} // colorDict = {id:color} "#2CD3E1"
-                  role={role}
-                />
-              </div>
-            )}
-            <div className="col-md-2">
-              <UserColorSquare
-                selectedPlayer={selectedPlayer}
-                otherPlayers={otherPlayers}
-                mainColor={"#0d6efd"}
-                colorDict={currentColorDict}
-              />
-            </div>
-          </div>
-        </div>
-        */}
+
       </div>
     );
   }
