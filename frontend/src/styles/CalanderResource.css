@@ -1,7 +1,7 @@
 .fc-event {
     border-radius: 20px; 
     border: none;
-    border-left-width: 8px; /* Increase the left border width */
+    border-left-width: 6px; /* Increase the left border width */
     border-left-style: solid; /* Ensure the border style is solid */
     border-left-color: inherit; /* Use the inherited border color */
 }
@@ -94,7 +94,12 @@
     border-right: 4px solid #eeeeee!important; /* Red right border for every fourth line if there are exactly 29 children */
 }
 
-
+/* CalendarResource.css */
+.fc-toolbar-title {
+    font-size: 24px; /* Custom font size */
+    font-weight: 300; /* Custom font weight */
+    color: #6b6b6b; /* Bootstrap primary color */
+}
 
 
 :root {
@@ -108,25 +113,22 @@
     --fc-button-text-color: #ffffff;
     --fc-button-bg-color: #0d6efd;
     --fc-button-border-color: #0d6dfd;
-    --fc-button-hover-bg-color: #0d6dfd;
-    --fc-button-hover-border-color: #0d6dfd;
-    --fc-button-active-bg-color: #0d6dfd;
-    --fc-button-active-border-color: #0d6dfd;
+    --fc-button-hover-bg-color: #094cb1;
+    --fc-button-hover-border-color: #094cb1;
+    --fc-button-active-bg-color: #0d6efd;;
+    --fc-button-active-border-color: #0d6efd;
     
     --fc-event-bg-color: #3788d8;
-  
-    --fc-more-link-bg-color: #d0d0d0;
-    --fc-more-link-text-color: inherit;
   
     --fc-event-resizer-thickness: 8px;
     --fc-event-resizer-dot-total-width: 8px;
     --fc-event-resizer-dot-border-width: 1px;
   
-    --fc-non-business-color: rgba(215, 215, 215, 0.3);
-    --fc-bg-event-color: rgba(189, 255, 186, 0.982);
+    --fc-non-business-color: rgb(255, 255, 255);
+    --fc-bg-event-color: rgb(255, 255, 255);
     --fc-bg-event-opacity: 0.3;
-    --fc-highlight-color: rgba(181, 181, 181, 0.489);
+    --fc-highlight-color: rgb(255, 255, 255);
     --fc-today-bg-color: rgb(255, 255, 255);
-    --fc-now-indicator-color: rgb(142, 142, 142);
+    --fc-now-indicator-color: rgb(133, 133, 133);
   }
 
