@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useUser } from "../context/UserContext";
-import "../styles/Home.css";
 import api from "../api";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimelinePlugin from "@fullcalendar/resource-timeline";
@@ -12,39 +10,15 @@ import listPlugin from "@fullcalendar/list";
 import rrulePlugin from "@fullcalendar/rrule";
 import moment from "moment";
 import "../styles/CalanderResource.css";
-import bootstrap5Plugin from "@fullcalendar/bootstrap5";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import UserColorSquare from "./UserColorSquare";
-
-const hexToRgba = (hex, alpha = 1) => {
-    if (!hex || typeof hex !== "string") {
-        console.error("Invalid hex value:", hex);
-        return "rgba(0, 0, 0, 1)";
-    }
-    hex = hex.replace(/^#/, "");
-
-    let bigint;
-    if (hex.length === 3) {
-        bigint = parseInt(
-            hex
-                .split("")
-                .map((char) => char + char)
-                .join(""),
-            16
-        );
-    } else if (hex.length === 6) {
-        bigint = parseInt(hex, 16);
-    } else {
-        console.error("Invalid hex length:", hex);
-        return "rgba(0, 0, 0, 1)";
-    }
-
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
+import  UserColorSquare  from "./UserColorSquare";
+import { hexToRgba } from "../utils/calanderUtils";
+import {
+    renderEventContent,
+    renderDayHeaderContent,
+    renderResourceLabelContent,
+    renderSlotLabelContent,
+} from "../utils/renderCalanderUtils";
 
 const CalendarResource = ({
     initialCurrUserId = null,
@@ -185,116 +159,10 @@ const CalendarResource = ({
         );
     };
 
-    const renderEventContent = (eventInfo) => {
-        const eventType = eventInfo.event.extendedProps.type; // Assuming the type is stored in extendedProps
-        const submitted = eventInfo.event.extendedProps.submitted;
-        const iconStyle = {
-            backgroundColor: currUserId
-                ? hexToRgba(colorDict[currUserId], 1)
-                : "transparent",
-            color: "white",
-        };
 
-        const buttonStyle = {
-            border: "none",
-            backgroundColor: "transparent",
-            cursor: "pointer",
-        };
 
-        return (
-            <div>
-                {eventType === "edit" && (
-                    <button
-                        onClick={() => handleDeleteEvent(eventInfo.event)}
-                        style={buttonStyle}>
-                        <i
-                            className="bi bi-x-circle-fill"
-                            style={iconStyle}></i>
-                    </button>
-                )}
-                {/*
-                <div>
-                    {submitted === "submitted" ? "Submitted" : "Not Submitted"}
-                </div>
-                */}
-            </div>
-        );
-    };
 
-    const renderDayHeaderContent = (headerInfo) => {
-        const dayName = headerInfo.date.toLocaleDateString("en-US", {
-            weekday: "short",
-        });
-        const dayNumber = headerInfo.date.getDate();
-
-        const dayNameStyle = {
-            fontSize: "16px",
-            textTransform: "uppercase",
-            fontWeight: 100,
-            color: "gray",
-            textDecoration: "none",
-            fontFamily: "Roboto,Arial,sans-serif",
-        };
-
-        const dayNumberStyle = {
-            fontSize: "30px",
-            fontWeight: 300,
-            color: "gray",
-            textDecoration: "none",
-            fontFamily: "Roboto,Arial,sans-serif",
-        };
-
-        return (
-            <div>
-                <div style={dayNameStyle}>{dayName}</div>
-                <div style={dayNumberStyle}>{dayNumber}</div>
-            </div>
-        );
-    };
-
-    const renderResourceLabelContent = (resourceInfo) => {
-        const name = resourceInfo.resource.title;
-        const id = resourceInfo.resource.id;
-
-        const getInitials = (fullName) => {
-            return fullName
-                .split(" ")
-                .map((word) => word[0])
-                .join("");
-        };
-
-        const initials = getInitials(name);
-        return (
-            <div
-                style={{
-                    fontFamily: "Roboto,Arial,sans-serif",
-                    color: colorDict[id],
-                }}>
-                {initials}
-            </div>
-        );
-    };
-
-    const renderSlotLabelContent = (slotLabelInfo) => {
-        const dayNameStyle = {
-            fontSize: "10px",
-            textTransform: "uppercase",
-            fontWeight: 100,
-            color: "gray",
-            textDecoration: "none",
-            fontFamily: "Roboto,Arial,sans-serif",
-        };
-        return (
-            <div style={dayNameStyle}>
-                <b>
-                    {slotLabelInfo.date.toLocaleTimeString([], {
-                        hour: "numeric",
-                        omitZeroMinute: true,
-                    })}
-                </b>
-            </div>
-        );
-    };
+ 
 
     const createTerm = (start_date, end_date) => {
         console.log("Role in createTerm:", role);
@@ -419,7 +287,7 @@ const CalendarResource = ({
                                 listPlugin,
                                 rrulePlugin,
                             ]}
-                            initialView="resourceTimeGridWeek" // Change this to resourceTimeGridWeek
+                            initialView="resourceTimeGridWeek"
                             slotDuration="00:30:00"
                             slotMinTime={"08:00:00"}
                             slotMaxTime={"21:00:00"}
@@ -428,12 +296,24 @@ const CalendarResource = ({
                             resourceAreaHeaderContent="Players"
                             events={events}
                             contentHeight={"auto"}
-                            selectable={true} // Enable slot selection
+                            selectable={true}
                             select={handleSelectSlot}
                             selectAllow={selectAllow}
-                            eventContent={renderEventContent} // Custom event rendering
-                            dayHeaderContent={renderDayHeaderContent} // Custom day header rendering
-                            resourceLabelContent={renderResourceLabelContent} // Custom resource label rendering
+                            eventContent={(eventInfo) =>
+                                renderEventContent(
+                                    eventInfo,
+                                    currUserId,
+                                    colorDict,
+                                    handleDeleteEvent
+                                )
+                            }
+                            dayHeaderContent={renderDayHeaderContent}
+                            resourceLabelContent={(resourceInfo) =>
+                                renderResourceLabelContent(
+                                    resourceInfo,
+                                    colorDict
+                                )
+                            }
                             slotLabelContent={renderSlotLabelContent}
                             timeZone="local"
                             headerToolbar={{
