@@ -4,7 +4,7 @@ import AvailableTerm from "./AvailableTerm";
 
 function MatchAccordionTermsMatch({ matches, leagues }) {
   const [selectedTerm, setSelectedTerm] = useState(null);
-  const [activeKey, setActiveKey] = useState("0");
+  const [activeKey, setActiveKey] = useState(null);
 
   const formatTeamPlayers = (team) => {
     return [team.player1_obj, team.player2_obj]

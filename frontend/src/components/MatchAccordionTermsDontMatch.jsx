@@ -6,7 +6,7 @@ import { getOtherPlayers } from "../utils/playerUtils";
 
 function MatchAccordionTermsDontMatch({ matches, leagues }) {
   const { currUser, role, authorised } = useUser();
-    const [activeKey, setActiveKey] = useState("0");
+    const [activeKey, setActiveKey] = useState(null);
 
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
