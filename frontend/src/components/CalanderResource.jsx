@@ -359,6 +359,7 @@ const CalendarResource = ({
                 .catch((error) => alert(error));
         }
     };
+
     const handleSelectChange = (event) => {
         setCurrUserId(parseInt(event.target.value));
         // Add your custom logic here
@@ -390,7 +391,7 @@ const CalendarResource = ({
             <div className="container mt-3 mb-3">
                 <div className="row">
                     <div
-                        className={playerList.length > 1 ? "col-10" : "col-12"}>
+                        className={"col-10"}>
                         <FullCalendar
                             key={rerenderKey}
                             titleFormat={{
@@ -461,7 +462,7 @@ const CalendarResource = ({
                             </div>
                         </div>
                     </div>
-                    {playerList.length > 1 && (
+                    
                         <div className="col-2"  style={{ marginTop: "60px" }}>
                             <small>You are currently editing:</small>
                             <select
