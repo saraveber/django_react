@@ -1,48 +1,50 @@
 import React, { useEffect, useState } from "react";
 
-const UserColorSquare = ({selectedPlayer, otherPlayers, mainColor, colorDict}) => {  
-  
+const UserColorSquare = ({ currUserId, playerList, colorDict }) => {
 
 
-  const squareStyle = {
-    width: "50px",
-    height: "50px",
-    backgroundColor: selectedPlayer != null ? mainColor : "transparent", // Set to blue if selectedPlayer is not null
-    display: "inline-block",
-    marginRight: "10px",
-    verticalAlign: "middle",
-  };
+  useEffect(() => {
+    console.log("CurrUserId playerList:", currUserId);
+  },[currUserId, playerList, colorDict]);
 
   return (
-    <div>
-      <div>
-        <div style={squareStyle}></div>
-        {selectedPlayer != null && (
-          <span>
-            {selectedPlayer.name} {selectedPlayer.surname}
-          </span>
-        )}
+    
+      <div className="mt-3">
+          {playerList.map((player, index) => {
+              const opacity = player.user === currUserId ? 1 : 0.3;
+              return (
+                  <div key={index} style={{ display: "inline-block" }}>
+                      <div
+                          style={{
+                              position: "relative",
+                              width: "30px",
+                              height: "30px",
+                              display: "inline-block",
+                              borderLeft: `6px solid ${colorDict[player.user]}`, 
+                          }}>
+                          <div
+                              style={{
+                                  backgroundColor: colorDict[player.user],
+                                  width: "100%",
+                                  height: "100%",
+                                  opacity: opacity,
+                                  position: "absolute",
+                                  top: 0,
+                                  left: 0,
+                              }}
+                          ></div>
+                      </div>
+                      <div
+                          style={{
+                              display: "inline-block",
+                              marginLeft: "5px"
+                          }}>
+                          {player.name} {player.surname}
+                      </div>
+                  </div>
+              );
+          })}
       </div>
-      {otherPlayers.map((player, index) => (
-        <div
-          key={index}
-          style={{ display: "flex", alignItems: "center", margin: "5px 0" }}
-        >
-          <div
-            style={{
-              width: "50px",
-              height: "50px",
-              backgroundColor: colorDict[player.user] || "grey",
-              marginRight: "10px",
-            }}
-          ></div>
-          <span>
-            {player.name} {player.surname}
-          </span>
-        </div>
-      ))}
-      
-    </div>
   );
 };
 export default UserColorSquare;

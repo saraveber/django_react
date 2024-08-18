@@ -89,6 +89,13 @@ To install the frontend dependencies, run the following command:
     ```bash
     npm install axios react-router-dom jwt-decode
     ```
+     ```bash
+    npm install react-datepicker react-bootstrap
+    npm install react-bootstrap-datetimepicker
+    npm install react-datetime
+    npm install @fullcalendar/bootstrap5
+npm install moment
+    ```
 
 3. Run frontend
 

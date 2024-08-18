@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Accordion, Card, Button } from 'react-bootstrap';
-import AvailableTerm from "../components/AvailableTerm";
+import AvailableTerm from "./AvailableTerm";
 
-function MatchAccordion({ matches, leagues }) {
+function MatchAccordionTermsMatch({ matches, leagues }) {
   const [selectedTerm, setSelectedTerm] = useState(null);
-  const [activeKey, setActiveKey] = useState("0");
+  const [activeKey, setActiveKey] = useState(null);
 
   const formatTeamPlayers = (team) => {
     return [team.player1_obj, team.player2_obj]
@@ -75,4 +75,4 @@ function MatchAccordion({ matches, leagues }) {
   );
 }
 
-export default MatchAccordion;
+export default MatchAccordionTermsMatch;
