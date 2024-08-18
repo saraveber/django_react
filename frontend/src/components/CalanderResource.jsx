@@ -390,8 +390,7 @@ const CalendarResource = ({
         <div>
             <div className="container mt-3 mb-3">
                 <div className="row">
-                    <div
-                        className={"col-10"}>
+                    <div className={"col-10"}>
                         <FullCalendar
                             key={rerenderKey}
                             titleFormat={{
@@ -462,30 +461,26 @@ const CalendarResource = ({
                             </div>
                         </div>
                     </div>
-                    
-                        <div className="col-2"  style={{ marginTop: "60px" }}>
-                            <small>You are currently editing:</small>
-                            <select
-                                className="form-select"
-                               
-                                value={currUserId}
-                                onChange={handleSelectChange}>
-                                <option value="all">Select player</option>
-                                {playerList.map((player) => (
-                                    <option
-                                        key={player.user}
-                                        value={player.user}>
-                                        {player.name} {player.surname}
-                                    </option>
-                                ))}
-                            </select>
-                            <UserColorSquare
-                                currUserId={currUserId}
-                                playerList={playerList}
-                                colorDict={colorDict}
-                            />
-                        </div>
-                    )}
+
+                    <div className="col-2" style={{ marginTop: "60px" }}>
+                        <small>You are currently editing:</small>
+                        <select
+                            className="form-select"
+                            value={currUserId}
+                            onChange={handleSelectChange}>
+                            <option value="all">Select player</option>
+                            {playerList.map((player) => (
+                                <option key={player.user} value={player.user}>
+                                    {player.name} {player.surname}
+                                </option>
+                            ))}
+                        </select>
+                        <UserColorSquare
+                            currUserId={currUserId}
+                            playerList={playerList}
+                            colorDict={colorDict}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

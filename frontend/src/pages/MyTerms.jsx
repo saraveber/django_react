@@ -9,6 +9,7 @@ import { getOtherPlayers } from "../utils/playerUtils";
 
 function MyTerms() {
   const { currUser, role, authorised } = useUser();
+  const [currPlayer, setCurrPlayer] = useState(null);
 
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -29,6 +30,28 @@ function MyTerms() {
     }
   }, [selectedMatch, selectedPlayer]);
 
+  useEffect(() => {
+    console.log("currUser", currUser);
+
+    const fetchTerms = async () => {
+        if (currUser) {
+            
+        try {
+            const res = await api.get(`/api/players/?user=${currUser.id}`);
+            console.log("IT WORKS");
+            console.log(res.data);
+            setCurrPlayer(res.data[0]);
+        } catch (error) {
+            console.error(`Error fetching terms for player ${currUser.id}:`, error);
+        }
+      
+    };
+  };
+
+    fetchTerms();
+}, [currUser]);
+
+
   if (role === null) {
     return <div>Loading...</div>;
   }
@@ -36,16 +59,14 @@ function MyTerms() {
     return (
       <div>
         <div className="container mt-3">
-          <div className="row">
-            <div className="col-md-12">
-              <CalendarReact
-                //CurrUserId={currUser.id}
-                OnlyShowUserIdList={[]}
-                colorDict={[]}
-                role={role}
-              />
-            </div>
-          </div>
+          {currPlayer && (  
+          <CalendarResource
+              initialCurrUserId={currPlayer.user}
+              playerList={[currPlayer]}
+              colorDict={{ [currPlayer.user]: "#007bff" }}
+              role={role}
+            />
+          )}
         </div>
       </div>
     );

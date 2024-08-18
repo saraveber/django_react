@@ -32,10 +32,11 @@
 .fc-theme-standard td:nth-child(2):nth-last-child(7),
 .fc-theme-standard td:nth-child(1):nth-last-child(8),
 .fc-theme-standard td:first-child,
-.fc-theme-standard td:last-child {￼
-
+.fc-theme-standard td:last-child {
     border-right: 4px solid #eeeeee !important; /* Black right border if there are exactly 8 children */
 }
+
+
 .fc-theme-standard th:nth-child(7):nth-last-child(2),
 .fc-theme-standard th:nth-child(6):nth-last-child(3),
 .fc-theme-standard th:nth-child(5):nth-last-child(4),
