@@ -96,9 +96,11 @@ class PlayerListCreate(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Player.objects.all()
         name = self.request.query_params.get('name', None)
-        
+        user = self.request.query_params.get('user', None)        
         if name:
             queryset = queryset.filter(name__icontains=name)
+        if user:
+            queryset = queryset.filter(user__id=user)
         
         return queryset
 

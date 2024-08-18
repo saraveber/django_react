@@ -1,0 +1,136 @@
+.fc-event {
+    border-radius: 10px; 
+    border: none;
+    border-left-width: 6px; /* Increase the left border width */
+    border-left-style: solid; /* Ensure the border style is solid */
+    border-left-color: inherit; /* Use the inherited border color */
+}
+
+.fc-col-header-cell-cushion {
+    text-decoration: none; /* Ensure no underline */
+}
+
+.fc-theme-standard .fc-scrollgrid {
+    border: none;
+}
+
+
+
+
+.fc-theme-standard td, .fc-theme-standard th {
+    border-right: 2px solid #eeeeee !important; /* Default right border color */
+    border-bottom: 1px solid #8383831b !important; /* Lighter horizontal border color */
+}
+
+
+/* Apply red border to all lines if there are exactly 8 children */
+.fc-theme-standard td:nth-child(7):nth-last-child(2),
+.fc-theme-standard td:nth-child(6):nth-last-child(3),
+.fc-theme-standard td:nth-child(5):nth-last-child(4),
+.fc-theme-standard td:nth-child(4):nth-last-child(5),
+.fc-theme-standard td:nth-child(3):nth-last-child(6),
+.fc-theme-standard td:nth-child(2):nth-last-child(7),
+.fc-theme-standard td:nth-child(1):nth-last-child(8),
+.fc-theme-standard td:first-child,
+.fc-theme-standard td:last-child {
+    border-right: 4px solid #eeeeee !important; /* Black right border if there are exactly 8 children */
+}
+
+
+.fc-theme-standard th:nth-child(7):nth-last-child(2),
+.fc-theme-standard th:nth-child(6):nth-last-child(3),
+.fc-theme-standard th:nth-child(5):nth-last-child(4),
+.fc-theme-standard th:nth-child(4):nth-last-child(5),
+.fc-theme-standard th:nth-child(3):nth-last-child(6),
+.fc-theme-standard th:nth-child(2):nth-last-child(7),
+.fc-theme-standard th:nth-child(1):nth-last-child(8) ,
+.fc-theme-standard th:first-child,
+.fc-theme-standard th:last-child {
+    border-right: 4px solid #eeeeee !important; /* Red right border if there are exactly 8 children */
+}
+
+/* Apply red border to every second line if there are exactly 15 children */
+.fc-theme-standard td:nth-child(15):nth-last-child(1),
+.fc-theme-standard td:nth-child(13):nth-last-child(3),
+.fc-theme-standard td:nth-child(11):nth-last-child(5),
+.fc-theme-standard td:nth-child(9):nth-last-child(7),
+.fc-theme-standard td:nth-child(7):nth-last-child(9),
+.fc-theme-standard td:nth-child(5):nth-last-child(11),
+.fc-theme-standard td:nth-child(3):nth-last-child(13),
+.fc-theme-standard td:nth-child(1):nth-last-child(15) {
+    border-right: 4px solid #eeeeee !important; /* Red right border for every second line if there are exactly 15 children */
+}
+
+.fc-theme-standard th:nth-child(15):nth-last-child(1),
+.fc-theme-standard th:nth-child(13):nth-last-child(3),
+.fc-theme-standard th:nth-child(11):nth-last-child(5),
+.fc-theme-standard th:nth-child(9):nth-last-child(7),
+.fc-theme-standard th:nth-child(7):nth-last-child(9),
+.fc-theme-standard th:nth-child(5):nth-last-child(11),
+.fc-theme-standard th:nth-child(3):nth-last-child(13),
+.fc-theme-standard th:nth-child(1):nth-last-child(15) {
+    border-right: 4px solid #eeeeee !important; /* Red right border for every second line if there are exactly 15 children */
+}
+
+
+/* Apply red border to every fourth line if there are exactly 29 children */
+.fc-theme-standard td:nth-child(29):nth-last-child(1),
+.fc-theme-standard td:nth-child(25):nth-last-child(5),
+.fc-theme-standard td:nth-child(21):nth-last-child(9),
+.fc-theme-standard td:nth-child(17):nth-last-child(13),
+.fc-theme-standard td:nth-child(13):nth-last-child(17),
+.fc-theme-standard td:nth-child(9):nth-last-child(21),
+.fc-theme-standard td:nth-child(5):nth-last-child(25),
+.fc-theme-standard td:nth-child(1):nth-last-child(29) {
+    border-right: 4px solid #eeeeee !important; /* Red right border for every fourth line if there are exactly 29 children */
+}
+
+.fc-theme-standard th:nth-child(29):nth-last-child(1),
+.fc-theme-standard th:nth-child(25):nth-last-child(5),
+.fc-theme-standard th:nth-child(21):nth-last-child(9),
+.fc-theme-standard th:nth-child(17):nth-last-child(13),
+.fc-theme-standard th:nth-child(13):nth-last-child(17),
+.fc-theme-standard th:nth-child(9):nth-last-child(21),
+.fc-theme-standard th:nth-child(5):nth-last-child(25),
+.fc-theme-standard th:nth-child(1):nth-last-child(29) {
+    border-right: 4px solid #eeeeee!important; /* Red right border for every fourth line if there are exactly 29 children */
+}
+
+/* CalendarResource.css */
+.fc-toolbar-title {
+    font-size: 24px; /* Custom font size */
+    font-weight: 300; /* Custom font weight */
+    color: #6b6b6b; /* Bootstrap primary color */
+}
+
+
+:root {
+
+    --fc-small-font-size: .85em;
+    --fc-page-bg-color: #ffffff;
+    --fc-neutral-bg-color: rgba(208, 208, 208, 0.3);
+    --fc-neutral-text-color: #808080;
+    --fc-border-color: #ddd;
+  
+    --fc-button-text-color: #ffffff;
+    --fc-button-bg-color: #0d6efd;
+    --fc-button-border-color: #0d6dfd;
+    --fc-button-hover-bg-color: #094cb1;
+    --fc-button-hover-border-color: #094cb1;
+    --fc-button-active-bg-color: #0d6efd;;
+    --fc-button-active-border-color: #0d6efd;
+    
+    --fc-event-bg-color: #3788d8;
+  
+    --fc-event-resizer-thickness: 8px;
+    --fc-event-resizer-dot-total-width: 8px;
+    --fc-event-resizer-dot-border-width: 1px;
+  
+    --fc-non-business-color: rgb(255, 255, 255);
+    --fc-bg-event-color: rgb(255, 255, 255);
+    --fc-bg-event-opacity: 0.3;
+    --fc-highlight-color: rgb(255, 255, 255);
+    --fc-today-bg-color: rgb(255, 255, 255);
+    --fc-now-indicator-color: rgb(133, 133, 133);
+  }
+
