@@ -11,7 +11,8 @@ import rrulePlugin from "@fullcalendar/rrule";
 import moment from "moment";
 import "../styles/CalanderResource.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
-import  UserColorSquare  from "./UserColorSquare";
+import UserColorSquare from "./UserColorSquare";
+import SubmittedTermsModal from "../alerts/submittedTermsModal"; // Import the modal component
 import { hexToRgba } from "../utils/calanderUtils";
 import {
     renderEventContent,
@@ -31,6 +32,8 @@ const CalendarResource = ({
     const [currUserId, setCurrUserId] = useState(initialCurrUserId);
     const [rerenderKey, setRerenderKey] = useState(0);
 
+    const [showAlert, setShowAlert] = useState(false); // Add state for alert visibility
+
     useEffect(() => {
         updateResources(playerList);
         fetchEvents();
@@ -39,6 +42,26 @@ const CalendarResource = ({
     useEffect(() => {
         setCurrUserId(initialCurrUserId);
     }, [initialCurrUserId]);
+
+    useEffect(() => {
+        console.log("I AM IN USEEFFECT");
+        setRerenderKey((prevKey) => prevKey + 1);
+        events.forEach((event) => {
+            if (event.player_id === currUserId) {
+                event.type = "edit";
+                event.backgroundColor = hexToRgba(
+                    colorDict[event.player_id],
+                    1
+                );
+            } else {
+                event.type = "show";
+                event.backgroundColor = hexToRgba(
+                    colorDict[event.player_id],
+                    0.3
+                );
+            }
+        });
+    }, [currUserId]);
 
     const updateResources = async () => {
         setResources(
@@ -159,11 +182,6 @@ const CalendarResource = ({
         );
     };
 
-
-
-
- 
-
     const createTerm = (start_date, end_date) => {
         console.log("Role in createTerm:", role);
 
@@ -189,14 +207,12 @@ const CalendarResource = ({
         }
     };
 
-    const handleSubmit = async () => {
-        const eventsString = events
-            .map((event) => `Start: ${event.start}, End: ${event.end}`)
-            .join("\n");
-        const isConfirmed = window.confirm(
-            `Submitting these terms:\n${eventsString}\nDo you want to proceed?`
-        );
-        if (!isConfirmed) return;
+    const handleSubmit = () => {
+        setShowAlert(true); // Show the alert
+    };
+
+    const handleConfirm = async () => {
+        setShowAlert(false); // Hide the alert after confirmation
         if (role === "admin" || role === "staff") {
             api.delete(`api/terms/delete-all/user/${currUserId}/`).then(
                 (res) => {
@@ -233,26 +249,6 @@ const CalendarResource = ({
         // Add your custom logic here
         console.log(`Selected player: ${event.target.value}`);
     };
-
-    useEffect(() => {
-        console.log("I AM IN USEEFFECT");
-        setRerenderKey((prevKey) => prevKey + 1);
-        events.forEach((event) => {
-            if (event.player_id === currUserId) {
-                event.type = "edit";
-                event.backgroundColor = hexToRgba(
-                    colorDict[event.player_id],
-                    1
-                );
-            } else {
-                event.type = "show";
-                event.backgroundColor = hexToRgba(
-                    colorDict[event.player_id],
-                    0.3
-                );
-            }
-        });
-    }, [currUserId]);
 
     return (
         <div>
@@ -363,6 +359,12 @@ const CalendarResource = ({
                     </div>
                 </div>
             </div>
+            <SubmittedTermsModal
+                show={showAlert}
+                handleClose={() => setShowAlert(false)}
+                events={events}
+                onConfirm={handleConfirm}
+            />
         </div>
     );
 };
