@@ -63,7 +63,7 @@ function MyTerms() {
         {selectedPlayer && (
         <div className="container mt-3">
           <CalendarResource
-            currUserId={selectedPlayer ? selectedPlayer.user : null}
+            initialCurrUserId={selectedPlayer ? selectedPlayer.user : null}
             playerList={players}
             colorDict={colorDict}
             role={role}

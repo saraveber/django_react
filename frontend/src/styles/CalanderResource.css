@@ -1,5 +1,5 @@
 .fc-event {
-    border-radius: 20px; 
+    border-radius: 10px; 
     border: none;
     border-left-width: 6px; /* Increase the left border width */
     border-left-style: solid; /* Ensure the border style is solid */
@@ -32,7 +32,8 @@
 .fc-theme-standard td:nth-child(2):nth-last-child(7),
 .fc-theme-standard td:nth-child(1):nth-last-child(8),
 .fc-theme-standard td:first-child,
-.fc-theme-standard td:last-child {
+.fc-theme-standard td:last-child {￼
+
     border-right: 4px solid #eeeeee !important; /* Black right border if there are exactly 8 children */
 }
 .fc-theme-standard th:nth-child(7):nth-last-child(2),
