@@ -3,12 +3,12 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class HourlyWeeklyCalendar extends StatefulWidget {
+class CalendarPage extends StatefulWidget {
   @override
   _HourlyWeeklyCalendarState createState() => _HourlyWeeklyCalendarState();
 }
 
-class _HourlyWeeklyCalendarState extends State<HourlyWeeklyCalendar> {
+class _HourlyWeeklyCalendarState extends State<CalendarPage> {
   Map<DateTime, Color> _selectedHours = {};
   DateTime _focusedDay = DateTime.now();
 
