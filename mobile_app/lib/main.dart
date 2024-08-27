@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_app/result_page.dart';
 import 'home_page.dart';
 import 'calendar_page.dart';
+import 'result_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -30,6 +32,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     HomePage(),
     CalendarPage(),
+    ResultsPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -54,6 +57,10 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
             label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Results',
           ),
         ],
         currentIndex: _selectedIndex,
