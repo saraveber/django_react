@@ -46,14 +46,41 @@ class AvailableTermListCreateForUser(generics.ListCreateAPIView):
             else:
                 print(serializer.errors)
 
+# ODKOMENTIREJ, PODVOJEN JE ZARAD TESTIRANJA
+# # Class that returns all available terms for the current user
+# class AvailableTermListCreate(generics.ListCreateAPIView):
+#     serializer_class = AvailableTermSerializer
+#     permission_classes = [IsAuthenticated]
+    
+#     def get_queryset(self):
+#         user = self.request.user
+#         return AvailableTerm.objects.filter(user=user)
+    
+#     def perform_create(self, serializer):
+#         user = self.request.user
+#         end_date = serializer.validated_data.get('end_date')
+#         start_date = serializer.validated_data.get('start_date')
+
+#         if AvailableTerm.objects.filter(user=user, start_date=start_date, end_date=end_date).exists():
+#             print('This term already exists.')
+#         else:
+#             if serializer.is_valid():
+#                 serializer.save(user=self.request.user)
+#             else:
+#                 print(serializer.errors)
 
 # Class that returns all available terms for the current user
 class AvailableTermListCreate(generics.ListCreateAPIView):
     serializer_class = AvailableTermSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    def dispatch(self, request, *args, **kwargs):
+        # Set the request user manually
+        test_user = User.objects.get(username='AmeliaHall312')  # or create a new test user
+        request.user = test_user
+        return super().dispatch(request, *args, **kwargs)
     
     def get_queryset(self):
-        user = self.request.user
+        user = User.objects.get(username='AmeliaHall312')
         return AvailableTerm.objects.filter(user=user)
     
     def perform_create(self, serializer):

@@ -139,7 +139,7 @@ class _HourlyWeeklyCalendarState extends State<CalendarPage> {
                 child: Container(
                   height: cellHeight,
                   decoration: BoxDecoration(
-                    color: _selectedHours[hourSlot] ?? Colors.white,
+                    color: _selectedHours[hourSlot.toLocal()] ?? Colors.white,
                     border: Border.all(color: Colors.grey),
                   ),
                   child: Center(
@@ -238,11 +238,11 @@ class _HourlyWeeklyCalendarState extends State<CalendarPage> {
             DateTime startDate = DateTime.parse(term['start_date']);
             DateTime endDate = DateTime.parse(term['end_date']);
 
-            // Mark all hours between start and end as selected
+            // Ensure the comparison checks are precise for both date and time
             for (DateTime hour = startDate;
                 hour.isBefore(endDate) || hour.isAtSameMomentAs(endDate);
                 hour = hour.add(Duration(hours: 1))) {
-              _selectedHours[hour] = Colors.blueAccent;
+                _selectedHours[hour.toLocal()] = Colors.blueAccent;
             }
           }
         });
@@ -281,7 +281,6 @@ class _HourlyWeeklyCalendarState extends State<CalendarPage> {
     List<ApiResponse> responses = [];
 
     for (var group in groupedHours) {
-      print(group);
       try {
         final response = await http.post(
           Uri.parse('http://127.0.0.1:8000/api/terms/'), // Assuming you're running on Android Emulator
