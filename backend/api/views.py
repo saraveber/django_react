@@ -84,7 +84,7 @@ class AvailableTermListCreate(generics.ListCreateAPIView):
         return AvailableTerm.objects.filter(user=user)
     
     def perform_create(self, serializer):
-        user = self.request.user
+        user = User.objects.get(username='AmeliaHall312')
         end_date = serializer.validated_data.get('end_date')
         start_date = serializer.validated_data.get('start_date')
 
@@ -92,7 +92,7 @@ class AvailableTermListCreate(generics.ListCreateAPIView):
             print('This term already exists.')
         else:
             if serializer.is_valid():
-                serializer.save(user=self.request.user)
+                serializer.save(user=user)
             else:
                 print(serializer.errors)
 
@@ -106,13 +106,26 @@ class AvailableTermDeleteAllForUser(generics.GenericAPIView):
         AvailableTerm.objects.filter(user__id=userId).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+# ODKOMENTIREJ, PODVOJEN JE ZARAD TESTIRANJA
+# # Class that deletes all available terms for the current user
+# class AvailableTermDeleteAll(generics.GenericAPIView):
+#     serializer_class = AvailableTermSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def delete(self, request, *args, **kwargs):
+#         AvailableTerm.objects.filter(user=request.user).delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
 # Class that deletes all available terms for the current user
 class AvailableTermDeleteAll(generics.GenericAPIView):
     serializer_class = AvailableTermSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+
 
     def delete(self, request, *args, **kwargs):
-        AvailableTerm.objects.filter(user=request.user).delete()
+        user = User.objects.get(username='AmeliaHall312')
+        AvailableTerm.objects.filter(user__id=user.id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

@@ -139,7 +139,7 @@ class _HourlyWeeklyCalendarState extends State<CalendarPage> {
                 child: Container(
                   height: cellHeight,
                   decoration: BoxDecoration(
-                    color: _selectedHours[hourSlot.toLocal()] ?? Colors.white,
+                    color: _selectedHours[hourSlot] ?? Colors.white,
                     border: Border.all(color: Colors.grey),
                   ),
                   child: Center(
@@ -193,7 +193,6 @@ class _HourlyWeeklyCalendarState extends State<CalendarPage> {
         end = start;
       }
     }
-
     // Add the last group
     if (start != null && end != null) {
       groupedHours.add({
@@ -242,7 +241,7 @@ class _HourlyWeeklyCalendarState extends State<CalendarPage> {
             for (DateTime hour = startDate;
                 hour.isBefore(endDate) || hour.isAtSameMomentAs(endDate);
                 hour = hour.add(Duration(hours: 1))) {
-                _selectedHours[hour.toLocal()] = Colors.blueAccent;
+                _selectedHours[DateTime.parse(hour.toIso8601String().replaceFirst('Z', ''))] = Colors.blueAccent;
             }
           }
         });
@@ -293,25 +292,14 @@ class _HourlyWeeklyCalendarState extends State<CalendarPage> {
           }),
         );
 
-        if (response.statusCode == 200) {
-          responses.add(ApiResponse.fromJson(jsonDecode(response.body)));
-        } else {
-          responses.add(ApiResponse(isSuccessful: false, message: 'Failed to submit data'));
+        if (response.statusCode != 201) {
+          return ApiResponse(isSuccessful: false, message: 'Submission failed');
         }
       } catch (e) {
-        // Handle exceptions
-        responses.add(ApiResponse(isSuccessful: false, message: e.toString()));
+        return ApiResponse(isSuccessful: false, message: 'Submission failed');
       }
     }
-
-    // Check if any of the responses are successful
-    if (responses.any((response) => response.isSuccessful)) {
-      // Return the first successful response or handle it as needed
-      return responses.firstWhere((response) => response.isSuccessful);
-    } else {
-      // If all requests fail, return a default failure response
-      return ApiResponse(isSuccessful: false, message: 'All submissions failed');
-    }
+    return ApiResponse(isSuccessful: true, message: 'Submission sucessfull');
   }
 }
 
