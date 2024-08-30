@@ -158,7 +158,8 @@ class PlayerListCreate(generics.ListCreateAPIView):
 
 class LeagueList(generics.ListCreateAPIView):
     serializer_class = LeagueSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         queryset = League.objects.all()
@@ -207,7 +208,8 @@ class PlayerListView(generics.ListAPIView):
 
 class TeamListCreate(generics.ListCreateAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         """
@@ -276,7 +278,8 @@ class RoundsListCreate(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated(), IsAdminOrStaffUser()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     def get_queryset(self):
         queryset = Round.objects.all()
@@ -323,7 +326,8 @@ class MatchListCreate(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated(), IsAdminOrStaffUser()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     def get_queryset(self):
         queryset = Match.objects.all()

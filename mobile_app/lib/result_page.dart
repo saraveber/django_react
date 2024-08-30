@@ -104,92 +104,103 @@ class _ResultsPageState extends State<ResultsPage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Match Results'),
-      ),
-      body: loading
-          ? Center(child: CircularProgressIndicator())
-          : leagues.isEmpty
-              ? Center(child: Text('No leagues available'))
-              : Column(
-                  children: [
-                    DropdownButton<League>(
-                      value: selectedLeague,
-                      onChanged: (League? newValue) {
-                        setState(() {
-                          selectedLeague = newValue!;
-                        });
-                      },
-                      items: leagues.map<DropdownMenuItem<League>>((League league) {
-                        return DropdownMenuItem<League>(
-                          value: league,
-                          child: Text(league.name),
-                        );
-                      }).toList(),
-                    ),
-                    if (selectedLeague != null) ...[
-                      Expanded(
-                        child: ListView(
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text('Match Results'),
+    ),
+    body: loading
+        ? Center(child: CircularProgressIndicator())
+        : leagues.isEmpty
+            ? Center(child: Text('No leagues available'))
+            : Column(
+                children: [
+                  DropdownButton<League>(
+                    value: selectedLeague,
+                    onChanged: (League? newValue) {
+                      setState(() {
+                        selectedLeague = newValue!;
+                      });
+                    },
+                    items: leagues.map<DropdownMenuItem<League>>((League league) {
+                      return DropdownMenuItem<League>(
+                        value: league,
+                        child: Text(league.name),
+                      );
+                    }).toList(),
+                  ),
+                  if (selectedLeague != null) ...[
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            DataTable(
-                              columns: [
-                                DataColumn(label: Text('Place')),
-                                DataColumn(label: Text('Player 1')),
-                                if (selectedLeague!.type != 'S')
-                                  DataColumn(label: Text('Player 2')),
-                                DataColumn(label: Text('Matches Played')),
-                                DataColumn(label: Text('Wins')),
-                                DataColumn(label: Text('Losses')),
-                                DataColumn(label: Text('Points')),
-                              ],
-                              rows: selectedLeague!.teams.map((team) {
-                                return DataRow(
-                                  cells: [
-                                    DataCell(Text(team.place.toString())),
-                                    DataCell(Text('${team.player1Name}')),
-                                    if (selectedLeague!.type != 'S')
-                                      DataCell(Text('${team.player2Name ?? '-'}')),
-                                    DataCell(Text(team.numberOfPlayedMatches.toString())),
-                                    DataCell(Text(team.wins.toString())),
-                                    DataCell(Text(team.losses.toString())),
-                                    DataCell(Text(team.points.toString())),
-                                  ],
-                                );
-                              }).toList(),
-                            ),
-                            for (var round in selectedLeague!.rounds) ...[
-                              Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                child: Text('Round ${round.roundNumber}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                              ),
-                              DataTable(
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: DataTable(
                                 columns: [
-                                  DataColumn(label: Text('Match')),
-                                  DataColumn(label: Text('Team 1')),
-                                  DataColumn(label: Text('Team 2')),
+                                  DataColumn(label: Text('Place')),
+                                  DataColumn(label: Text('Player 1')),
+                                  if (selectedLeague!.type != 'S')
+                                    DataColumn(label: Text('Player 2')),
+                                  DataColumn(label: Text('Matches Played')),
+                                  DataColumn(label: Text('Wins')),
+                                  DataColumn(label: Text('Losses')),
+                                  DataColumn(label: Text('Points')),
                                 ],
-                                rows: round.matches.map((match) {
+                                rows: selectedLeague!.teams.map((team) {
                                   return DataRow(
                                     cells: [
-                                      DataCell(Text('${match.roundNumber}-${match.id}')),
-                                      DataCell(Text('${match.teamHostName}')),
-                                      DataCell(Text('${match.teamGuestName}')),
+                                      DataCell(Text(team.place.toString())),
+                                      DataCell(Text('${team.player1Name}')),
+                                      if (selectedLeague!.type != 'S')
+                                        DataCell(Text('${team.player2Name ?? '-'}')),
+                                      DataCell(Text(team.numberOfPlayedMatches.toString())),
+                                      DataCell(Text(team.wins.toString())),
+                                      DataCell(Text(team.losses.toString())),
+                                      DataCell(Text(team.points.toString())),
                                     ],
                                   );
                                 }).toList(),
                               ),
-                            ]
+                            ),
+                            for (var round in selectedLeague!.rounds) ...[
+                              Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                child: Text(
+                                  'Round ${round.roundNumber}',
+                                  style: TextStyle(
+                                      fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: DataTable(
+                                  columns: [
+                                    DataColumn(label: Text('Team 1')),
+                                    DataColumn(label: Text('Team 2')),
+                                  ],
+                                  rows: round.matches.map((match) {
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(Text('${match.teamHostName}')),
+                                        DataCell(Text('${match.teamGuestName}')),
+                                      ],
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
-                    ]
-                  ],
-                ),
-    );
-  }
+                    ),
+                  ]
+                ],
+              ),
+      );
+  	}
 }
 
 class League {
@@ -232,8 +243,8 @@ class Team {
   factory Team.fromJson(Map<String, dynamic> json) {
     return Team(
       id: json['id'],
-      player1Name: json['player1_obj']['name'],
-      player2Name: json['player2_obj'] != null ? json['player2_obj']['name'] : null,
+      player1Name: json['player1_obj']['name'] + ' ' + json['player1_obj']['surname'],
+      player2Name: json['player2_obj'] != null ? json['player2_obj']['name'] + ' ' +  json['player2_obj']['surname'] : null,
       points: json['points'],
       wins: json['wins'],
       losses: json['losses'],
@@ -276,8 +287,14 @@ class Match {
     return Match(
       id: json['id'],
       roundNumber: json['round_number'],
-      teamHostName: json['team_host']['player1_obj']['name'],
-      teamGuestName: json['team_guest']['player1_obj']['name'],
+      teamHostName: json['team_host_obj']['player2_obj'] == null ? 
+        json['team_host_obj']['player1_obj']['name'] + ' ' + json['team_host_obj']['player1_obj']['surname'] 
+        : 
+        json['team_host_obj']['player1_obj']['name'] + ' ' + json['team_host_obj']['player1_obj']['surname'] + ' & ' +  json['team_host_obj']['player2_obj']['name'] + ' ' + json['team_host_obj']['player2_obj']['surname'],
+      teamGuestName: json['team_guest_obj']['player2_obj'] == null ? 
+        json['team_guest_obj']['player1_obj']['name'] + ' ' + json['team_guest_obj']['player1_obj']['surname'] 
+        : 
+        json['team_guest_obj']['player1_obj']['name'] + ' ' + json['team_guest_obj']['player1_obj']['surname'] + ' & ' + json['team_guest_obj']['player2_obj']['name'] + ' ' + json['team_guest_obj']['player2_obj']['surname'],
     );
   }
 }
