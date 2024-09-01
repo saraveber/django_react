@@ -46,18 +46,45 @@ class AvailableTermListCreateForUser(generics.ListCreateAPIView):
             else:
                 print(serializer.errors)
 
+# ODKOMENTIREJ, PODVOJEN JE ZARAD TESTIRANJA
+# # Class that returns all available terms for the current user
+# class AvailableTermListCreate(generics.ListCreateAPIView):
+#     serializer_class = AvailableTermSerializer
+#     permission_classes = [IsAuthenticated]
+    
+#     def get_queryset(self):
+#         user = self.request.user
+#         return AvailableTerm.objects.filter(user=user)
+    
+#     def perform_create(self, serializer):
+#         user = self.request.user
+#         end_date = serializer.validated_data.get('end_date')
+#         start_date = serializer.validated_data.get('start_date')
+
+#         if AvailableTerm.objects.filter(user=user, start_date=start_date, end_date=end_date).exists():
+#             print('This term already exists.')
+#         else:
+#             if serializer.is_valid():
+#                 serializer.save(user=self.request.user)
+#             else:
+#                 print(serializer.errors)
 
 # Class that returns all available terms for the current user
 class AvailableTermListCreate(generics.ListCreateAPIView):
     serializer_class = AvailableTermSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+    def dispatch(self, request, *args, **kwargs):
+        # Set the request user manually
+        test_user = User.objects.get(username='AmeliaHall312')  # or create a new test user
+        request.user = test_user
+        return super().dispatch(request, *args, **kwargs)
     
     def get_queryset(self):
-        user = self.request.user
+        user = User.objects.get(username='AmeliaHall312')
         return AvailableTerm.objects.filter(user=user)
     
     def perform_create(self, serializer):
-        user = self.request.user
+        user = User.objects.get(username='AmeliaHall312')
         end_date = serializer.validated_data.get('end_date')
         start_date = serializer.validated_data.get('start_date')
 
@@ -65,7 +92,7 @@ class AvailableTermListCreate(generics.ListCreateAPIView):
             print('This term already exists.')
         else:
             if serializer.is_valid():
-                serializer.save(user=self.request.user)
+                serializer.save(user=user)
             else:
                 print(serializer.errors)
 
@@ -79,13 +106,26 @@ class AvailableTermDeleteAllForUser(generics.GenericAPIView):
         AvailableTerm.objects.filter(user__id=userId).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+# ODKOMENTIREJ, PODVOJEN JE ZARAD TESTIRANJA
+# # Class that deletes all available terms for the current user
+# class AvailableTermDeleteAll(generics.GenericAPIView):
+#     serializer_class = AvailableTermSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def delete(self, request, *args, **kwargs):
+#         AvailableTerm.objects.filter(user=request.user).delete()
+#         return Response(status=status.HTTP_204_NO_CONTENT)
+
 # Class that deletes all available terms for the current user
 class AvailableTermDeleteAll(generics.GenericAPIView):
     serializer_class = AvailableTermSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+
 
     def delete(self, request, *args, **kwargs):
-        AvailableTerm.objects.filter(user=request.user).delete()
+        user = User.objects.get(username='AmeliaHall312')
+        AvailableTerm.objects.filter(user__id=user.id).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -118,7 +158,8 @@ class PlayerListCreate(generics.ListCreateAPIView):
 
 class LeagueList(generics.ListCreateAPIView):
     serializer_class = LeagueSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         queryset = League.objects.all()
@@ -167,7 +208,8 @@ class PlayerListView(generics.ListAPIView):
 
 class TeamListCreate(generics.ListCreateAPIView):
     serializer_class = TeamSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         """
@@ -236,7 +278,8 @@ class RoundsListCreate(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated(), IsAdminOrStaffUser()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     def get_queryset(self):
         queryset = Round.objects.all()
@@ -283,7 +326,8 @@ class MatchListCreate(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated(), IsAdminOrStaffUser()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     def get_queryset(self):
         queryset = Match.objects.all()
@@ -354,11 +398,13 @@ class AssignedMatchesListCreate(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated(), IsAdminOrStaffUser()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     def get_queryset(self):
         queryset = AssignedMatch.objects.all()
-        myId = self.request.query_params.get('id', None)
+        #myId = self.request.query_params.get('id', None)
+        myId = User.objects.get(username='AmeliaHall312').id
         if myId:
             queryset = queryset.filter(
                 Q(match__team_host__player1=myId) |
