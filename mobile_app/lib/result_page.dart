@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:provider/provider.dart';
 
 class ResultsPage extends StatefulWidget {
   @override
@@ -25,10 +24,10 @@ class _ResultsPageState extends State<ResultsPage> {
     });
 
     try {
-      final leaguesResponse = await http.get(Uri.parse('http://127.0.0.1:8000//api/leagues/'));
-      final teamsResponse = await http.get(Uri.parse('http://127.0.0.1:8000//api/teams/'));
-      final roundsResponse = await http.get(Uri.parse('http://127.0.0.1:8000//api/rounds/'));
-      final matchesResponse = await http.get(Uri.parse('http://127.0.0.1:8000//api/matches/'));
+      final leaguesResponse = await http.get(Uri.parse('http://127.0.0.1:8000/api/leagues/'));
+      final teamsResponse = await http.get(Uri.parse('http://127.0.0.1:8000/api/teams/'));
+      final roundsResponse = await http.get(Uri.parse('http://127.0.0.1:8000/api/rounds/'));
+      final matchesResponse = await http.get(Uri.parse('http://127.0.0.1:8000/api/matches/'));
 
       if (leaguesResponse.statusCode == 200 && teamsResponse.statusCode == 200 &&
           roundsResponse.statusCode == 200 && matchesResponse.statusCode == 200) {

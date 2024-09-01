@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_app/result_page.dart';
+import 'result_page.dart';
 import 'home_page.dart';
 import 'calendar_page.dart';
-import 'result_page.dart';
+import 'upcomingMatches_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
     HomePage(),
     CalendarPage(),
     ResultsPage(),
+    MyUpcomingMatches(),
   ];
 
   void _onItemTapped(int index) {
@@ -49,6 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -62,9 +64,14 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.list),
             label: 'Results',
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            label: 'Upcoming matches',
+          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
     );

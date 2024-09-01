@@ -398,11 +398,13 @@ class AssignedMatchesListCreate(generics.ListCreateAPIView):
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsAuthenticated(), IsAdminOrStaffUser()]
-        return [IsAuthenticated()]
+        #return [IsAuthenticated()]
+        return [AllowAny()]
 
     def get_queryset(self):
         queryset = AssignedMatch.objects.all()
-        myId = self.request.query_params.get('id', None)
+        #myId = self.request.query_params.get('id', None)
+        myId = User.objects.get(username='AmeliaHall312').id
         if myId:
             queryset = queryset.filter(
                 Q(match__team_host__player1=myId) |
