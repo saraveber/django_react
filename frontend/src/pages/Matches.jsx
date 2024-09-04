@@ -293,7 +293,7 @@ const Matches = () => {
               </div>
               <button
                 onClick={() => handleUpdateResults(assignedMatch)}
-                className="btn btn-success mt-2"
+                className="btn btn-primary"
                 disabled={gemResults[assignedMatch.id]?.filter((result) => result.host && result.guest).length < 2} // Disable button if less than 2 gem results are filled
               >
                 Confirm Results

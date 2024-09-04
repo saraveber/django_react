@@ -60,7 +60,7 @@ function MatchAccordionTermsMatch({ matches, leagues }) {
                 ))}
               </div>
               <Button
-                variant="success"
+                variant="primary"
                 onClick={handleReserve}
                 disabled={!selectedTerm}
                 style={{ marginTop: "10px" }}
